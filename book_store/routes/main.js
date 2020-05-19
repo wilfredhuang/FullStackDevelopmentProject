@@ -24,21 +24,21 @@ router.get('/about', (req, res) => {
     })
 });
 
-router.get('/faq.html', (req, res) => {
+router.get('/faq', (req, res) => {
     const title = 'FAQs';
     res.render('faq', {            
         title
     })
 });
 
-router.get('/privacy-policy.html', (req, res) => {
+router.get('/privacy-policy', (req, res) => {
     const title = 'Privacy Policy';
     res.render('privacy-policy', {            
         title
     })
 });
 
-router.get('/terms-conditions.html', (req, res) => {
+router.get('/terms-conditions', (req, res) => {
     const title = 'Terms and Conditions';
     res.render('terms-conditions', {            
         title
@@ -59,7 +59,8 @@ router.get('/individualProduct', (req, res) => {
     })
 });
 
-router.get('/shipping.html', (req, res) => {
+
+router.get('/shipping', (req, res) => {
     const title = 'Shipping';
     res.render('shipping', {            
         title
@@ -73,6 +74,8 @@ router.get('/product-single.html', (req, res) => {
     })
 });
 */
+
+// Login Page
 router.get('/login', (req, res) => {
     const title = 'Login Page';
     res.render('user/login', {            
@@ -80,6 +83,7 @@ router.get('/login', (req, res) => {
     })
 });
 
+// Register Page
 router.get('/register', (req, res) => {
     const title = 'Registration Page';
     res.render('user/register', {            
@@ -95,13 +99,18 @@ router.get('/forgetPassword', (req, res) => {
     })
 });
 
-//userPage
+//userPage - General
 router.get('/userPage', (req, res) => {
     const title = 'User Page';
     res.render('user/userPage', {            
         title
     })
 });
+
+
+
+
+
 
 // // Exercise 2 solution
 // router.get('/about', (req, res) => {
