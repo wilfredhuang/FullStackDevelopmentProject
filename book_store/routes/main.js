@@ -31,6 +31,13 @@ router.get('/faq.html', (req, res) => {
     })
 });
 
+router.get('/shop.html', (req, res) => {
+    const title = 'FAQs';
+    res.render('shop', {            
+        title
+    })
+});
+
 router.get('/privacy-policy.html', (req, res) => {
     const title = 'Privacy Policy';
     res.render('privacy-policy', {            
@@ -61,7 +68,7 @@ router.get('/shipping.html', (req, res) => {
 
 router.get('/product-single.html', (req, res) => {
     const title = 'Product-Single';
-    res.render('product-single', {            
+    res.render('products/product-single', {            
         title
     })
 });
