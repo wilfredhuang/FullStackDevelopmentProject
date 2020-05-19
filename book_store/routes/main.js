@@ -59,7 +59,33 @@ router.get('/individualProduct', (req, res) => {
     })
 });
 
+//create Product page
+router.get('/createProduct', (req, res) => {
+    const title = "Create Product"
+    res.render('products/createProduct', {
+        title
+    })
+});
 
+//list Product Pages for Admin
+router.get('/listProductAdmin', (req, res) => {
+    const title = "Product List"
+    res.render('products/listProductAdmin', {
+        title
+    })
+});
+
+//update existing product page
+/* 
+router.get('/', (req, res) => {
+    const title = "Update Product"
+    res.render('product/', {
+        title
+    })
+});
+
+*/
+//Shipping Details Page
 router.get('/shipping', (req, res) => {
     const title = 'Shipping';
     res.render('shipping', {            
