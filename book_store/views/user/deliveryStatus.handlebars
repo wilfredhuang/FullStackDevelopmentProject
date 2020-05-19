@@ -1,0 +1,62 @@
+<div class="breadcrumb">
+        <div class="container">
+            <a class="breadcrumb-item" href="#">Admin Mode</a>
+            <span class="breadcrumb-item active">Delivery Status</span>
+        </div>
+    </div>
+    <section class="static about-sec">
+        <div class="container">
+            <h1>Delivery Status</h1>
+            <div class="row">
+                <nav class="navbar navbar-expand-lg navbar-light">
+                    <ul class="navbar-nav ml-auto list-inline">
+                        <li class="navbar-item list-inline-item" style="padding-bottom: 5px;">
+                            <form class="form-inline my-2 my-lg-0" method="GET" action="search">
+                                <input class="form-control mr-sm-2" type="text" name="query" id="searchInput" onkeyup="searchFunction()" placeholder="Search by Order ID"
+                                       aria-label="Search">
+                            </form>
+                        </li>
+                        <li class="navbar-item list-inline-item">
+                            <h3 class="text" style="padding-top: 13px;">Sort by: </h3>
+                        </li>
+                        <li class="navbar-item dropdown list-inline-item">
+                            <button type="button" class="btn dropdown-toggle" data-toggle="dropdown">choose</button>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" href="#">Date (new)</a>
+                                <a class="dropdown-item" href="#">Date (old)</a>
+                                <a class="dropdown-item" href="#">Order ID (ascending)</a>
+                                <a class="dropdown-item" href="#">Order ID (descending)</a>
+                            </div>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+        <div class="container">
+            <table class="table table-striped" id="myTable">
+                <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>Date Received</th>
+                    <th>Delivery Type</th>
+                    <th>Delivery Status</th>
+                    <th>Remarks</th>
+                    <th>Alert User</th>
+                </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><a href="/view_more_admin/">100C</a></td>
+                        <td></td>
+                        <td></td>
+                            <td>Delayed</td>
+                        <td></td>
+                        <td>
+                            <a href="/" class="btn btn-warning">Alert User</a>
+                        </td>
+                    </tr>
+                    </tbody>
+            </table>
+        </div>
+    </section>
+    <script src="js/searchOrderID.js"></script>
