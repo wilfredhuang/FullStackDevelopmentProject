@@ -68,7 +68,7 @@ router.get('/shipping.html', (req, res) => {
 
 router.get('/product-single.html', (req, res) => {
     const title = 'Product-Single';
-    res.render('product-single', {            
+    res.render('products/product-single', {            
         title
     })
 });
