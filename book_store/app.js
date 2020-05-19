@@ -14,29 +14,25 @@ const bcrypt = require('bcryptjs');  // added here for debugging, but it's impor
 // Passport - Setting Authentication - P4A2
 const passport = require('passport');
 
-
-
-
 // Load routes
 const mainRoute = require('./routes/main');
 const userRoute = require('./routes/user');
-const videoRoute = require('./routes/video');
 
-// Library to use MySQL to store session objects
-const MySQLStore = require('express-mysql-session');
-const db = require('./config/db');// db.js config file
+// // Library to use MySQL to store session objects
+// const MySQLStore = require('express-mysql-session');
+// const db = require('./config/db');// db.js config file
 
 // Messaging libraries
 const flash = require('connect-flash');
 const FlashMessenger = require('flash-messenger');
 
-// Bring in database connection 
-const vidjotDB = require('./config/DBConnection');
-// Connects to MySQL database 
-vidjotDB.setUpDB(false); // To set up database with new tables set (true)
+// // Bring in database connection 
+// const vidjotDB = require('./config/DBConnection');
+// // Connects to MySQL database 
+// vidjotDB.setUpDB(false); // To set up database with new tables set (true)
 // Passport Config - P4A2
-const authenticate = require('./config/passport'); 
-authenticate.localStrategy(passport); 
+// const authenticate = require('./config/passport'); 
+// authenticate.localStrategy(passport); 
 
 
 
@@ -64,32 +60,32 @@ app.use(methodOverride('_method'));
 app.use(cookieParser());
 
 // Express session middleware - uses MySQL to store session
-app.use(session({
-	key: 'vidjot_session',
-	secret: 'tojiv',
-	store: new MySQLStore({
-		host: db.host,
-		port: 3306,
-		user: db.username,
-		password: db.password,
-		database: db.database,
-		clearExpired: true,
-		// How frequently expired sessions will be cleared; milliseconds:
-		checkExpirationInterval: 900000,
-		// The maximum age of a valid session; milliseconds: 
-		expiration: 900000,
-	}),
-	resave: false,
-	saveUninitialized: false,
-}));
+// app.use(session({
+// 	key: 'vidjot_session',
+// 	secret: 'tojiv',
+// 	store: new MySQLStore({
+// 		host: db.host,
+// 		port: 3306,
+// 		user: db.username,
+// 		password: db.password,
+// 		database: db.database,
+// 		clearExpired: true,
+// 		// How frequently expired sessions will be cleared; milliseconds:
+// 		checkExpirationInterval: 900000,
+// 		// The maximum age of a valid session; milliseconds: 
+// 		expiration: 900000,
+// 	}),
+// 	resave: false,
+// 	saveUninitialized: false,
+// }));
 
 // Initilize Passport middleware - P4A2
-app.use(passport.initialize());
-app.use(passport.session());
+// app.use(passport.initialize());
+// app.use(passport.session());
 
 // Two flash messenging libraries - Flash (connect-flash) and Flash Messenger
-app.use(flash());
-app.use(FlashMessenger.middleware);
+// app.use(flash());
+// app.use(FlashMessenger.middleware);
 
 
 // Global variables
@@ -100,7 +96,6 @@ app.use(function (req, res, next) {
 // Use Routes
 app.use('/', mainRoute);	// uses main.js routing under ./routes
 app.use('/user', userRoute);
-app.use('/video', videoRoute);
 
 const port = 5000;
 
