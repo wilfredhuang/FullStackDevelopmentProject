@@ -10,14 +10,14 @@ router.get('/', (req, res) => {
     })
 });
 
-router.get('/index.html', (req, res) => {
+router.get('/index', (req, res) => {
     const title = 'Bookstore Home Page';
     res.render('index', {            // renders views/index.handlebars
         title
     })
 });
 
-router.get('/about.html', (req, res) => {
+router.get('/about', (req, res) => {
     const title = 'About Us';
     res.render('about', {            
         title
@@ -45,9 +45,16 @@ router.get('/terms-conditions.html', (req, res) => {
     })
 });
 
-router.get('/products.html', (req, res) => {
+router.get('/listProduct', (req, res) => {
     const title = 'Products';
-    res.render('products', {            
+    res.render('products/listProduct', {            
+        title
+    })
+});
+
+router.get('/individualProduct', (req, res) => {
+    const title = 'Products';
+    res.render('products/individualProduct', {            
         title
     })
 });
@@ -58,30 +65,43 @@ router.get('/shipping.html', (req, res) => {
         title
     })
 });
-
+/* later add this in
 router.get('/product-single.html', (req, res) => {
     const title = 'Product-Single';
     res.render('product-single', {            
         title
     })
 });
-
-router.get('/login.html', (req, res) => {
+*/
+router.get('/login', (req, res) => {
     const title = 'Login Page';
     res.render('user/login', {            
         title
     })
 });
 
-router.get('/register.html', (req, res) => {
+router.get('/register', (req, res) => {
     const title = 'Registration Page';
     res.render('user/register', {            
         title
     })
 });
 
+//forgetPassword page
+router.get('/forgetPassword', (req, res) => {
+    const title = 'Forget Password';
+    res.render('user/forgetPassword', {            
+        title
+    })
+});
 
-
+//userPage
+router.get('/userPage', (req, res) => {
+    const title = 'User Page';
+    res.render('user/userPage', {            
+        title
+    })
+});
 
 // // Exercise 2 solution
 // router.get('/about', (req, res) => {
