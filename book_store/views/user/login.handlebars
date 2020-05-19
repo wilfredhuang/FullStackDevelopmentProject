@@ -1,0 +1,30 @@
+<!--- css for login though might change later on
+<link rel="stylesheet" href="{{url_for('.static', filename='signin.css')}}">
+--->
+<div class="breadcrumb">
+        <div class="container">
+            <a class="breadcrumb-item" href="/">Home</a>
+            <span class="breadcrumb-item active">Login</span>
+        </div>
+    </div>
+    <section class="static about-sec">
+        <div class="container">
+            <h1>Login</h1>
+      <h3></h3>
+            <div class="form">
+                    <div class="row">
+                      <div class="col-3">
+                      </div>
+                        <div class="col-md-6">
+                            <form method="POST" action="/login">
+                                <!--- add in forms here--->
+                                <h5>Not Registered?<a href="/">Register here</a></h5>
+                                <h5>Forgot password?<a href="/">Click here</a></h5>
+                                <p>&nbsp;</p>
+                                <button class="btn black" type="submit">Sign in</button>
+                            </form>
+                        </div>
+                    </div>
+            </div>
+        </div>
+    </section>
