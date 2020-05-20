@@ -10,21 +10,21 @@ router.get('/', (req, res) => {
     })
 });
 
-router.get('/index.html', (req, res) => {
+router.get('/index', (req, res) => {
     const title = 'Bookstore Home Page';
     res.render('index', {            // renders views/index.handlebars
         title
     })
 });
 
-router.get('/about.html', (req, res) => {
+router.get('/about', (req, res) => {
     const title = 'About Us';
     res.render('about', {            
         title
     })
 });
 
-router.get('/faq.html', (req, res) => {
+router.get('/faq', (req, res) => {
     const title = 'FAQs';
     res.render('faq', {            
         title
@@ -38,57 +38,137 @@ router.get('/shop.html', (req, res) => {
     })
 });
 
-router.get('/privacy-policy.html', (req, res) => {
+router.get('/privacy-policy', (req, res) => {
+
     const title = 'Privacy Policy';
     res.render('privacy-policy', {            
         title
     })
 });
 
-router.get('/terms-conditions.html', (req, res) => {
+router.get('/terms-conditions', (req, res) => {
     const title = 'Terms and Conditions';
     res.render('terms-conditions', {            
         title
     })
 });
 
-router.get('/products.html', (req, res) => {
+router.get('/listProduct', (req, res) => {
     const title = 'Products';
-    res.render('products', {            
+    res.render('products/listProduct', {            
         title
     })
 });
 
-router.get('/shipping.html', (req, res) => {
+router.get('/individualProduct', (req, res) => {
+    const title = 'Products';
+    res.render('products/individualProduct', {            
+        title
+    })
+});
+
+//create Product page
+router.get('/createProduct', (req, res) => {
+    const title = "Create Product"
+    res.render('products/createProduct', {
+        title
+    })
+});
+
+//list Product Pages for Admin
+router.get('/listProductAdmin', (req, res) => {
+    const title = "Product List"
+    res.render('products/listProductAdmin', {
+        title
+    })
+});
+
+//view More Details of Product
+router.get('/viewMoreProduct', (req, res) => {
+    const title = "Product Details"
+    res.render('products/viewMoreProduct', {
+        title
+    })
+});
+
+//update existing product page
+/* 
+router.get('/', (req, res) => {
+    const title = "Update Product"
+    res.render('product/', {
+        title
+    })
+});
+
+*/
+//Shipping Details Page
+router.get('/shipping', (req, res) => {
     const title = 'Shipping';
     res.render('shipping', {            
         title
     })
 });
-
+/* later add this in
 router.get('/product-single.html', (req, res) => {
     const title = 'Product-Single';
     res.render('products/product-single', {            
         title
     })
 });
+*/
 
-router.get('/login.html', (req, res) => {
+// Login Page
+router.get('/login', (req, res) => {
     const title = 'Login Page';
     res.render('user/login', {            
         title
     })
 });
 
-router.get('/register.html', (req, res) => {
+// Register Page
+router.get('/register', (req, res) => {
     const title = 'Registration Page';
     res.render('user/register', {            
         title
     })
 });
 
+//forgetPassword page
+router.get('/forgetPassword', (req, res) => {
+    const title = 'Forget Password';
+    res.render('user/forgetPassword', {            
+        title
+    })
+});
+
+//userPage - General
+router.get('/userPage', (req, res) => {
+    const title = 'User Page';
+    res.render('user/userPage', {            
+        title
+    })
+});
+
+//
 
 
+
+
+//checkout
+router.get('/checkout', (req, res) => {
+    const title = 'Check Out';
+    res.render('delivery/checkOut', {            
+        title
+    })
+});
+
+//after checkout page
+router.get('/checkout2', (req, res) => {
+    const title = "Thank You";
+    res.render('delivery/thankYou'), {
+        title
+    }
+})
 
 // // Exercise 2 solution
 // router.get('/about', (req, res) => {
