@@ -75,6 +75,14 @@ router.get('/listProductAdmin', (req, res) => {
     })
 });
 
+//view More Details of Product
+router.get('/viewMoreProduct', (req, res) => {
+    const title = "Product Details"
+    res.render('products/viewMoreProduct', {
+        title
+    })
+});
+
 //update existing product page
 /* 
 router.get('/', (req, res) => {
@@ -133,10 +141,26 @@ router.get('/userPage', (req, res) => {
     })
 });
 
+//
 
 
 
 
+//checkout
+router.get('/checkout', (req, res) => {
+    const title = 'Check Out';
+    res.render('delivery/checkOut', {            
+        title
+    })
+});
+
+//after checkout page
+router.get('/checkout2', (req, res) => {
+    const title = "Thank You";
+    res.render('delivery/thankYou'), {
+        title
+    }
+})
 
 // // Exercise 2 solution
 // router.get('/about', (req, res) => {
