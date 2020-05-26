@@ -1,17 +1,19 @@
 const mySQLDB = require('./DBConfig');
 const user = require('../models/User');
-const video = require('../models/Video');
+
+const cart = require('../models/Cart'); //cart refers to items in cart not the cart that holds the item
+// should have name it product instead
 // If drop is true, all existing tables are dropped and recreated 
 const setUpDB = (drop) => {
     mySQLDB.authenticate()
         .then(() => {
-            console.log('Vidjot database connected');
+            console.log('Bookshop database connected');
         })
         .then(() => {
             /*               Defines the relationship where a user has many videos.               
             In this case the primary key from user will be a foreign key               
             in video.             */
-            user.hasMany(video);
+            user.hasMany(cart);
             mySQLDB.sync({ // Creates table if none exists                 
                 force: drop
             })
@@ -22,7 +24,6 @@ const setUpDB = (drop) => {
         })
         .catch(err => console.log('Error: ' + err));
 };
-
 
 
 module.exports = { setUpDB };
