@@ -7,9 +7,14 @@ const Cart = db.define('cart',
         language: { type: Sequelize.STRING },
         subtitles: { type: Sequelize.STRING, },
         author: { type: Sequelize.STRING },
-        price: {type:Sequelize.INTEGER},
+        price: {type:Sequelize.FLOAT},
         quantity: {type:Sequelize.INTEGER},
-        dateRelease: { type: Sequelize.DATE }
+        dateOrder: { type: Sequelize.DATE },
+        address: {type: Sequelize.STRING},
+        address1: {type: Sequelize.STRING},
+        country:{type: Sequelize.STRING},
+        deliverFee:{type: Sequelize.FLOAT},
+        totalPrice:{type: Sequelize.FLOAT}
     });
 
 module.exports = Cart;
