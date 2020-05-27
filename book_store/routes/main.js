@@ -133,16 +133,14 @@ router.get('/userPage', (req, res) => {
 
 //
 
-
-
-
-//checkout
+//checkout 
+/*
 router.get('/checkout', (req, res) => {
     const title = 'Check Out';
     res.render('delivery/checkOut', {            
         title
     })
-});
+}); */
 
 //after checkout page
 router.get('/checkout2', (req, res) => {
