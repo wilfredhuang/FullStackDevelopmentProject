@@ -1,6 +1,6 @@
 module.exports = {
     host: 'localhost',
-    database: 'vidjot',
+    database: 'book_store',
     username: 'itp211',
     password: 'itp211'
 }
