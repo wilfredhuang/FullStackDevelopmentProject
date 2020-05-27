@@ -45,37 +45,10 @@ router.get('/terms-conditions', (req, res) => {
     })
 });
 
-router.get('/listProduct', (req, res) => {
-    const title = 'Products';
-    res.render('products/listProduct', {            
-        title
-    })
-});
 
-router.get('/individualProduct1', (req, res) => {
-    const title = 'Products';
-    res.render('products/individualProduct1', {            
-        title
-    })
-});
-router.get('/individualProduct2', (req, res) => {
-    const title = 'Products';
-    res.render('products/individualProduct2', {            
-        title
-    })
-});
-router.get('/individualProduct3', (req, res) => {
-    const title = 'Products';
-    res.render('products/individualProduct3', {            
-        title
-    })
-});
-router.get('/individualProduct4', (req, res) => {
-    const title = 'Products';
-    res.render('products/individualProduct4', {            
-        title
-    })
-});
+
+
+
 //create Product page
 router.get('/createProduct', (req, res) => {
     const title = "Create Product"
