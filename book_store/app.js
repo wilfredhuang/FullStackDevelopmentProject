@@ -8,6 +8,11 @@ const exphbs = require('express-handlebars');
 const methodOverride = require('method-override');
 const Handlebars = require('handlebars')
 const { allowInsecurePrototypeAccess } = require('@handlebars/allow-prototype-access')
+//https stuff
+const openssl = require('openssl-nodejs')
+
+//https stuff
+openssl('openssl req -config csr.cnf -x509 -sha256 -nodes -days 365 -newkey rsa:2048 -keyout key.key -out certificate.crt')
 
 // Bcrypt - Encrypt password - P4A1
 const bcrypt = require('bcryptjs');  // added here for debugging, but it's import only used in user.js
@@ -58,32 +63,32 @@ app.use(methodOverride('_method'));
 app.use(cookieParser());
 
 // Express session middleware - uses MySQL to store session
-// app.use(session({
-// 	key: 'vidjot_session',
+//app.use(session({
+//	key: 'bookstore_session',
 // 	secret: 'tojiv',
 // 	store: new MySQLStore({
 // 		host: db.host,
 // 		port: 3306,
-// 		user: db.username,
-// 		password: db.password,
-// 		database: db.database,
-// 		clearExpired: true,
+//		user: db.username,
+//		password: db.password,
+//		database: db.database,
+//		clearExpired: true,
 // 		// How frequently expired sessions will be cleared; milliseconds:
-// 		checkExpirationInterval: 900000,
+//		checkExpirationInterval: 900000,
 // 		// The maximum age of a valid session; milliseconds: 
-// 		expiration: 900000,
-// 	}),
+//		 expiration: 900000,
+//	 	}),
 // 	resave: false,
-// 	saveUninitialized: false,
+//	saveUninitialized: false,
 // }));
 
 // Initilize Passport middleware - P4A2
-// app.use(passport.initialize());
-// app.use(passport.session());
+app.use(passport.initialize());
+app.use(passport.session());
 
 // Two flash messenging libraries - Flash (connect-flash) and Flash Messenger
-// app.use(flash());
-// app.use(FlashMessenger.middleware);
+//app.use(flash());
+//app.use(FlashMessenger.middleware);
 
 
 // Global variables

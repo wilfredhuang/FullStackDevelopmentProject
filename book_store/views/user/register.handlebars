@@ -9,22 +9,26 @@
             <h1>My Account / Register</h1>
             <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's printer took a galley of type and scrambled it to make a type specimen book. It has survived not only fiveLorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem </p>
             <div class="form">
-                <form>
+                <form method="post" action="/user/register">
                     <div class="row">
                         <div class="col-md-4">
-                            <input type="email" placeholder="Email" value="{{email}}" required>
+                            <label for ="email">Email</label>
+                            <input type="email" id="email"value= "" name= "email"required>
                             <span class="required-star">*</span>
                         </div>
                         <div class="col-md-4">
-                            <input placeholder="Enter Name" value="{{name}}"  required>
+                            <label for = "name">Name</label>
+                            <input type="text" id="name" value="" name= "name" required>
                             <span class="required-star">*</span>
                         </div>
                         <div class="col-md-4">
-                            <input type="password" placeholder="Password" value="{{password}}" required>
+                            <label for="password">Password</label>
+                            <input type="password" id="password" value="" name = "password"required>
                             <span class="required-star">*</span>
                         </div>
                         <div class="col-md-4">
-                            <input type="password" placeholder="Repeat Password"value="{{password2}}" required>
+                            <label for="password2">Repeat password</label>
+                            <input type="password" id="password2" value="" name= "password2" required>
                             <span class="required-star">*</span>
                         </div>
                         <div class="col-lg-8 col-md-12">

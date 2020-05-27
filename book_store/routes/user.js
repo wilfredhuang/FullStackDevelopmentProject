@@ -5,10 +5,9 @@ const User = require('../models/User');
 const alertMessage = require('../helpers/messenger');
 const bcrypt = require('bcryptjs');
 const passport = require('passport');
-
-module.exports = router;
-
+var https = require('https');
 router.get("/auth/facebook", passport.authenticate("facebook"));
+
 
 router.get(
   "/auth/facebook/callback",
@@ -96,7 +95,7 @@ router.get('/register', (req, res) => {
 });
 router.post('/register', (req, res) => {
     errors = [];
-    let { name, email, password, password2 } = req.body;
+    let {email,name, password, password2 } = req.body;
     if (password !== password2){
         errors.push({ text: 'Passwords do not match' });
     }
@@ -148,4 +147,5 @@ router.post('/login', (req, res, next) => {
         failureFlash: true
     })(req, res, next);
 });
+
 module.exports = router;

@@ -22,13 +22,9 @@ const flashMessage = (res, messageType, message, icon, dismissable) => {
 };
 
 module.exports = flashMessage; 		// returns a function
-/*
-* const alertMessage = require('..../messenger')
-* alertMessage(res, 'info', 'message', icon, true
-* */
+//const alertMessage = require('../messenger')
+//alertMessage(res, 'info', 'message', icon, true
 
-// module.exports = { flashMessage }; // returns and object instead of a function
-/*
-* const alertMessage = require('.../messenger')
-* alertMessage.flashMessage(...)	 // Calls object using dot notation
-* */
+//module.exports = { flashMessage }; // returns and object instead of a function
+ //const alertMessage = require('.../messenger')
+//nod alertMessage.flashMessage(...)	 // Calls object using dot notation
