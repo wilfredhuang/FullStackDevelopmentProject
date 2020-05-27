@@ -17,6 +17,7 @@ const passport = require('passport');
 // Load routes
 const mainRoute = require('./routes/main');
 const userRoute = require('./routes/user');
+const deliveryRoute = require('./routes/cart');
 
 // // Library to use MySQL to store session objects
 const MySQLStore = require('express-mysql-session');
@@ -33,8 +34,6 @@ bookshopDB.setUpDB(false); // To set up database with new tables set (true)
 // Passport Config - P4A2
 // const authenticate = require('./config/passport'); 
 // authenticate.localStrategy(passport); 
-
-
 
 // creates an express server
 const app = express();
@@ -96,6 +95,7 @@ app.use(function (req, res, next) {
 // Use Routes
 app.use('/', mainRoute);	// uses main.js routing under ./routes
 app.use('/user', userRoute);
+app.use('/delivery', deliveryRoute);
 
 const port = 5000;
 
