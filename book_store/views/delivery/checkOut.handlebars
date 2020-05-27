@@ -1,6 +1,6 @@
 <div class="breadcrumb">
   <div class="container">
-    <a class="breadcrumb-item" href="index">Home</a>
+    <a class="breadcrumb-item" href="/index">Home</a>
     <span class="breadcrumb-item">Cart</span>
     <span class="breadcrumb-item active">Checkout</span>
   </div>
@@ -10,7 +10,7 @@
     <h1>Checkout</h1>
     <div class="row">
       <div class="col-8">
-        <form method="post" action="">
+        <form method="post" action="/delivery/processCheckout">
           <h3>Delivery Address</h3>
           <br>
           <div class="form-group control-label">
@@ -54,40 +54,40 @@
           <br>
           <div class="form-group control-label">
             <label for="fullName">Full Name:</label>
-            <input type="text" name="fullName" class="form-control" required>
+            <input type="text" name="fullName" class="form-control" >
           </div>
           <div class="form-group control-label">
             <label for="email">Email:</label>
-            <input type="email" name="email" class="form-control" required>
+            <input type="email" name="email" class="form-control" >
           </div>
           <div class="form-group control-label">
             <label for="phoneNumber">Phone Number:</label>
-            <input type="text" name="phoneNumber" class="form-control" required>
+            <input type="text" name="phoneNumber" class="form-control" >
           </div>
           <div class="form-group control-label">
             <!--- Op in to mailing list --->
           </div>
           <div class="form-group control-label">
             <label for="address1">Address Line 1:</label>
-            <input type="text" name="address1" class="form-control" required>
+            <input type="text" name="address1" class="form-control" >
             <p>E.g. Street Address, PO box, company name, c/o</p>
           </div>
           <div class="form-group control-label">
             <label for="address2">Address Line 2:</label>
-            <input type="text" name="address2" class="form-control" required>
+            <input type="text" name="address2" class="form-control" >
             <p>E.g. apartment, suite, unit, building, floor</p>
           </div>
           <div class="form-group control-label">
             <label for="city">City:</label>
-            <input type="text" name="city" class="form-control" required>
+            <input type="text" name="city" class="form-control" >
           </div>
           <div class="form-group control-label">
             <label for="country">Country:</label>
-            <input type="text" name="country" class="form-control" required>
+            <input type="text" name="country" class="form-control" >
           </div>
           <div class="form-group control-label">
             <label for="postalCode">Postal Code:</label>
-            <input type="text" name="postalCode" class="form-control" required>
+            <input type="text" name="postalCode" class="form-control" >
           </div>
           <h3>Payment</h3>
           <br>

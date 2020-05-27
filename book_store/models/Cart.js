@@ -2,17 +2,13 @@ const Sequelize = require('sequelize');
 const db = require('../config/DBConfig');
 const Cart = db.define('cart',
     {
-        title: { type: Sequelize.STRING },
-        story: { type: Sequelize.STRING(2000) },
-        language: { type: Sequelize.STRING },
-        subtitles: { type: Sequelize.STRING, },
-        author: { type: Sequelize.STRING },
-        price: {type:Sequelize.FLOAT},
-        quantity: {type:Sequelize.INTEGER},
-        dateOrder: { type: Sequelize.DATE },
+        fullName: {type: Sequelize.STRING},
+        phoneNumber: {type: Sequelize.INTEGER},
         address: {type: Sequelize.STRING},
         address1: {type: Sequelize.STRING},
+        city: {type: Sequelize.STRING},
         country:{type: Sequelize.STRING},
+        postalCode: {type: Sequelize.STRING},
         deliverFee:{type: Sequelize.FLOAT},
         totalPrice:{type: Sequelize.FLOAT}
     });
