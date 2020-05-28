@@ -50,20 +50,10 @@ router.get('/terms-conditions', (req, res) => {
 
 
 //create Product page
-router.get('/createProduct', (req, res) => {
-    const title = "Create Product"
-    res.render('products/createProduct', {
-        title
-    })
-});
+
 
 //list Product Pages for Admin
-router.get('/listProductAdmin', (req, res) => {
-    const title = "Product List"
-    res.render('products/listProductAdmin', {
-        title
-    })
-});
+
 
 //view More Details of Product
 router.get('/viewMoreProduct', (req, res) => {

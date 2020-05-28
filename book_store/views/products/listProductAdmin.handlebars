@@ -2,11 +2,15 @@
         <div class="container">
             <a class="breadcrumb-item" href="#">Admin Logs</a>
             <span class="breadcrumb-item active">Retrieve Product</span>
+            <a class="breadcrumb-item" href="/product/createProduct">Add product</a>
+            
         </div>
          </div>
          <section class="product-sec">
 <div class="container" >
     <h1 class="display-4">Product List</h1>
+    {{#each productadmin}}
+    
     <!--- add in later
     <div>
         {% if count == 0 %}
@@ -39,10 +43,10 @@
                 <tr>
                     <td><a href="/product-single/">product id</a></td>
 
-                    <td>book name</td>
-                    <td>that author</td>
-                    <td>that publisher</td>
-                    <td></td>
+                    <td>{{product_name}}</td>
+                    <td>{{author}}</td>
+                    <td>{{publisher}}</td>
+                    <td>{{genre}}</td>
                     <!--- add in later
                     {% if product.get_genre() == "Children" %}
                         <td>Children</td>
@@ -54,8 +58,8 @@
                         <td>Manga</td>
                     {% endif %}
                     --->
-                    <td>10</td>
-                    <td>10</td>
+                    <td>{{price}}</td>
+                    <td>{{stock}}</td>
 
                     <td>
                         <p>image here</p>
@@ -67,10 +71,15 @@
                             <input type="submit" value="Delete" class="btn btndanger" onclick="return confirm('Are you sure you want to delete this item ? ')">
                         </form>
                         --->
-                        <button type="submit" value="Delete" class="btn btn-primary">Delete</button>
+                        <a href="/product/delete/{{id}}" class="card-link" data-toggle="confirmation"
+							   data-title="Confirm delete?">
+								<i class="far fa-trash-alt"></i>
+								Delete
+							</a>
                     </td>
                 </tr>
             </tbody>
         </table>
+        {{/each}}
 </div>
 </section>

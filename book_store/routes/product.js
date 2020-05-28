@@ -1,7 +1,11 @@
 const express = require('express');
 const router = express.Router();
+const moment = require('moment');
 const product = require('../models/Product');
+const productadmin = require('../models/ProductAdmin');
 // List videos belonging to current logged in user 
+
+
 
 router.get('/listProduct', (req, res) => {
     const title = 'Products';
@@ -19,21 +23,21 @@ router.get('/individualProduct1', (req, res) => {
 
 router.get('/individualProduct2', (req, res) => {
     const title = 'Products';
-    res.render('products/individualProduct2', {            
+    res.render('products/individualProduct2', {
         title
     })
 });
 
 router.get('/individualProduct3', (req, res) => {
     const title = 'Products';
-    res.render('products/individualProduct3', {            
+    res.render('products/individualProduct3', {
         title
     })
 });
 
 router.get('/individualProduct4', (req, res) => {
     const title = 'Products';
-    res.render('products/individualProduct4', {            
+    res.render('products/individualProduct4', {
         title
     })
 });
@@ -49,5 +53,60 @@ router.post('/addProduct1', (req, res) => {
     })
         .catch(err => console.log(err))
 });
+
+router.get('/createProduct', (req, res) => {
+    const title = "Create Product"
+    res.render('products/createProduct', {
+        title
+    })
+});
+
+router.post('/addProductAdmin', (req, res) => {
+    let product_name = req.body.product_name;
+    console.log(product_name)
+    let author = req.body.author;
+    let publisher = req.body.publisher;
+    let genre = req.body.genre;
+    let price = req.body.price;
+    let stock = req.body.stock;
+    let details = req.body.details;
+    productadmin.create({
+        product_name, author, publisher, genre, price, stock, details,
+    }).then((product) => {
+        res.redirect('/product/listProductAdmin')
+    })
+        .catch(err => console.log(err))
+});
+
+router.get('/listProductAdmin', (req, res) => {
+    productadmin.findAll({
+        order: [
+            ['product_name', 'ASC']
+        ],
+        raw: true
+    })
+        .then((productadmin) => {
+            res.render('products/listProductAdmin', {
+                productadmin: productadmin
+            });
+        })
+});
+
+router.get('/delete/:id', (req, res) => {
+    productadmin.findOne({
+        where: {
+            id: req.params.id,
+        },
+    }).then((productadmin) => {
+        productadmin.destroy({
+            where: {
+            id: req.params.id,
+        }
+        }).then((productadmin) => {
+            res.redirect("/product/listProductAdmin");
+        });
+    })
+})
+
 
 module.exports = router;
