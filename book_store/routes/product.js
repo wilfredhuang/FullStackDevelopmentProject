@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const product = require('../models/Product');
+const cartItem = require('../models/CartItem');
 // List videos belonging to current logged in user 
 
 router.get('/listProduct', (req, res) => {
@@ -36,18 +36,6 @@ router.get('/individualProduct4', (req, res) => {
     res.render('products/individualProduct4', {            
         title
     })
-});
-
-router.post('/addProduct1', (req, res) => {
-    let title = "7 DAY SELF PUBLISH HOW TO WRITE A BOOK";
-    let price = 3.37;
-    let amount = 1;
-    product.create({
-        title, price, amount,
-    }).then((product) => {
-        res.redirect('/product/listproduct')
-    })
-        .catch(err => console.log(err))
 });
 
 module.exports = router;

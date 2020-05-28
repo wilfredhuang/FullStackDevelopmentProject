@@ -25,16 +25,14 @@
                                 <th>Date Received</th>
                                 <th>Delivery Type</th>
                                 <th>Delivery Status</th>
-                                <th>Admin Remarks</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td><a href="viewMoreProduct">100C</a></td>
+                                <td><a href="/viewMoreProduct">100C</a></td>
                                 <td>12/12/12</td>
                                 <td>Normal Shipping</td>
                                 <td>Delivered</td>
-                                <td>-</td>
                             </tr>
                         </tbody>
                     </table>
@@ -113,49 +111,49 @@
                 <br>
                 <div></div>
                 <!--- add in each product--->
+                {{#if cartItem}}
+                {{#each cartItem}}
                 <div class="row">
                     <div class="col-md-2">
-                        <img src="images/product1.jpg" class="img">
+                        <img src="/images/product1.jpg" class="img">
                     </div>
-                    <div class="col-md-10">
-                        <h4>Book Name</h4> <!--- add in link here--->
-                        <p>Author Name, Genre, etc</p>
-                        <p class="price">$10</p>
+                    <div class="row col-md-10">
+                        <div class="col-11">
+                            <h4>{{title}}</h4>
+                            <!--- add in link here--->
+                            <p>Author Name, Genre, etc</p>
+                            <p class="price">{{price}}</p>
+                            <p>Amount: {{amount}}</p>
+                        </div>
+                        <div class="col-1">
+                            <a href="/delivery/removeItem/{{id}}"><button class="btn">Delete</button></a>
+                        </div>
                     </div>
                 </div>
                 <hr>
+                {{/each}}
+                <p> </p>
+                <p></p>
+                {{else}}
+                <h3>No Items In Cart</h3>
+                <hr>
+                {{/if}}
                 <div class="row">
-                    <div class="col-10">
-                </div>
-                <div class="col-2">
-                    <a href="delivery/checkout">
-                        <button class="btn" type="submit" value="submit">Check Out
-                        </button>
-                    </a>
+                    <div class="col-8">
+                    </div>
+                    <div class="col-3">
+                        <a href="/product/listProduct">
+                            <button class="btn" type="submit" value="submit">Continue Shopping
+                            </button>
+                        </a>
+                    </div>
+                    <div class="col-1">
+                        <a href="/delivery/checkout">
+                            <button class="btn" type="submit" value="submit">Check Out
+                            </button>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
-
-        <!---
-            <table class="table table-striped" id="myTable">
-                <thead>
-                    <tr>
-                        <th>Order ID</th>
-                        <th>Date Received</th>
-                        <th>Delivery Type</th>
-                        <th>Delivery Status</th>
-                        <th>Admin Remarks</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><a href="viewMoreProduct">100C</a></td>
-                        <td>12/12/12</td>
-                        <td>Normal Shipping</td>
-                        <td>Delivered</td>
-                        <td>-</td>
-                    </tr>
-                </tbody>
-            </table>--->
-    </div>
 </section>

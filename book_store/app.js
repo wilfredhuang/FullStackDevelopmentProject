@@ -24,7 +24,6 @@ const deliveryRoute = require('./routes/cart');
 const MySQLStore = require('express-mysql-session');
 const db = require('./config/db');// db.js config file
 
-
 // Messaging libraries
 const flash = require('connect-flash');
 const FlashMessenger = require('flash-messenger');
