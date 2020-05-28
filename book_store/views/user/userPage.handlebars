@@ -10,12 +10,13 @@
         <ul class="nav nav-tabs">
             <li class="active"><a data-toggle="tab" href="#recentOrders" class="nav-link">Recent Orders</a></li>
             <li><a data-toggle="tab" href="#userProfile" class="nav-link">User Profile</a></li>
-            <li><a data-toggle="tab" href="#menu2" class="nav-link">Menu 2</a></li>
+            <li><a data-toggle="tab" href="#cart" class="nav-link">Cart</a></li>
         </ul>
         <br>
         <div class="tab-content">
             <div id="recentOrders" class="tab-pane fade in active">
                 <h3>Recent Orders</h3>
+                <br>
                 <div>
                     <table class="table table-striped" id="myTable">
                         <thead>
@@ -41,6 +42,7 @@
             </div>
             <div id="userProfile" class="tab-pane fade">
                 <h3>User Profile</h3>
+                <br>
                 <table border="0">
                     <tr>
                         <td>Name:</td>
@@ -106,6 +108,54 @@
                 <p></p>
                 <a class="btn" href="/">Add Security Question</a>
             </div>
+            <div class="tab-pane fade" id="cart">
+                <h3>Cart</h3>
+                <br>
+                <div></div>
+                <!--- add in each product--->
+                <div class="row">
+                    <div class="col-md-2">
+                        <img src="images/product1.jpg" class="img">
+                    </div>
+                    <div class="col-md-10">
+                        <h4>Book Name</h4> <!--- add in link here--->
+                        <p>Author Name, Genre, etc</p>
+                        <p class="price">$10</p>
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-10">
+                </div>
+                <div class="col-2">
+                    <a href="delivery/checkout">
+                        <button class="btn" type="submit" value="submit">Check Out
+                        </button>
+                    </a>
+                </div>
+            </div>
         </div>
+
+        <!---
+            <table class="table table-striped" id="myTable">
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Date Received</th>
+                        <th>Delivery Type</th>
+                        <th>Delivery Status</th>
+                        <th>Admin Remarks</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><a href="viewMoreProduct">100C</a></td>
+                        <td>12/12/12</td>
+                        <td>Normal Shipping</td>
+                        <td>Delivered</td>
+                        <td>-</td>
+                    </tr>
+                </tbody>
+            </table>--->
     </div>
 </section>
