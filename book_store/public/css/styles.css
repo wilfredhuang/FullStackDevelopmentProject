@@ -90,6 +90,56 @@ section {
 img {
   max-width: 100%; }
 
+/* vertical tabs */
+.tab {
+  float: left;
+  border: 1px solid #ccc;
+  background-color: white;
+  width: 20%;
+  height: auto;
+}
+
+.tab button {
+  display: block;
+  background-color: inherit;
+  color: black;
+  text-transform: uppercase;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.4px;
+  padding: 22px 14px;
+  width: 100%;
+  border: none;
+  outline: none;
+  text-align: left;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.tab .active-tab{
+  background: black;
+  opacity: 1;
+  color: white;
+  text-transform: uppercase;
+  padding: 22px 14px;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.4px;
+  border: none;
+}
+
+.tab .inactive-tab{
+  background: white;
+  opacity: 1;
+  color: black;
+  text-transform: uppercase;
+  padding: 22px 14px;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.4px;
+  border: none;
+}
+
 /* modules */
 /* layouts */
 header .header-top {
@@ -507,7 +557,7 @@ header .cart {
     background: #cdcdcd;
     border-radius: 50%;
     margin: 0 5px;
-    trnsition: all 0.3s; }
+    transition: all 0.3s; }
     .testimonial-sec button.owl-dot.active {
       background: #ff9700;
       transform: scale(1.6); }

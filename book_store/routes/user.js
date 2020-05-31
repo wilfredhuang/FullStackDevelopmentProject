@@ -5,8 +5,41 @@ const User = require('../models/User');
 const alertMessage = require('../helpers/messenger');
 const bcrypt = require('bcryptjs');
 const passport = require('passport');
+const cartItem = require("../models/CartItem");
+
+
 
 module.exports = router;
+
+router.get('/userPage', (req, res) => {
+    const title = 'User Information';
+    res.render("user/userpage", {
+        title
+    });
+});
+
+router.get('/userRecentOrder', (req, res) => {
+    const title = 'Recent Orders';
+    res.render("user/userRecentOrder", {
+        title
+    });
+});
+
+router.get('/userCart', (req, res) => {
+    const title = 'Cart';
+    cartItem.findAll({
+        //where:{
+          //  userId = req.user.id,
+        //},
+    })
+    .then((cartItem) =>{
+    res.render("user/userCart", {
+        cartItem:cartItem,
+        title
+    });
+})
+});
+
 
 // Ignore, from practical 
 

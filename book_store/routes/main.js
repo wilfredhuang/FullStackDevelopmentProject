@@ -119,7 +119,7 @@ router.get('/forgetPassword', (req, res) => {
         title
     })
 });
-
+/*
 //userPage - General
 router.get('/userPage', (req, res) => {
     const title = 'User Page';
@@ -135,7 +135,7 @@ router.get('/userPage', (req, res) => {
         });
     })
 });
-
+*/
 // // Exercise 2 solution
 // router.get('/about', (req, res) => {
 //     const author = 'Denzel Washington';

@@ -6,163 +6,89 @@
 </div>
 <section class="static about-sec">
     <div class="container">
-        <h1>User Info</h1>
-        <ul class="nav nav-tabs">
-            <li class="active"><a data-toggle="tab" href="#recentOrders" class="nav-link">Recent Orders</a></li>
-            <li><a data-toggle="tab" href="#userProfile" class="nav-link">User Profile</a></li>
-            <li><a data-toggle="tab" href="#cart" class="nav-link">Cart</a></li>
-        </ul>
-        <br>
-        <div class="tab-content">
-            <div id="recentOrders" class="tab-pane fade in active">
-                <h3>Recent Orders</h3>
-                <br>
-                <div>
-                    <table class="table table-striped" id="myTable">
-                        <thead>
-                            <tr>
-                                <th>Order ID</th>
-                                <th>Date Received</th>
-                                <th>Delivery Type</th>
-                                <th>Delivery Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><a href="/viewMoreProduct">100C</a></td>
-                                <td>12/12/12</td>
-                                <td>Normal Shipping</td>
-                                <td>Delivered</td>
-                            </tr>
-                        </tbody>
+        <div class="row">
+            <div class="tab col-3">
+                <button class="tab">Navigation</button>
+                <a href="/user/userPage">
+                    <button class="active-tab">User Info</button>
+                </a>
+                <a href="/user/userRecentOrder">
+                    <button class="inactive-tab">Recent Orders</button>
+                </a>
+                <a href="/user/userCart">
+                    <button class="inactive-tab">Cart</button>
+                </a>
+            </div>
+            <div class="col-9">
+                <div id="userProfile">
+                    <h2>User Profile</h2>
+                    <br>
+                    <table border="0">
+                        <tr>
+                            <td>Name:</td>
+                        </tr>
+                        <tr>
+                            <td id="nameinfo"></td>
+                        </tr>
+                        <tr>
+                            <td>&nbsp;</td>
+                        </tr>
+                        <tr>
+                            <td>Email:</td>
+                        </tr>
+                        <tr>
+                            <td id="emailinfo"></td>
+                        </tr>
+                        <tr>
+                            <td>&nbsp;</td>
+                        </tr>
+                        <tr>
+                            <td>User ID:</td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>&nbsp;</td>
+                        </tr>
+                        <tr>
+                            <td>Address:</td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>&nbsp;</td>
+                        </tr>
+                        <tr>
+                            <td>Postal:</td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>&nbsp;</td>
+                        </tr>
+                        <tr>
+                            <td>Country:</td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                        </tr>
                     </table>
-                </div>
-            </div>
-            <div id="userProfile" class="tab-pane fade">
-                <h3>User Profile</h3>
-                <br>
-                <table border="0">
-                    <tr>
-                        <td>Name:</td>
-                    </tr>
-                    <tr>
-                        <td id="nameinfo"></td>
-                    </tr>
-                    <tr>
-                        <td>&nbsp;</td>
-                    </tr>
-                    <tr>
-                        <td>Email:</td>
-                    </tr>
-                    <tr>
-                        <td id="emailinfo"></td>
-                    </tr>
-                    <tr>
-                        <td>&nbsp;</td>
-                    </tr>
-                    <tr>
-                        <td>User ID:</td>
-                    </tr>
                     <tr>
                         <td></td>
                     </tr>
-                    <tr>
-                        <td>&nbsp;</td>
-                    </tr>
-                    <tr>
-                        <td>Address:</td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td>&nbsp;</td>
-                    </tr>
-                    <tr>
-                        <td>Postal:</td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td>&nbsp;</td>
-                    </tr>
-                    <tr>
-                        <td>Country:</td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                    </tr>
-                </table>
-                <tr>
-                    <td></td>
-                </tr>
-                </table>
-                <p></p>
-                <a class="btn" href="/">Update Particulars</a>
-                <p></p>
-                <a class="btn" href="/forgetPassword">Change Password</a>
-                <p></p>
-                <p></p>
-                <a class="btn" href="/">Add Security Question</a>
-            </div>
-            <div class="tab-pane fade" id="cart">
-                <h3>Cart</h3>
-                <br>
-                <div></div>
-                <!--- add in each product--->
-                {{#if cartItem}}
-                {{#each cartItem}}
-                <div class="row">
-                    <div class="col-md-2">
-                        <img src="/images/product1.jpg" class="img">
-                    </div>
-                    <div class="row col-md-10">
-                        <div class="col-11">
-                            <h4>{{title}}</h4>
-                            <!--- add in link here--->
-                            <p>Author Name, Genre, etc</p>
-                            <p class="price">{{price}}</p>
-                            <p>Amount: {{amount}}</p>
-                        </div>
-                        <div class="col-1">
-                            <a href="/delivery/removeItem/{{id}}"><button class="btn">Delete</button></a>
-                        </div>
-                    </div>
-                </div>
-                <hr>
-                {{/each}}
-                <p> </p>
-                <p></p>
-                {{else}}
-                <h3>No Items In Cart</h3>
-                <hr>
-                {{/if}}
-                <div class="row">
-                    <div class="col-9"></div>
-                    <div class="col-2-md">
-                        <p>Total Price:</p>
-                    </div>
-                    <div class="col-1-md">
-                        <p>$</p>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-8">
-                    </div>
-                    <div class="col-3">
-                        <a href="/product/listProduct">
-                            <button class="btn" type="submit" value="submit">Continue Shopping
-                            </button>
-                        </a>
-                    </div>
-                    <div class="col-1">
-                        <a href="/delivery/checkout">
-                            <button class="btn" type="submit" value="submit">Check Out
-                            </button>
-                        </a>
-                    </div>
+                    </table>
+                    <p></p>
+                    <a class="btn" href="/">Update Particulars</a>
+                    <p></p>
+                    <a class="btn" href="/forgetPassword">Change Password</a>
+                    <p></p>
+                    <p></p>
+                    <a class="btn" href="/">Add Security Question</a>
                 </div>
             </div>
         </div>
+    </div>
 </section>
