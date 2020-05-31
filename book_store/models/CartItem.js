@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
 const db = require('../config/DBConfig');
-const Product = db.define('product',
+const CartItem = db.define('cartItem',
     {
         title: {
             type: Sequelize.STRING
@@ -14,4 +14,4 @@ const Product = db.define('product',
     });
 
 
-module.exports = Product;
+module.exports = CartItem;

@@ -18,24 +18,24 @@ const passport = require('passport');
 const mainRoute = require('./routes/main');
 const userRoute = require('./routes/user');
 const productRoute = require('./routes/product');
+const deliveryRoute = require('./routes/cart');
 
 // // Library to use MySQL to store session objects
- const MySQLStore = require('express-mysql-session');
- const db = require('./config/db');// db.js config file
+const MySQLStore = require('express-mysql-session');
+const db = require('./config/db');// db.js config file
 
 // Messaging libraries
 const flash = require('connect-flash');
 const FlashMessenger = require('flash-messenger');
 
-// // Bring in database connection 
+// Bring in database connection 
  const vidjotDB = require('./config/DBConnection');
-// // Connects to MySQL database 
+// Connects to MySQL database 
  vidjotDB.setUpDB(false); // To set up database with new tables set (true)
+
 // Passport Config - P4A2
 // const authenticate = require('./config/passport'); 
 // authenticate.localStrategy(passport); 
-
-
 
 // creates an express server
 const app = express();
@@ -98,6 +98,8 @@ app.use(function (req, res, next) {
 app.use('/', mainRoute);	// uses main.js routing under ./routes
 app.use('/user', userRoute);
 app.use('/product', productRoute);
+app.use('/delivery', deliveryRoute);
+
 
 const port = 5000;
 
