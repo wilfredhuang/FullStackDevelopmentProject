@@ -45,7 +45,6 @@ router.get('/terms-conditions', (req, res) => {
     })
 });
 
-
 //create Product page
 router.get('/createProduct', (req, res) => {
     const title = "Create Product"
@@ -119,23 +118,7 @@ router.get('/forgetPassword', (req, res) => {
         title
     })
 });
-/*
-//userPage - General
-router.get('/userPage', (req, res) => {
-    const title = 'User Page';
-    cartItem.findAll({
-        //where:{
-          //  userId = req.user.id,
-        //},
-    })
-    .then((cartItem) =>{
-        res.render("user/userpage", {
-            cartItem:cartItem,
-            title
-        });
-    })
-});
-*/
+
 // // Exercise 2 solution
 // router.get('/about', (req, res) => {
 //     const author = 'Denzel Washington';
