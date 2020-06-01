@@ -3,51 +3,52 @@ const router = express.Router();
 const Order = require("../models/Cart");
 const cartItem = require("../models/CartItem");
 
-
 router.get("/checkout", (req, res) => {
   const title = "Check Out";
-  cartItem.findAll({
-
-  })
-  .then((cartItem)=>{
+  cartItem.findAll({}).then((cartItem) => {
     res.render("delivery/checkOut", {
       title,
-      cartItem:cartItem
+      cartItem: cartItem,
     });
-  })
+  });
 });
 
-router.post('/addToCart', (req, res) => {
+router.post("/addToCart", (req, res) => {
   let title = "7 DAY SELF PUBLISH HOW TO WRITE A BOOK";
   let price = 3.37;
   let amount = 1;
-  cartItem.create({
-      title, price, amount,
-  }).then((cartItem) => {
-      res.redirect('/product/listproduct')
-  })
-      .catch(err => console.log(err))
-});
-
-router.get('/removeItem/:id', (req, res) => {
-  cartItem.findOne({
-    where: {
-      id: req.params.id,
-    },
-  })
-  .then((cartItem) => {
-    cartItem.destroy({
-      where:  {
-        id: req.params.id
-      }
+  cartItem
+    .create({
+      title,
+      price,
+      amount,
     })
-    .then((cartItem)=> {
-      res.redirect('/userPage');
-    });
-  })
-  .catch((err) => console.log(err)); // To catch no cartItem ID
+    .then((cartItem) => {
+      res.redirect("/product/listproduct");
+    })
+    .catch((err) => console.log(err));
 });
 
+router.get("/removeItem/:id", (req, res) => {
+  cartItem
+    .findOne({
+      where: {
+        id: req.params.id,
+      },
+    })
+    .then((cartItem) => {
+      cartItem
+        .destroy({
+          where: {
+            id: req.params.id,
+          },
+        })
+        .then((cartItem) => {
+          res.redirect("/user/userCart");
+        });
+    })
+    .catch((err) => console.log(err)); // To catch no cartItem ID
+});
 
 router.post("/processCheckout", (req, res) => {
   let fullName = req.body.fullName.toString();
@@ -71,22 +72,29 @@ router.post("/processCheckout", (req, res) => {
     postalCode,
     deliveryFee,
     totalPrice,
-    
-  })
-  .then((Order) => {
-    res.redirect('/delivery/checkout2')
+  }).then((Order) => {
+    res.redirect("/delivery/checkout2");
   });
 });
 
 //after checkout page
-router.get('/checkout2', (req, res) => {
-    const title = "Thank You";
-    res.render('delivery/thankYou'), {
-        title
-    }
-})
+router.get("/checkout2", (req, res) => {
+  const title = "Thank You";
+  res.render("delivery/thankYou"),
+    {
+      title,
+    };
+});
 
-
-
+//view More Details of Order //still uses cart.js for example, will change later on
+router.get("/viewMoreOrder", (req, res) => {
+  const title = "Order Details";
+  cartItem.findAll({}).then((cartItem) => {
+    res.render("products/viewMoreOrder", {
+      cartItem:cartItem,
+      title,
+    });
+  });
+});
 
 module.exports = router;

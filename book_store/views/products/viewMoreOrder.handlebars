@@ -1,0 +1,77 @@
+<div class="breadcrumb">
+    <div class="container">
+        <a class="breadcrumb-item" href="#">Home</a>
+        <a class="breadcrumb-item" href="#">Recent Orders</a>
+        <span class="breadcrumb-item active">Delivery Information</span>
+    </div>
+</div>
+<section class="static about-sec">
+    <div class="container">
+        <h1>Delivery Information</h1>
+        <!--- {% for order in orderList %}   add in conditions here--->
+        <div class="row">
+            <div class="col-8">
+                <div>
+                    <p>remember to put progress step bar here</p>
+                </div>
+                {{#if cartItem}}
+                {{#each cartItem}}
+                <div class="row">
+                    <div class="col-md-2">
+                        <img src="/images/product1.jpg" class="img">
+                    </div>
+                    <div class="col-md-10">
+                        <h4>{{title}}</h4>
+                        <!--- add in link here--->
+                        <p>Author Name, Genre, etc</p>
+                        <p class="price">{{price}}</p>
+                        <p>Amount: {{amount}}</p>
+                    </div>
+                </div>
+                <hr>
+                {{/each}}
+                <p> </p>
+                <p></p>
+                {{else}}
+                <h3>No Items In Cart</h3>
+                <hr>
+                {{/if}}
+            </div>
+            <div class="col-4">
+                <div class="right-sidebar">
+                    <h3>Delivery Address</h3>
+                    <hr>
+                    <div class="row">
+                        <div class="col">
+                            <p>Name: </p>
+                            <p>Order ID: </p>
+                            <p>address 1 info</p>
+                            <p>address 2 info</p>
+                            <p>City: </p>
+                            <p>Country: </p>
+                            <p>Delivery Status: </p>
+                        </div>
+                        <div class="col">
+
+                        </div>
+                    </div>
+                </div>
+                <div class="right-sidebar">
+                    <h3>Total Price</h3>
+                    <hr>
+                    <div class="row">
+                        <div class="col">
+                            <p>Subtotal: </p>
+                            <p>GST: </p>
+                            <p>Delivery Fee: </p>
+                            <p>Total: </p>
+                        </div>
+                        <div class="col">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

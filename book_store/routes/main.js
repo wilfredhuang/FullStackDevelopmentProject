@@ -61,14 +61,6 @@ router.get('/listProductAdmin', (req, res) => {
     })
 });
 
-//view More Details of Product
-router.get('/viewMoreProduct', (req, res) => {
-    const title = "Product Details"
-    res.render('products/viewMoreProduct', {
-        title
-    })
-});
-
 //update existing product page
 /* 
 router.get('/', (req, res) => {
