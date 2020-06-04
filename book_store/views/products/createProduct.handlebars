@@ -8,37 +8,36 @@
 <div class="container ">
     <h1 class="display-4">Create Product</h1>
     <br>
-    <form method="POST" action="">
+    <form method="POST" action="/product/addProductAdmin" id="addProductAdmin">
         <div class="form-group">
-            <label for="productName">Product Name:</label>
-            <input type="text" name="productName" class="form-control">
+            <label for="product_name">Product Name:</label>
+            <input type="text" name="product_name" class="form-control" id="product_name">
         </div>
         <div class="form-group">
             <label for="author">Author:</label>
-            <input type="text" name="author" class="form-control">
+            <input type="text" name="author" class="form-control" id="author">
         </div>
         <div class="form-group">
             <label for="publisher">Publisher:</label>
-            <input type="text" name="publisher" class="form-control">
+            <input type="text" name="publisher" class="form-control" id="publisher">
         </div>
         <div class="form-group">
             <label for="genre">Genre:</label>
-            <p>genre checkbox here here</p>
+            <input type="text" name="genre" class="form-control" id="genre">
         </div>
         <div class="form-group">
-            <label for="genre">Pricing ($):</label>
-            <p>pricing here</p>
+            <label for="price">Pricing ($):</label>
+            <input type="text" name="price" class="form-control" id="price">
         </div>
         <div class="form-group">
-            <label for="genre">Stocks:</label>
-            <p>stocks here</p>
+            <label for="stock">Stocks:</label>
+            <input type="text" name="stock" class="form-control" id="stock">
         </div>
-        <div id="prof">
-            <div class="form-group">
-                <label for="genre">Product Details:</label>
-                <textarea class="form-control"></textarea>
-                </div>
+        <div class="form-group">
+            <label for="details">Product Details:</label>
+            <textarea class="form-control" name="details" id="details"></textarea>
         </div>
+        
         <p>You are required to choose <strong>3</strong> images for the product</p>
         <br />
         <div class="container">
@@ -48,6 +47,7 @@
                 <div class="col-md-4">image 3 here</div>
             </div>
         </div>
+        
         <br>
         <button type="submit" value="Submit" class="btn btn-primary">Submit</button>
     </form>
