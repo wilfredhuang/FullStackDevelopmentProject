@@ -1,0 +1,48 @@
+<div class="breadcrumb">
+    <div class="container">
+        <a class="breadcrumb-item" href="/">Home</a>
+        <span class="breadcrumb-item active">Recent Order</span>
+    </div>
+</div>
+<section class="static about-sec">
+    <div class="container">
+        <div class="row">
+            <div class="tab col-3">
+                <button class="tab">Navigation</button>
+                <a href="/user/userPage">
+                    <button class="inactive-tab">User Info</button>
+                </a>
+                <a href="/user/userRecentOrder">
+                    <button class="active-tab">Recent Orders</button>
+                </a>
+                <a href="/user/userCart">
+                    <button class="inactive-tab">Cart</button>
+                </a>
+            </div>
+            <div id="recentOrders" class="col-9">
+                <h2>Recent Orders</h2>
+                <br>
+                <div>
+                    <table class="table table-striped" id="myTable">
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Date Received</th>
+                                <th>Delivery Type</th>
+                                <th>Delivery Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><a href="/viewMoreProduct">100C</a></td>
+                                <td>12/12/12</td>
+                                <td>Normal Shipping</td>
+                                <td>Delivered</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
