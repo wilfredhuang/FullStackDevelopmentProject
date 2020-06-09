@@ -78,6 +78,12 @@ router.post("/processCheckout", (req, res) => {
   });
 });
 
+// Dont touch, stripe code -W
+// router.get('/checkout', async (req, res) => {
+//   const intent = // ... Fetch or create the PaymentIntent
+//   res.render('checkout', { client_secret: intent.client_secret });
+// });
+
 //after checkout page
 router.get('/checkout2', (req, res) => {
     const title = "Thank You";
