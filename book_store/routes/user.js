@@ -130,7 +130,7 @@ router.post('/register', (req, res) => {
                              password = hash;
                              User.create({ name, email, password })
                                 .then(user => {
-                                    alertMessage(res, 'success', user.name + ' added.Please login', 'fas fa-sign-in-alt', true);
+                                    //alertMessage(res, 'success', user.name + ' added.Please login', 'fas fa-sign-in-alt', true);
                                     res.redirect('/user/login');
                                 })
                                 .catch(err => console.log(err));                            
