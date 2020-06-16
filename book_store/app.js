@@ -12,7 +12,11 @@ const { allowInsecurePrototypeAccess } = require('@handlebars/allow-prototype-ac
 const openssl = require('openssl-nodejs')
 
 //https stuff
-openssl('openssl req -config csr.cnf -x509 -sha256 -nodes -days 365 -newkey rsa:2048 -keyout key.key -out certificate.crt')
+//openssl('openssl req -config csr.cnf -x509 -sha256 -nodes -days 365 -newkey rsa:2048 -keyout key.key -out certificate.crt')
+
+//admin stuff
+const AdminBroExpress = require('admin-bro-expressjs')
+
 
 // Bcrypt - Encrypt password - P4A1
 const bcrypt = require('bcryptjs');  // added here for debugging, but it's import only used in user.js
@@ -22,6 +26,7 @@ const passport = require('passport');
 // Load routes
 const mainRoute = require('./routes/main');
 const userRoute = require('./routes/user');
+const adminRoute = require('./routes/admin');
 
 // // Library to use MySQL to store session objects
 // const MySQLStore = require('express-mysql-session');
@@ -99,7 +104,7 @@ app.use(function (req, res, next) {
 // Use Routes
 app.use('/', mainRoute);	// uses main.js routing under ./routes
 app.use('/user', userRoute);
-
+app.use('/admin',adminRoute); //use admin route
 const port = 5000;
 
 app.listen(port, () => {

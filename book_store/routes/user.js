@@ -128,7 +128,8 @@ router.post('/register', (req, res) => {
                         bcrypt.hash(password, salt, function(err, hash) {
                             if (err) return next(err);
                              password = hash;
-                             User.create({ name, email, password })
+                             role = "user";
+                             User.create({ name, email, password,role})
                                 .then(user => {
                                     //alertMessage(res, 'success', user.name + ' added.Please login', 'fas fa-sign-in-alt', true);
                                     res.redirect('/user/login');
