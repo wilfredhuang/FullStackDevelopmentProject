@@ -10,9 +10,15 @@ const Handlebars = require('handlebars')
 const { allowInsecurePrototypeAccess } = require('@handlebars/allow-prototype-access')
 //https stuff
 const openssl = require('openssl-nodejs')
+const https = require('https');
+const fs = require('fs');
 
 //https stuff
-//openssl('openssl req -config csr.cnf -x509 -sha256 -nodes -days 365 -newkey rsa:2048 -keyout key.key -out certificate.crt')
+const options = {
+	key: fs.readFileSync('key.pem'),
+	cert: fs.readFileSync('cert.crt')
+  };
+  
 
 //admin stuff
 const AdminBroExpress = require('admin-bro-expressjs')
@@ -107,8 +113,10 @@ app.use('/user', userRoute);
 app.use('/admin',adminRoute); //use admin route
 const port = 5000;
 
-app.listen(port, () => {
-	console.log(`Server started on port ${port}`);
-});
+//app.listen(port, () => {
+	//console.log(`Server started on port ${port}`);
+//});
+
+https.createServer(options,app).listen(port);
 
 

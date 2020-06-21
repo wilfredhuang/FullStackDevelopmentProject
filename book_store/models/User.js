@@ -19,3 +19,4 @@ const facebookUser = db.define("facebookUser",{
 })
 
 module.exports = User; 
+module.exports = facebookUser;

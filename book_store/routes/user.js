@@ -5,15 +5,15 @@ const User = require('../models/User');
 const alertMessage = require('../helpers/messenger');
 const bcrypt = require('bcryptjs');
 const passport = require('passport');
-var https = require('https');
-router.get("/auth/facebook", passport.authenticate("facebook"));
+
+router.get("/auth/facebook", passport.authenticate("facebook",{scope: 'email'}));
 
 
 router.get(
   "/auth/facebook/callback",
   passport.authenticate("facebook", {
-    successRedirect: "/user/userPage",
-    failureRedirect: "/user/login"
+    successRedirect: "/userPage",
+    failureRedirect: "/login"
   })
 );
 

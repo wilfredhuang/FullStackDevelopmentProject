@@ -5,6 +5,7 @@ const passport = require('passport')
 
 // Load user model
 const User = require('../models/User');
+const facebookUser = require('../models/User');
 
 function localStrategy(passport) {
     passport.use(new LocalStrategy({ usernameField: 'email' }, (email, password,
@@ -45,31 +46,31 @@ function localStrategy(passport) {
 passport.use(new FacebookStrategy({
     clientID: "239865340604409" ,
     clientSecret: "61403ba37105bae272df33dda173ec85" ,
-    callbackURL: "http://localhost:5000/auth/facebook/callback"
+    callbackURL: "https://localhost:5000/user/auth/facebook/callback"
   },
   function(accessToken, refreshToken, profile, done) {
-        process.nextTick(function(){
-            User.findOne({'facebook.id': profile.id}, function(err, user){
+    process.nextTick(function(){
+        facebookUser.findOne({ where: { id:profile.id} },function(err,user){
+        if(err)
+            return done(err);
+        if(user)
+            return done(null, user);
+        else {
+            var Newuser = {
+                'email': profile.emails[0].value,
+                'name' : profile.name.givenName + ' ' + profile.name.familyName,
+                'id'   : profile.id,
+                'token': accessToken
+            }
+            facebookUser.create(Newuser)
                 if(err)
-                    return done(err);
-                if(user)
-                    return done(null, user);
-                else {
-                    var newUser = new User();
-                    newUser.facebook.id = profile.id;
-                    newUser.facebook.token = accessToken;
-                    newUser.facebook.name = profile.name.givenName + ' ' + profile.name.familyName;
-                    newUser.facebook.email = profile.emails[0].value;
-
-                    facebookUser.create(newUser)
-                        if(err)
-                            throw err;
-                        return done(null, newUser);
+                    throw err;
+                return done(null, user);
                 }
             });
         });
     }
-
-));
     
+));
+
 module.exports = { localStrategy };
