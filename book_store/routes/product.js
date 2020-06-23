@@ -4,6 +4,7 @@ const moment = require('moment');
 const product = require('../models/Product');
 const productadmin = require('../models/ProductAdmin');
 const cartItem = require('../models/CartItem');
+
 // List videos belonging to current logged in user 
 
 
@@ -122,18 +123,22 @@ router.get('/updateProductAdmin/:id', (req, res) => {
     })
 });
 
-router.put('/updateProductAdmin', (req, res) => {
+router.put('/updateProductAdmin/:id', (req, res) => {
     let product_name = req.body.product_name;
-    console.log(product_name)
     let author = req.body.author;
     let publisher = req.body.publisher;
     let genre = req.body.genre;
     let price = req.body.price;
     let stock = req.body.stock;
     let details = req.body.details;
-    productadmin.create({
+    productadmin.update({
         product_name, author, publisher, genre, price, stock, details,
-    }).then((product) => {
+    }, {
+        where: {
+            id: req.params.id
+        }
+    })
+    .then(() => {
         res.redirect('/product/listProductAdmin')
     })
         .catch(err => console.log(err))
