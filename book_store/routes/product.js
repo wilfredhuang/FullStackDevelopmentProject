@@ -107,6 +107,36 @@ router.get('/delete/:id', (req, res) => {
             res.redirect("/product/listProductAdmin");
         });
     })
+});
+
+router.get('/updateProductAdmin/:id', (req, res) => {
+    productadmin.findOne({
+        where:{
+            id: req.params.id
+        }
+    })
+    .then((product) => {
+        res.render('products/updateProduct', {
+            product
+        });
+    })
+});
+
+router.put('/updateProductAdmin', (req, res) => {
+    let product_name = req.body.product_name;
+    console.log(product_name)
+    let author = req.body.author;
+    let publisher = req.body.publisher;
+    let genre = req.body.genre;
+    let price = req.body.price;
+    let stock = req.body.stock;
+    let details = req.body.details;
+    productadmin.create({
+        product_name, author, publisher, genre, price, stock, details,
+    }).then((product) => {
+        res.redirect('/product/listProductAdmin')
+    })
+        .catch(err => console.log(err))
 })
 
 module.exports = router;

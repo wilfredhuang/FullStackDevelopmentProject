@@ -1,41 +1,41 @@
 <div class="breadcrumb">
     <div class="container">
         <a class="breadcrumb-item" href="#">Admin Logs</a>
-        <span class="breadcrumb-item active">Create Product</span>
+        <span class="breadcrumb-item active">Update Product</span>
     </div>
 </div>
 <section class="product-sec">
 <div class="container ">
-    <h1 class="display-4">Create Product</h1>
+    <h1 class="display-4">Update Product</h1>
     <br>
     <form method="POST" action="/product/addProductAdmin" id="addProductAdmin">
         <div class="form-group">
             <label for="product_name">Product Name:</label>
-            <input type="text" name="product_name" class="form-control" id="product_name">
+            <textarea type="text" name="product_name" class="form-control" id="product_name" > {{product.product_name}}</textarea>
         </div>
         <div class="form-group">
             <label for="author">Author:</label>
-            <input type="text" name="author" class="form-control" id="author">
+            <textarea type="text" name="author" class="form-control" id="author" > {{product.author}}</textarea>
         </div>
         <div class="form-group">
             <label for="publisher">Publisher:</label>
-            <input type="text" name="publisher" class="form-control" id="publisher">
+            <textarea type="text" name="publisher" class="form-control" id="publisher">{{product.publisher}}</textarea>
         </div>
         <div class="form-group">
             <label for="genre">Genre:</label>
-            <input type="text" name="genre" class="form-control" id="genre">
+            <textarea type="text" name="genre" class="form-control" id="genre">{{product.genre}}</textarea>
         </div>
         <div class="form-group">
             <label for="price">Pricing ($):</label>
-            <input type="text" name="price" class="form-control" id="price">
+            <textarea type="text" name="price" class="form-control" id="price">{{product.price}}</textarea>
         </div>
         <div class="form-group">
             <label for="stock">Stocks:</label>
-            <input type="text" name="stock" class="form-control" id="stock">
+            <textarea type="text" name="stock" class="form-control" id="stock">{{product.stock}}</textarea>
         </div>
         <div class="form-group">
             <label for="details">Product Details:</label>
-            <textarea class="form-control" name="details" id="details"></textarea>
+            <textarea class="form-control" name="details" id="details">{{product.details}}</textarea>
         </div>
         
         <p>You are required to choose <strong>3</strong> images for the product</p>
