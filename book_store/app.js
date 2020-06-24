@@ -9,6 +9,10 @@ const methodOverride = require('method-override');
 const Handlebars = require('handlebars')
 const { allowInsecurePrototypeAccess } = require('@handlebars/allow-prototype-access')
 
+// Stripe Payment System
+// Set your secret key. Remember to switch to your live secret key in production!
+const stripe = require('stripe')('sk_test_ns9DyHTray5Wihniw93C2ANH00IMJTVjKw');
+
 // Bcrypt - Encrypt password - P4A1
 const bcrypt = require('bcryptjs');  // added here for debugging, but it's import only used in user.js
 // Passport - Setting Authentication - P4A2

@@ -120,3 +120,6 @@ router.get('/userCart', (req, res) => {
 //        object as error */
 //     })(req, res, next);
 // });
+
+
+module.exports = router;
