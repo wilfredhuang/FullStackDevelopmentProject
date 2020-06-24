@@ -51,14 +51,6 @@ router.get('/terms-conditions', (req, res) => {
 //list Product Pages for Admin
 
 
-//view More Details of Product
-router.get('/viewMoreProduct', (req, res) => {
-    const title = "Product Details"
-    res.render('products/viewMoreProduct', {
-        title
-    })
-});
-
 //update existing product page
 /* 
 router.get('/', (req, res) => {
