@@ -33,12 +33,18 @@
                             </tr>
                         </thead>
                         <tbody>
+                            {{#if order}}
+                            {{#each order}}
                             <tr>
-                                <td><a href="/delivery/viewMoreOrder">100C</a></td>
+                                <td><a href="/delivery/viewMoreOrder/{{id}}">{{id}}</a></td>
                                 <td>12/12/12</td>
                                 <td>Normal Shipping</td>
                                 <td>Delivered</td>
                             </tr>
+                            {{/each}}
+                            {{else}}
+                            <p>There is no current orders</p>
+                            {{/if}}
                         </tbody>
                     </table>
                 </div>
