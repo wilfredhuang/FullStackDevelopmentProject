@@ -11,6 +11,16 @@ const Order = db.define('order',
         postalCode: {type: Sequelize.STRING,},
         deliverFee:{type: Sequelize.FLOAT,},
         totalPrice:{type: Sequelize.FLOAT,}
+        /**
+         * addressId:{type: Sequelize.STRING,},
+         * trackingId:{type: Sequelize.STRING,},
+         * dateStart:{type:Sequelize.DATETIME,},
+         * dateEnd:{type:Sequelize.DATETIME,},
+         * deliveryStatus:{type:Sequelize.STRING,},
+         * 
+         * 
+         * 
+         */
     });
 
 module.exports = Order;

@@ -66,7 +66,14 @@ router.post("/processCheckout", (req, res) => {
   let deliverFee = 10; //req.body.deliveryFee;
   let totalPrice = 10; //req.body.totalPrice;
   //console.log(fullName);
-  
+
+  const parcel = new api.Parcel({
+    predefined_package: "Parcel",
+    weight: 10, //change number according to weight of total books
+  });
+
+  parcel.save(); //.then(console.log);
+
   const fromAddress = new api.Address({
     //default address of company
     name: "Bookstore",
@@ -82,8 +89,8 @@ router.post("/processCheckout", (req, res) => {
   //fromAddress.save().then(console.log);
 
   const toAddress = new api.Address({
-    verify: ['delivery'],
-    
+    verify: ["delivery"],
+
     /*name: fullName,
     company: "-",
     street1: address,
@@ -93,63 +100,75 @@ router.post("/processCheckout", (req, res) => {
     country: country,
     zip: postalCode,*/
     //example code
-    name: 'George Costanza',
-  company: 'Vandelay Industries',
-  street1: '1 E 161st St.',
-  city: 'Bronx',
-  state: 'NY',
-  zip: '10451'
-    
+    name: "George Costanza",
+    company: "Vandelay Industries",
+    street1: "1 E 161st St.",
+    city: "Bronx",
+    state: "NY",
+    zip: "10451",
   });
-  toAddress.save()
-  .then((addr)=> {
-    //console.log(addr);
-    //console.log(addr.street1);
-    //console.log(addr.verifications)
-    //console.log(addr.id)
-    let checkAddress = addr.verifications.delivery.success
-    //console.log(addr.verifications.delivery.errors[0])
-    if (checkAddress == true) {
-      console.log(checkAddress)
-      console.log('its true');
-      res.redirect("/delivery/checkout2");
-
-    }
-    else{
-      console.log(checkAddress)
-      console.log('its false');
-      alertMessage(res, "danger", "Please enter a valid address", "fas faexclamation-circle",
-      true)
-      res.redirect("/delivery/checkout");      
-    }
-
-    //console.log(addr.verifications.errors);
-
-  }).catch(e => {
-    console.log(e);  //check errors
-  });
-  
-  const parcel = new api.Parcel({
-    predefined_package: 'Parcel',
-    weight: 10,   //change number according to weight of total books
-  });
-
-  parcel.save()//.then(console.log); 
-  
-  const shipment = new api.Shipment({
-    to_address: toAddress,
-    from_address: fromAddress,
-    parcel: parcel,
-  });
-
-  //shipment.save()//.then(console.log);
+  toAddress
+    .save()
+    .then((addr) => {
+      //console.log(addr);
+      //console.log(addr.street1);
+      //console.log(addr.verifications)
+      //console.log(addr.id)
+      let checkAddress = addr.verifications.delivery.success;
+      //console.log(addr.verifications.delivery.errors[0])
+      if (checkAddress == true) {
+        const shipment = new api.Shipment({
+          to_address: toAddress,
+          from_address: fromAddress,
+          parcel: parcel,
+        });
+      
+        //shipment.save()//.then(console.log);
+      
+        shipment
+          .save()
+          .then((s) =>
+            s.buy(shipment.lowestRate(["USPS"], ["First"])).then(console.log)
+          );
+        console.log(checkAddress);
+        console.log("its true");
+        Order.create({
+          fullName,
+          phoneNumber,
+          address,
+          address1,
+          city,
+          country,
+          postalCode,
+          deliverFee,
+          totalPrice,
+        }).then((Order) => {
+          res.redirect("/delivery/checkout2");
+        })
 
 
-  shipment.save().then(s =>
-    s.buy(shipment.lowestRate(['USPS'], ['First']))
-      .then(console.log)
-  );
-/*
+
+
+        res.redirect("/delivery/checkout2");
+      } else {
+        console.log(checkAddress);
+        console.log("its false");
+        alertMessage(
+          res,
+          "danger",
+          "Please enter a valid address",
+          "fas faexclamation-circle",
+          true
+        );
+        res.redirect("/delivery/checkout");
+      }
+
+      //console.log(addr.verifications.errors);
+    })
+    .catch((e) => {
+      console.log(e); //check errors
+    });
+  /*
   shipment.buy(shipment.lowestRate(["USPS"], ["First"])).then(console.log);
   console.log('heeyy')
   console.log(shipment.tracking_code);
@@ -183,6 +202,7 @@ router.get("/checkout2", (req, res) => {
   res.render("delivery/thankYou"),
     {
       title,
+
     };
 });
 
