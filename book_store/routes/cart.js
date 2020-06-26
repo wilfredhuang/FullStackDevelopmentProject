@@ -145,11 +145,7 @@ router.post("/processCheckout", (req, res) => {
         }).then((Order) => {
           res.redirect("/delivery/checkout2");
         })
-
-
-
-
-        res.redirect("/delivery/checkout2");
+        //res.redirect("/delivery/checkout2");
       } else {
         console.log(checkAddress);
         console.log("its false");
