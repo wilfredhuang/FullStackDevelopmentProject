@@ -1,9 +1,11 @@
 const express = require("express");
 const router = express.Router();
 const Order = require("../models/Order");
+const alertMessage = require("../helpers/messenger");
 const cartItem = require("../models/CartItem");
 const EasyPost = require("@easypost/api");
-const apiKey = "EZTK29b55ab4ee7a437890e19551520f5dd0oJNz9EtGGQwxZFavjxPxCg";
+//const e = require("express");
+const apiKey = "EZTK29b55ab4ee7a437890e19551520f5dd0uaJjPiW9XsVqXYFNVI0kog";
 const api = new EasyPost(apiKey);
 
 router.get("/checkout", (req, res) => {
@@ -63,8 +65,8 @@ router.post("/processCheckout", (req, res) => {
   let postalCode = req.body.postalCode.toString();
   let deliverFee = 10; //req.body.deliveryFee;
   let totalPrice = 10; //req.body.totalPrice;
-  console.log(fullName);
-  /*
+  //console.log(fullName);
+  
   const fromAddress = new api.Address({
     //default address of company
     name: "Bookstore",
@@ -77,36 +79,79 @@ router.post("/processCheckout", (req, res) => {
     phone: "415-123-4567",
     email: "example@example.com",
   });
-  fromAddress.save().then(console.log);
+  //fromAddress.save().then(console.log);
 
   const toAddress = new api.Address({
-    name: fullName,
+    verify: ['delivery'],
+    
+    /*name: fullName,
     company: "-",
     street1: address,
     city: city,
     state: "-",
     phone: phoneNumber,
-    zip: postalCode,
+    country: country,
+    zip: postalCode,*/
+    //example code
+    name: 'George Costanza',
+  company: 'Vandelay Industries',
+  street1: '1 E 161st St.',
+  city: 'Bronx',
+  state: 'NY',
+  zip: '10451'
+    
   });
+  toAddress.save()
+  .then((addr)=> {
+    //console.log(addr);
+    //console.log(addr.street1);
+    //console.log(addr.verifications)
+    //console.log(addr.id)
+    let checkAddress = addr.verifications.delivery.success
+    //console.log(addr.verifications.delivery.errors[0])
+    if (checkAddress == true) {
+      console.log(checkAddress)
+      console.log('its true');
+      res.redirect("/delivery/checkout2");
 
-  toAddress.save().then(console.log);
+    }
+    else{
+      console.log(checkAddress)
+      console.log('its false');
+      alertMessage(res, "danger", "Please enter a valid address", "fas faexclamation-circle",
+      true)
+      res.redirect("/delivery/checkout");      
+    }
+
+    //console.log(addr.verifications.errors);
+
+  }).catch(e => {
+    console.log(e);  //check errors
+  });
+  
   const parcel = new api.Parcel({
-    length: 9,
-    width: 6,
-    height: 2,
-    weight: 10,
+    predefined_package: 'Parcel',
+    weight: 10,   //change number according to weight of total books
   });
 
-  parcel.save().then(console.log);
+  parcel.save()//.then(console.log); 
+  
   const shipment = new api.Shipment({
     to_address: toAddress,
     from_address: fromAddress,
     parcel: parcel,
   });
 
-  shipment.save().then(console.log);
+  //shipment.save()//.then(console.log);
 
+
+  shipment.save().then(s =>
+    s.buy(shipment.lowestRate(['USPS'], ['First']))
+      .then(console.log)
+  );
+/*
   shipment.buy(shipment.lowestRate(["USPS"], ["First"])).then(console.log);
+  console.log('heeyy')
   console.log(shipment.tracking_code);
 
   //let userId = "hello"; //req.user.id
@@ -123,6 +168,7 @@ router.post("/processCheckout", (req, res) => {
   }).then((Order) => {
     res.redirect("/delivery/checkout2");
   });*/
+  //res.redirect("/delivery/checkout2");
 });
 
 // Dont touch, stripe code -W

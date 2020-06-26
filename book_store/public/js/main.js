@@ -5,7 +5,7 @@ const apiKey = "EZTK29b55ab4ee7a437890e19551520f5dd0uaJjPiW9XsVqXYFNVI0kog";
 const api = new EasyPost(apiKey);
 
 // set addresses
-/*
+
 const toAddress = new api.Address({
   name: "Dr. Steve Brule",
   street1: "179 N Harbor Dr",
@@ -14,8 +14,9 @@ const toAddress = new api.Address({
   zip: "90277",
   country: "US",
   phone: "310-808-5243",
-});*/
+});
 
+console.log(toAddress)
 //Test retrive information
 
 
@@ -29,6 +30,18 @@ api.Address.retrieve('adr_a829cf7045d140eb95c917b01f1b2ae8').then(address => {
 //api.Address.retrieve('adr_a829cf7045d140eb95c917b01f1b2ae8').then(console.log);
 
 //api.Tracker.retrieve('trk_afeda88a6f934290b7dcb4bf1e2445b9').then(console.log);
+/*api.Tracker.retrieve('EZ1000000001').then(tracker => {
+  console.log(tracker.id);
+}).catch(console.log);
+*/
+/*
+const tracker = new api.Tracker({
+  tracking_code: 'EZ2000000002',
+  carrier: 'USPS',
+});
+
+tracker.save().then(console.log);
+*/
 
 /*
 toAddress.save().then((addr) => {
@@ -100,3 +113,30 @@ shipment
     s.buy(shipment.lowestRate(["USPS"], ["First"])).then(console.log)
   );
 */
+
+// this address will not be verified
+const toAddress2 = new api.Address({
+  verify: ['delivery'],
+  street1: '417 montgomery streat', // street1 will be cleaned up
+  city: 'SAN FRANCISCO',
+  state: 'CA',
+  zip: '94104',
+  country: 'US',
+  company: 'EasyPost',
+  phone: '415-123-4567',
+});
+
+toAddress2.save().then((addr) => {
+  // verifiableAddress is updated, and also passed into
+  // the promise resolve.
+  console.log(addr.street1);
+  // 417 Montgomery Street
+
+  console.log(addr.verifications);
+  /*
+  { delivery:
+   { success: true,
+     errors: [],
+       } }
+     */
+});
