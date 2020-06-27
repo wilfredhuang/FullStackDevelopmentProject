@@ -20,7 +20,7 @@ const Order = db.define('order',
         deliveryStatus:{type:Sequelize.STRING,},
          /** 
          * 
-         * 
+         *  might need to add more things over here
          */
     });
 
