@@ -50,8 +50,16 @@
                             <p>{{order.address1}}</p>
                             <p>City: {{order.city}}</p>
                             <p>Country: {{order.country}}</p>
-                            <p>Delivery Status: <a href="https://track.easypost.com/djE6dHJrX2FmZWRhODhhNmY5MzQyOTBiN2RjYjRiZjFlMjQ0NWI5">Delivered</a></p>
+                            <p>Delivery Status: <a href="{{trackingURL}}">{{deliveryStatus}}</a></p>
                         </div>
+                    </div>
+                </div>
+                <div class ="right-sidebar">
+                    <h3>Shipping Information</h3>
+                    <hr>
+                    <div>
+                        <p>Tracking Code: </p>
+                        <p>{{order.trackingCode}}</p>
                     </div>
                 </div>
                 <div class="right-sidebar">
@@ -60,8 +68,7 @@
                     <div class="row">
                         <div class="col">
                             <p>Subtotal: </p>
-                            <p>GST: </p>
-                            <p>Delivery Fee: {{order.deliverFee}}</p>
+                            <p>Delivery Fee: 0</p>
                             <p>Total: {{order.totalPrice}}</p>
                         </div>
                     </div>

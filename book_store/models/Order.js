@@ -10,14 +10,15 @@ const Order = db.define('order',
         country:{type: Sequelize.STRING,},
         postalCode: {type: Sequelize.STRING,},
         deliverFee:{type: Sequelize.FLOAT,},
-        totalPrice:{type: Sequelize.FLOAT,}
-        /**
-         * addressId:{type: Sequelize.STRING,},
-         * trackingId:{type: Sequelize.STRING,},
-         * dateStart:{type:Sequelize.DATETIME,},
-         * dateEnd:{type:Sequelize.DATETIME,},
-         * deliveryStatus:{type:Sequelize.STRING,},
-         * 
+        totalPrice:{type: Sequelize.FLOAT,},    
+        shippingId:{type:Sequelize.STRING},
+        addressId:{type: Sequelize.STRING,},
+        trackingId:{type: Sequelize.STRING,},
+        trackingCode:{type: Sequelize.STRING,},
+        dateStart:{type: Sequelize.DATE,},
+        dateEnd:{type:Sequelize.DATE,},
+        deliveryStatus:{type:Sequelize.STRING,},
+         /** 
          * 
          * 
          */

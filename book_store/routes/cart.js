@@ -57,6 +57,7 @@ router.get("/removeItem/:id", (req, res) => {
 
 router.post("/processCheckout", (req, res) => {
   let fullName = req.body.fullName.toString();
+  let email = req.body.email.toString();
   let phoneNumber = req.body.phoneNumber.toString();
   let address = req.body.address;
   let address1 = req.body.address1;
@@ -99,7 +100,7 @@ router.post("/processCheckout", (req, res) => {
     phone: phoneNumber,
     country: country,
     zip: postalCode,*/
-    //example code
+    //example code cos too lazy to type down
     name: "George Costanza",
     company: "Vandelay Industries",
     street1: "1 E 161st St.",
@@ -127,24 +128,46 @@ router.post("/processCheckout", (req, res) => {
       
         shipment
           .save()
-          .then((s) =>
-            s.buy(shipment.lowestRate(["USPS"], ["First"])).then(console.log)
+          .then((s) => {
+            s.buy(shipment.lowestRate(["USPS"], ["First"]))
+            .then((t) => {
+              console.log("=============")
+              console.log(t.id)
+              let shippingId = t.id
+              let addressId = t.to_address.id
+              let trackingId = t.tracker.id
+              let trackingCode = t.tracker.tracking_code
+              let dateStart = t.created_at
+              let dateEnd = t.tracker.est_delivery_date
+              let deliveryStatus = t.tracker.status
+              //console.log(shippingId)
+              //console.log(addressId)
+              Order.create({
+                fullName,
+                phoneNumber,
+                address, 
+                address1,
+                city,
+                country,
+                postalCode,
+                deliverFee,
+                totalPrice,
+                shippingId,
+                addressId,
+                trackingId,
+                trackingCode,
+                dateStart,
+                dateEnd,
+                deliveryStatus
+              }).then((Order) => {
+                res.redirect("/delivery/checkout2");
+              })
+            })
+          }
           );
         console.log(checkAddress);
         console.log("its true");
-        Order.create({
-          fullName,
-          phoneNumber,
-          address,
-          address1,
-          city,
-          country,
-          postalCode,
-          deliverFee,
-          totalPrice,
-        }).then((Order) => {
-          res.redirect("/delivery/checkout2");
-        })
+         
         //res.redirect("/delivery/checkout2");
       } else {
         console.log(checkAddress);
@@ -164,26 +187,6 @@ router.post("/processCheckout", (req, res) => {
     .catch((e) => {
       console.log(e); //check errors
     });
-  /*
-  shipment.buy(shipment.lowestRate(["USPS"], ["First"])).then(console.log);
-  console.log('heeyy')
-  console.log(shipment.tracking_code);
-
-  //let userId = "hello"; //req.user.id
-  Order.create({
-    fullName,
-    phoneNumber,
-    address,
-    address1,
-    city,
-    country,
-    postalCode,
-    deliverFee,
-    totalPrice,
-  }).then((Order) => {
-    res.redirect("/delivery/checkout2");
-  });*/
-  //res.redirect("/delivery/checkout2");
 });
 
 // Dont touch, stripe code -W
@@ -205,14 +208,27 @@ router.get("/checkout2", (req, res) => {
 //view More Details of Order //still uses cart.js for example, will change later on
 router.get("/viewMoreOrder/:id", (req, res) => {
   const title = "Order Details";
+  
   Order.findOne({
     where: {
       id: req.params.id,
     },
   }).then((order) => {
-    res.render("products/viewMoreOrder", {
-      order: order,
-      title,
+    console.log("===========")
+    const shippingId = order.shippingId
+    console.log(shippingId)
+    api.Shipment.retrieve(shippingId).then((s) => {
+      console.log(s.tracker.created_at)
+      console.log(s.tracker.updated_at)
+      const deliveryStatus = s.tracker.status
+      const trackingURL = s.tracker.public_url
+      
+      res.render("products/viewMoreOrder", {
+        order: order,
+        title,
+        deliveryStatus,
+        trackingURL
+      });
     });
   });
 });

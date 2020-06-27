@@ -16,7 +16,7 @@ const toAddress = new api.Address({
   phone: "310-808-5243",
 });
 
-console.log(toAddress)
+//console.log(toAddress)
 //Test retrive information
 
 
@@ -24,9 +24,16 @@ console.log(toAddress)
 
 //webhook.save().then(console.log);
 
-api.Address.retrieve('adr_a829cf7045d140eb95c917b01f1b2ae8').then(address => {
-  console.log(address.id);
-}).catch(console.log);
+//api.Address.retrieve('adr_a829cf7045d140eb95c917b01f1b2ae8').then(address => {
+  //console.log(address.id);
+//}).catch(console.log);
+console.log("=========")
+api.Shipment.retrieve('shp_e0f451a768394ab68621772b79c166db').then((s) => {
+  console.log(s.tracker.created_at)
+  console.log(s.tracker.updated_at)
+
+});
+
 //api.Address.retrieve('adr_a829cf7045d140eb95c917b01f1b2ae8').then(console.log);
 
 //api.Tracker.retrieve('trk_afeda88a6f934290b7dcb4bf1e2445b9').then(console.log);
@@ -115,28 +122,28 @@ shipment
 */
 
 // this address will not be verified
-const toAddress2 = new api.Address({
-  verify: ['delivery'],
-  street1: '417 montgomery streat', // street1 will be cleaned up
-  city: 'SAN FRANCISCO',
-  state: 'CA',
-  zip: '94104',
-  country: 'US',
-  company: 'EasyPost',
-  phone: '415-123-4567',
-});
+// const toAddress2 = new api.Address({
+//   verify: ['delivery'],
+//   street1: '417 montgomery streat', // street1 will be cleaned up
+//   city: 'SAN FRANCISCO',
+//   state: 'CA',
+//   zip: '94104',
+//   country: 'US',
+//   company: 'EasyPost',
+//   phone: '415-123-4567',
+// });
 
-toAddress2.save().then((addr) => {
-  // verifiableAddress is updated, and also passed into
-  // the promise resolve.
-  console.log(addr.street1);
-  // 417 Montgomery Street
+// toAddress2.save().then((addr) => {
+//   // verifiableAddress is updated, and also passed into
+//   // the promise resolve.
+//   console.log(addr.street1);
+//   // 417 Montgomery Street
 
-  console.log(addr.verifications);
-  /*
-  { delivery:
-   { success: true,
-     errors: [],
-       } }
-     */
-});
+//   console.log(addr.verifications);
+//   /*
+//   { delivery:
+//    { success: true,
+//      errors: [],
+//        } }
+//      */
+// });
