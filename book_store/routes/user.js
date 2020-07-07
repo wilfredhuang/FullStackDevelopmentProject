@@ -6,7 +6,7 @@ const alertMessage = require('../helpers/messenger');
 const bcrypt = require('bcryptjs');
 const passport = require('passport');
 const cartItem = require("../models/CartItem");
-
+const order = require("../models/Order");
 
 
 module.exports = router;
@@ -20,9 +20,18 @@ router.get('/userPage', (req, res) => {
 
 router.get('/userRecentOrder', (req, res) => {
     const title = 'Recent Orders';
-    res.render("user/userRecentOrder", {
-        title
-    });
+    order.findAll({
+        //where:{
+          //  id: req.params.id,
+        //}
+    })
+    .then((order) => {
+        res.render("user/userRecentOrder", {
+            order:order,
+            title
+        });
+    })
+    .catch(err => console.log(err));
 });
 
 router.get('/userCart', (req, res) => {
@@ -111,3 +120,6 @@ router.get('/userCart', (req, res) => {
 //        object as error */
 //     })(req, res, next);
 // });
+
+
+module.exports = router;
