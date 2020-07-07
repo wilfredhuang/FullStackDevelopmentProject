@@ -23,6 +23,7 @@ const mainRoute = require('./routes/main');
 const userRoute = require('./routes/user');
 const productRoute = require('./routes/product');
 const deliveryRoute = require('./routes/cart');
+const checkoutRoute = require('./routes/checkout');
 
 // // Library to use MySQL to store session objects
 const MySQLStore = require('express-mysql-session');
@@ -103,6 +104,7 @@ app.use('/', mainRoute);	// uses main.js routing under ./routes
 app.use('/user', userRoute);
 app.use('/product', productRoute);
 app.use('/delivery', deliveryRoute);
+app.use('/checkout', checkoutRoute);
 
 
 const port = 5000;
