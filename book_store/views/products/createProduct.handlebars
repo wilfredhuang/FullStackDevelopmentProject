@@ -1,6 +1,6 @@
 <div class="breadcrumb">
     <div class="container">
-        <a class="breadcrumb-item" href="#">Admin Logs</a>
+        <a class="breadcrumb-item" href="/product/listProductAdmin">Product Page Admin</a>
         <span class="breadcrumb-item active">Create Product</span>
     </div>
 </div>
@@ -10,7 +10,11 @@
     <br>
     <form method="POST" action="/product/addProductAdmin" id="addProductAdmin">
         <div class="form-group">
-            <label for="product_name">Product Name:</label>
+            <label for="product_name" onclick="getBook()">Product Name:</label>
+            <a href="#" onclick="getBook()" tabindex="-1" class="card-link">
+						<i class="fas fa-film"></i>
+						Get Book
+					</a>
             <input type="text" name="product_name" class="form-control" id="product_name">
         </div>
         <div class="form-group">
@@ -32,6 +36,10 @@
         <div class="form-group">
             <label for="stock">Stocks:</label>
             <input type="text" name="stock" class="form-control" id="stock">
+        </div>
+        <div class="form-group">
+            <label for="details">Weight:</label>
+            <textarea class="form-control" name="weight" id="weight"></textarea>
         </div>
         <div class="form-group">
             <label for="details">Product Details:</label>

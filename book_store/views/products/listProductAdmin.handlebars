@@ -1,6 +1,6 @@
 <div class="breadcrumb">
         <div class="container">
-            <a class="breadcrumb-item" href="#">Admin Logs</a>
+            <a class="breadcrumb-item" href="/product/listProductAdmin">Product Page Admin</a>
             <span class="breadcrumb-item active">Retrieve Product</span>
             <a class="breadcrumb-item" href="/product/createProduct">Add product</a>
             
@@ -42,10 +42,7 @@
                 <th>Genre</th>
                 <th>Price</th>
                 <th>Stocks</th>
-               <!-- <th>Remarks</th>-->
-                <th>Image</th>
-                <th>Update</th>
-                <th>Delete</th>
+                <th>Details</th>
             </tr>
             </thead>
             <tbody>
@@ -70,23 +67,7 @@
                     --->
                     <td>{{price}}</td>
                     <td>{{stock}}</td>
-
-                    <td>
-                        <p>image here</p>
-                    </td>
-                     <td><a href="/product/updateProductAdmin/{{id}}" class="btn btn-warning">Update</a></td>
-                    <td>
-                        <!---
-                        <form action="" method="POST">
-                            <input type="submit" value="Delete" class="btn btndanger" onclick="return confirm('Are you sure you want to delete this item ? ')">
-                        </form>
-                        --->
-                        <a href="/product/delete/{{id}}" class="card-link" data-toggle="confirmation"
-							   data-title="Confirm delete?">
-								<i class="far fa-trash-alt"></i>
-								Delete
-							</a>
-                    </td>
+                    <td><a href="/product/detailsProductAdmin/{{id}}" class="btn btn-warning">More Details</a></td>
                 </tr>
             </tbody>
         </table>
