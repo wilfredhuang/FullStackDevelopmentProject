@@ -58,13 +58,14 @@ router.get("/removeItem/:id", (req, res) => {
 router.post("/processCheckout", (req, res) => {
   let fullName = req.body.fullName.toString();
   let email = req.body.email.toString();
-  let phoneNumber = req.body.phoneNumber.toString();
+  let phoneNumber = '+'+ req.body.phoneNumber.toString();
+  console.log(phoneNumber)
   let address = req.body.address;
   let address1 = req.body.address1;
   let city = req.body.city.toString();
   let country = req.body.country.toString();
   let postalCode = req.body.postalCode.toString();
-  let deliverFee = 10; //req.body.deliveryFee;
+  let deliverFee = 0; //req.body.deliveryFee;
   let totalPrice = 10; //req.body.totalPrice;
   //console.log(fullName);
 
@@ -123,9 +124,7 @@ router.post("/processCheckout", (req, res) => {
           from_address: fromAddress,
           parcel: parcel,
         });
-      
         //shipment.save()//.then(console.log);
-      
         shipment
           .save()
           .then((s) => {
@@ -160,13 +159,16 @@ router.post("/processCheckout", (req, res) => {
                 dateEnd,
                 deliveryStatus
               }).then((Order) => {
+                //console.log(Order);
                 res.redirect("/delivery/checkout2");
+                // const trackingCodePage = Order.dataValues.trackingCode;
+                // console.log(trackingCodePage)
               })
             })
           }
           );
-        console.log(checkAddress);
-        console.log("its true");
+        //console.log(checkAddress);
+        //console.log("its true");
          
         //res.redirect("/delivery/checkout2");
       } else {
@@ -201,7 +203,7 @@ router.get("/checkout2", (req, res) => {
   res.render("delivery/thankYou"),
     {
       title,
-
+      
     };
 });
 
