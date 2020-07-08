@@ -10,6 +10,7 @@ const Handlebars = require('handlebars')
 
 const { allowInsecurePrototypeAccess } = require('@handlebars/allow-prototype-access')
 
+
 // Stripe Payment System
 // Set your secret key. Remember to switch to your live secret key in production!
 const stripe = require('stripe')('sk_test_ns9DyHTray5Wihniw93C2ANH00IMJTVjKw');
@@ -46,10 +47,11 @@ const FlashMessenger = require('flash-messenger');
 // creates an express server
 const app = express();
 
+
 // Handlebars Middleware
 app.engine('handlebars', exphbs({
 	defaultLayout: 'main',						// Specify default template views/layout/main.handlebar
-	handlebars: allowInsecurePrototypeAccess(Handlebars)
+	handlebars: allowInsecurePrototypeAccess(Handlebars),
 }));
 app.set('view engine', 'handlebars');
 
