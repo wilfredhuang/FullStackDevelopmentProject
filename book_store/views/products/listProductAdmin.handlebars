@@ -1,12 +1,21 @@
 <div class="breadcrumb">
         <div class="container">
-            <a class="breadcrumb-item" href="#">Admin Logs</a>
+            <a class="breadcrumb-item" href="/product/listProductAdmin">Product Page Admin</a>
             <span class="breadcrumb-item active">Retrieve Product</span>
             <a class="breadcrumb-item" href="/product/createProduct">Add product</a>
             
         </div>
          </div>
          <section class="product-sec">
+<div class="wrap", style="text-align: center">
+   <div class="search">
+      <input type="text" class="searchTerm" placeholder="What are you looking for?" onkeyup="searchFunction()">
+      <button type="submit" class="searchButton">
+        <i class="fa fa-search"></i>
+     </button>
+   </div>
+</div>
+
 <div class="container" >
     <h1 class="display-4">Product List</h1>
     {{#each productadmin}}
@@ -21,6 +30,7 @@
             <p>There are {{ count }} Products.</p>
         {% endif %} </div>
         --->
+    
     <div>
         <table class="table table-striped">
             <thead>
@@ -32,16 +42,13 @@
                 <th>Genre</th>
                 <th>Price</th>
                 <th>Stocks</th>
-               <!-- <th>Remarks</th>-->
-                <th>Image</th>
-                <th>Update</th>
-                <th>Delete</th>
+                <th>Details</th>
             </tr>
             </thead>
             <tbody>
             <!---add in conditions here {% for product in usersList %} --->
                 <tr>
-                    <td><a href="/product-single/">product id</a></td>
+                    <td>{{id}}</a></td>
 
                     <td>{{product_name}}</td>
                     <td>{{author}}</td>
@@ -60,23 +67,7 @@
                     --->
                     <td>{{price}}</td>
                     <td>{{stock}}</td>
-
-                    <td>
-                        <p>image here</p>
-                    </td>
-                     <td><a href="/AdminUpdateBooks/" class="btn btn-warning">Update</a></td>
-                    <td>
-                        <!---
-                        <form action="" method="POST">
-                            <input type="submit" value="Delete" class="btn btndanger" onclick="return confirm('Are you sure you want to delete this item ? ')">
-                        </form>
-                        --->
-                        <a href="/product/delete/{{id}}" class="card-link" data-toggle="confirmation"
-							   data-title="Confirm delete?">
-								<i class="far fa-trash-alt"></i>
-								Delete
-							</a>
-                    </td>
+                    <td><a href="/product/detailsProductAdmin/{{id}}" class="btn btn-warning">More Details</a></td>
                 </tr>
             </tbody>
         </table>
