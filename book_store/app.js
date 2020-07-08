@@ -93,7 +93,6 @@ app.use(session({
 app.use(flash());
 app.use(FlashMessenger.middleware);
 
-
 // Global variables
 app.use(function (req, res, next) {
 	res.locals.success_msg = req.flash('success_msg');
@@ -113,8 +112,6 @@ app.use(function(req, res, next) {
 	res.status(404).render('404');
 
 });
-
-
 
 const port = 5000;
 

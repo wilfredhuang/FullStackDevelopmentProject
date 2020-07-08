@@ -58,13 +58,13 @@ router.get("/removeItem/:id", (req, res) => {
 router.post("/processCheckout", (req, res) => {
   let fullName = req.body.fullName.toString();
   let email = req.body.email.toString();
-  let phoneNumber = req.body.phoneNumber.toString();
+  let phoneNumber = '+'+req.body.phoneNumber.toString();
   let address = req.body.address;
   let address1 = req.body.address1;
   let city = req.body.city.toString();
   let country = req.body.country.toString();
   let postalCode = req.body.postalCode.toString();
-  let deliverFee = 10; //req.body.deliveryFee;
+  let deliverFee = 0; //req.body.deliveryFee;
   let totalPrice = 10; //req.body.totalPrice;
   //console.log(fullName);
 
