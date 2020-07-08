@@ -148,15 +148,20 @@ shipment
 //      */
 // });
 
-
+/*
 const accountSid = 'AC7994551ea296710e5de3b74d7a93056c';
 const authToken = 'f5ac6a9439b75395ce54e9783d0f8877';
 const client = require('twilio')(accountSid, authToken);
-
+const trackingCode = '2e13124'
+const trackingURL = 'https://track.easypost.com/djE6dHJrXzlmNzc3ZTQzMmFlNzQ0MGQ5Nzc5NjE3MWI4NTBjOTQy'
 client.messages
   .create({
-     body: 'This is the ship that made the Kessel Run in fourteen parsecs? Your tracking code is and check your delivery here!',
+     body: 'This is the ship that made the Kessel Run in fourteen parsecs? Your tracking code is '+trackingCode+' and check your delivery here!\n'+trackingURL,
      from: '+12059461964',
      to: '+6590251744'
    })
-  .then(message => console.log(message.sid));
+  .then(message => console.log(message.sid));*/
+  var validator = require("email-validator");
+ 
+  validator.validate("test@email.com") // true
+  console.log(validator.validate)
