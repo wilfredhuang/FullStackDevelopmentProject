@@ -58,6 +58,10 @@ textarea {
   padding: 0 50px;
   max-width: 1200px; }
 
+.page-wrap {
+  min-height: 100vh;
+}
+
 section {
   float: left;
   width: 100%; }

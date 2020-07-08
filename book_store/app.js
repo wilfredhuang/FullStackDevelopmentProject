@@ -7,6 +7,7 @@ const bodyParser = require('body-parser');
 const exphbs = require('express-handlebars');
 const methodOverride = require('method-override');
 const Handlebars = require('handlebars')
+
 const { allowInsecurePrototypeAccess } = require('@handlebars/allow-prototype-access')
 
 // Stripe Payment System
@@ -25,7 +26,7 @@ const productRoute = require('./routes/product');
 const deliveryRoute = require('./routes/cart');
 const checkoutRoute = require('./routes/checkout');
 
-// // Library to use MySQL to store session objects
+// Library to use MySQL to store session objects
 const MySQLStore = require('express-mysql-session');
 const db = require('./config/db');// db.js config file
 
@@ -66,9 +67,9 @@ app.use(methodOverride('_method'));
 app.use(cookieParser());
 
 // Express session middleware - uses MySQL to store session
-// app.use(session({
-// 	key: 'vidjot_session',
-// 	secret: 'tojiv',
+app.use(session({
+ 	key: 'vidjot_session',
+ 	secret: 'tojiv',
 // 	store: new MySQLStore({
 // 		host: db.host,
 // 		port: 3306,
@@ -81,21 +82,25 @@ app.use(cookieParser());
 // 		// The maximum age of a valid session; milliseconds: 
 // 		expiration: 900000,
 // 	}),
-// 	resave: false,
-// 	saveUninitialized: false,
-// }));
+ 	resave: false,
+ 	saveUninitialized: false,
+}));
 
 // Initilize Passport middleware - P4A2
 // app.use(passport.initialize());
 // app.use(passport.session());
 
 // Two flash messenging libraries - Flash (connect-flash) and Flash Messenger
-// app.use(flash());
-// app.use(FlashMessenger.middleware);
+app.use(flash());
+app.use(FlashMessenger.middleware);
 
 
 // Global variables
 app.use(function (req, res, next) {
+	res.locals.success_msg = req.flash('success_msg');
+	res.locals.error_msg = req.flash('error_msg');
+	res.locals.error = req.flash('error');
+	res.locals.user = req.user || null;
 	next();
 });
 
@@ -106,6 +111,9 @@ app.use('/product', productRoute);
 app.use('/delivery', deliveryRoute);
 app.use('/checkout', checkoutRoute);
 
+app.use(function(req, res, next) {
+	res.status(404).render('404');
+});
 
 const port = 5000;
 
