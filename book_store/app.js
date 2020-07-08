@@ -13,7 +13,9 @@ const { allowInsecurePrototypeAccess } = require('@handlebars/allow-prototype-ac
 
 // Stripe Payment System
 // Set your secret key. Remember to switch to your live secret key in production!
-const stripe = require('stripe')('sk_test_ns9DyHTray5Wihniw93C2ANH00IMJTVjKw');
+const stripe = require('stripe')('sk_test_ns9DyHTray5Wihniw93C2ANH00IMJTVjKw', {
+	apiVersion: '2020-03-02',
+  });
 
 // Bcrypt - Encrypt password - P4A1
 const bcrypt = require('bcryptjs');  // added here for debugging, but it's import only used in user.js
@@ -36,13 +38,17 @@ const flash = require('connect-flash');
 const FlashMessenger = require('flash-messenger');
 
 // Bring in database connection 
- const vidjotDB = require('./config/DBConnection');
+const vidjotDB = require('./config/DBConnection');
 // Connects to MySQL database 
- vidjotDB.setUpDB(false); // To set up database with new tables set (true)
+vidjotDB.setUpDB(false); // To set up database with new tables set (true)
 
 // Passport Config - P4A2
 // const authenticate = require('./config/passport'); 
 // authenticate.localStrategy(passport); 
+
+
+// Bring in Handlebars Helpers here
+const {convertUpper, adminCheck, emptyCart} = require('./helpers/hbs');
 
 // creates an express server
 const app = express();
@@ -50,7 +56,12 @@ const app = express();
 
 // Handlebars Middleware
 app.engine('handlebars', exphbs({
-	defaultLayout: 'main',						// Specify default template views/layout/main.handlebar
+	defaultLayout: 'main',	// Specify default template views/layout/main.handlebar
+	helpers: {
+		convertUpper: convertUpper,
+		adminCheck: adminCheck,
+		emptyCart: emptyCart
+	},					
 	handlebars: allowInsecurePrototypeAccess(Handlebars),
 }));
 app.set('view engine', 'handlebars');
