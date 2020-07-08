@@ -1,4 +1,3 @@
-
 const flashMessage = (res, messageType, message, icon, dismissable) => {
 	let alert;
 	switch(messageType) {

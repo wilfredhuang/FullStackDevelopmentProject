@@ -10,7 +10,7 @@
         <h1>Delivery Information</h1>
         <!--- {% for order in orderList %}   add in conditions here--->
         <div class="row">
-            <div class="col-8">
+            <div class="col-md-8">
                 <div>
                     <!---<p>remember to put progress step bar here</p>--->
                 </div>
@@ -37,7 +37,7 @@
                 <hr>
                 {{/if}}
             </div>
-            <div class="col-4">
+            <div class="col-md-4">
                 {{#if order}}
                 <div class="right-sidebar">
                     <h3>Delivery Address</h3>
@@ -50,8 +50,16 @@
                             <p>{{order.address1}}</p>
                             <p>City: {{order.city}}</p>
                             <p>Country: {{order.country}}</p>
-                            <p>Delivery Status: <a href="https://track.easypost.com/djE6dHJrX2FmZWRhODhhNmY5MzQyOTBiN2RjYjRiZjFlMjQ0NWI5">Delivered</a></p>
+                            <p>Delivery Status: <a href="{{trackingURL}}">{{deliveryStatus}}</a></p>
                         </div>
+                    </div>
+                </div>
+                <div class ="right-sidebar">
+                    <h3>Shipping Information</h3>
+                    <hr>
+                    <div>
+                        <p>Tracking Code: </p>
+                        <p>{{order.trackingCode}}</p>
                     </div>
                 </div>
                 <div class="right-sidebar">
@@ -60,8 +68,7 @@
                     <div class="row">
                         <div class="col">
                             <p>Subtotal: </p>
-                            <p>GST: </p>
-                            <p>Delivery Fee: {{order.deliverFee}}</p>
+                            <p>Delivery Fee: Free</p>
                             <p>Total: {{order.totalPrice}}</p>
                         </div>
                     </div>
