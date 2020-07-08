@@ -161,7 +161,3 @@ client.messages
      to: '+6590251744'
    })
   .then(message => console.log(message.sid));*/
-  var validator = require("email-validator");
- 
-  validator.validate("test@email.com") // true
-  console.log(validator.validate)
