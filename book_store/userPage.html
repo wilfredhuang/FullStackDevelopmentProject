@@ -11,6 +11,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="public/css/owl.carousel.min.css">
     <link rel="stylesheet" href="public/css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://kit.fontawesome.com/af00ae0421.js" crossorigin="anonymous"></script>
 </head>
 
 <body>
@@ -78,107 +80,30 @@
     </div>
     <section class="static about-sec">
         <div class="container">
-            <h1>User Profile</h1>
+            <h1>Hello,{{user}}</h1>
         </div>
     </section>
     <section class="static about-sec">
         <div class="container">
-            <div class="row">
-                <div class="col-md-9">
-                    <h2>Recent Orders</h2>
-                    <div>
-                        <table class="table table-striped" id="myTable">
-                            <thead>
-                                <tr>
-                                    <th>Order ID</th>
-                                    <th>Date Received</th>
-                                    <th>Delivery Type</th>
-                                    <th>Delivery Status</th>
-                                    <th>Admin Remarks</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td><a href="/"></a>100C</td>
-                                    <td>12/12/12</td>
-                                    <td>Normal Shipping</td>
-                                    <td>Delivered</td>
-                                    <td>-</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <h3>User Profile</h3>
-                    <table border="0">
-                        <tr>
-                            <td>Name:</td>
-                        </tr>
-                        <tr>
-                            <td id="nameinfo"></td>
-                        </tr>
-                        <tr>
-                            <td>&nbsp;</td>
-                        </tr>
-                        <tr>
-                            <td>Email:</td>
-                        </tr>
-                        <tr>
-                            <td id="emailinfo"></td>
-                        </tr>
-                        <tr>
-                            <td>&nbsp;</td>
-                        </tr>
-                        <tr>
-                            <td>User ID:</td>
-                        </tr>
-                        <tr>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <td>&nbsp;</td>
-                        </tr>
-                        <tr>
-                            <td>Address:</td>
-                        </tr>
-                        <tr>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <td>&nbsp;</td>
-                        </tr>
-                        <tr>
-                            <td>Postal:</td>
-                        </tr>
-                        <tr>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <td>&nbsp;</td>
-                        </tr>
-                        <tr>
-                            <td>Country:</td>
-                        </tr>
-                        <tr>
-                            <td></td>
-                        </tr>
-                    </table>
-                    <tr>
-                        <td></td>
-                    </tr>
-                    </table>
-                    <p></p>
-                    <a class="btn" href="/">Add Address</a>
-                    <p>&nbsp;</p>
-                    <a class="btn" href="/">Change address</a>
-                    <p></p>
-                    <a class="btn" href="/">Change Password</a>
-                    <p></p>
-                    <p></p>
-                    <a class="btn" href="/">Add Security Question</a>
-                </div>
-            </div>
+        <div class="row">
+          <div style="padding:50px; " class="col-sm-12 col-md-4 col-lg-4 d-flex justify-content-center">
+            <a style="padding:30px;width:270px; " class="btn" href="/user/profile/orderhistoy"><i class="fas fa-history fa-2x"></i> Order History</a>
+          </div>
+          <div style="padding:50px; " class="col-sm-12 col-md-4 col-lg-4 d-flex justify-content-center ">
+            <a style="padding:30px;width:270px; " class="btn" href="/user/profile/changeinfo"><i class="fas fa-user-shield fa-2x"></i> Change/Set Info</a>
+          </div>
+          <div style="padding:50px;" class="col-sm-12 col-md-4 col-lg-4 d-flex justify-content-center">
+            <a style="padding:30px;width:270px; " class="btn" href="/user/profile/requestrefund"><i class="fas fa-hand-holding-usd fa-2x"></i> Request Refund</a>
+          </div>
+        </div>
+        <div class ="row">
+          <div style="padding:50px;" class="col-sm-12 col-md-6 col-lg-6 d-flex justify-content-center">
+            <a style="padding:30px;width:270px; " class="btn" href="/user/profile/setaddress"><i class="fas fa-map-marker-alt fa-2x"></i> Set Address</a>
+          </div>
+          <div style="padding:50px;" class="col-sm-12 col-md-6 col-lg-6 d-flex justify-content-center">
+            <a style="padding:30px;width:270px; " class="btn" href="/user/profile/wishlist"><i class="fas fa-clipboard-list fa-2x"></i> Wishlist</a>
+          </div>
+        </div>
         </div>
     </section>
     <script src="public/js/jquery.min.js"></script>

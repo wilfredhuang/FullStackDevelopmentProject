@@ -5,6 +5,8 @@ const User = require('../models/User');
 const alertMessage = require('../helpers/messenger');
 const bcrypt = require('bcryptjs');
 const passport = require('passport');
+const ensureAuthenticated = require('../helpers/auth');
+
 
 router.get("/auth/facebook", passport.authenticate("facebook",{scope: 'email'}));
 
@@ -12,7 +14,7 @@ router.get("/auth/facebook", passport.authenticate("facebook",{scope: 'email'}))
 router.get(
   "/auth/facebook/callback",
   passport.authenticate("facebook", {
-    successRedirect: "/userPage",
+    successRedirect: "/",
     failureRedirect: "/login"
   })
 );
@@ -143,10 +145,19 @@ router.post('/register', (req, res) => {
 });
 router.post('/login', (req, res, next) => {
     passport.authenticate('local', {
-        successRedirect: '/user/userPage', 
+        successRedirect: '/', 
         failureRedirect: '/user/login',
         failureFlash: true
     })(req, res, next);
+});
+
+router.get('/userPage',ensureAuthenticated,(req,res) =>{
+    res.render('user/register'); 
+});
+
+router.get('/userPage/changeinfo',ensureAuthenticated,(req,res) =>{
+
+    res.render('user/changeinfo');
 });
 
 module.exports = router;

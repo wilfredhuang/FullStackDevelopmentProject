@@ -51,10 +51,12 @@ passport.use(new FacebookStrategy({
   function(accessToken, refreshToken, profile, done) {
     process.nextTick(function(){
         facebookUser.findOne({ where: { id:profile.id} },function(err,user){
-        if(err)
+        if(err){
             return done(err);
-        if(user)
+        }
+        if(user){
             return done(null, user);
+        }
         else {
             var Newuser = {
                 'email': profile.emails[0].value,

@@ -80,31 +80,38 @@
     </div>
     <section class="static about-sec">
         <div class="container">
-            <h1>Hello,{{user}}</h1>
-        </div>
-    </section>
-    <section class="static about-sec">
-        <div class="container">
         <div class="row">
-          <div style="padding:50px; " class="col-sm-12 col-md-4 col-lg-4 d-flex justify-content-center">
-            <a style="padding:30px;width:270px; " class="btn" href="/user/userPage/orderhistoy"><i class="fas fa-history fa-2x"></i> Order History</a>
+          <div class="col-3">
+            <button class="btn black" type="button">back</button>
           </div>
-          <div style="padding:50px; " class="col-sm-12 col-md-4 col-lg-4 d-flex justify-content-center ">
-            <a style="padding:30px;width:270px; " class="btn" href="/user/userPage/changeinfo"><i class="fas fa-user-shield fa-2x"></i> Change/Set Info</a>
+          <div class="col-6">
+            <div class="form">
+            <form>
+                <div class="col-md-8">
+                    <label for="Name">Name:</label><br>
+                    <input placeholder="{{name}}" required>
+                </div>
+                <div class="col-md-8">
+                  <label for="email">Email:</label><br>
+                    <input type="email" placeholder="{{email}}" required>
+                </div>
+                <div class="col-md-8">
+                   <label for="passowrd">Old password:</label><br>
+                    <input type="password" placeholder="old password" required>
+                </div>
+                <div class="col-md-8">
+                   <label for="passowrd">New password:</label><br>
+                    <input type="password" placeholder="new password" required>
+                </div>
+                <div class="col-lg-8 col-md-12">
+                    <button class="btn black">Change</button>
+              </form>
+            </div>
           </div>
-          <div style="padding:50px;" class="col-sm-12 col-md-4 col-lg-4 d-flex justify-content-center">
-            <a style="padding:30px;width:270px; " class="btn" href="/user/userPage/requestrefund"><i class="fas fa-hand-holding-usd fa-2x"></i> Request Refund</a>
+          <div class="col-3">
           </div>
         </div>
-        <div class ="row">
-          <div style="padding:50px;" class="col-sm-12 col-md-6 col-lg-6 d-flex justify-content-center">
-            <a style="padding:30px;width:270px; " class="btn" href="/user/userPage/setaddress"><i class="fas fa-map-marker-alt fa-2x"></i> Set Address</a>
-          </div>
-          <div style="padding:50px;" class="col-sm-12 col-md-6 col-lg-6 d-flex justify-content-center">
-            <a style="padding:30px;width:270px; " class="btn" href="/user/userPage/wishlist"><i class="fas fa-clipboard-list fa-2x"></i> Wishlist</a>
-          </div>
-        </div>
-        </div>
+
     </section>
     <script src="public/js/jquery.min.js"></script>
     <script src="public/js/bootstrap.min.js"></script>
