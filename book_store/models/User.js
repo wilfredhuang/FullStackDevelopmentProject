@@ -1,3 +1,4 @@
+
 const Sequelize = require('sequelize');
 const db = require('../config/DBConfig'); // added a ' here 
 
@@ -9,7 +10,6 @@ const User = db.define('user', {
     email: { type: Sequelize.STRING },
     password: { type: Sequelize.STRING },
     role: { type: Sequelize.STRING}
-
 });
 const facebookUser = db.define("facebookUser",{
     id: { type: Sequelize.STRING, primaryKey: true },

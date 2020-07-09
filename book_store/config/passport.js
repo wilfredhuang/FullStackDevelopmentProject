@@ -41,8 +41,9 @@ function localStrategy(passport) {
             .catch((done) => { // No user found, not stored in req.session
                 console.log(done);
             });
-       });    
+    });
 }
+//still not saving info to database
 passport.use(new FacebookStrategy({
     clientID: "239865340604409" ,
     clientSecret: "61403ba37105bae272df33dda173ec85" ,
@@ -50,7 +51,7 @@ passport.use(new FacebookStrategy({
   },
   function(accessToken, refreshToken, profile, done) {
     process.nextTick(function(){
-        facebookUser.findOne({ where: { id:profile.id} },function(err,user){
+        facebookUser.findOne({ where: { id:profile.id} },function(err,user){//should be the problem line
         if(err){
             return done(err);
         }

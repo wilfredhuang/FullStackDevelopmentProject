@@ -5,19 +5,58 @@ const User = require('../models/User');
 const alertMessage = require('../helpers/messenger');
 const bcrypt = require('bcryptjs');
 const passport = require('passport');
+const cartItem = require("../models/CartItem");
+const order = require("../models/Order");
 const ensureAuthenticated = require('../helpers/auth');
-
 
 router.get("/auth/facebook", passport.authenticate("facebook",{scope: 'email'}));
 
-
 router.get(
-  "/auth/facebook/callback",
-  passport.authenticate("facebook", {
-    successRedirect: "/",
-    failureRedirect: "/login"
-  })
-);
+    "/auth/facebook/callback",
+    passport.authenticate("facebook", {
+      successRedirect: "/",
+      failureRedirect: "/login"
+    })
+  );
+
+router.get('/userPage', (req, res) => {
+    const title = 'User Information';
+    res.render("user/userpage", {
+        title
+    });
+});
+
+router.get('/userRecentOrder', (req, res) => {
+    const title = 'Recent Orders';
+    order.findAll({
+        //where:{
+          //  id: req.params.id,
+        //}
+    })
+    .then((order) => {
+        res.render("user/userRecentOrder", {
+            order:order,
+            title
+        });
+    })
+    .catch(err => console.log(err));
+});
+
+router.get('/userCart', (req, res) => {
+    const title = 'Cart';
+    cartItem.findAll({
+        //where:{
+          //  userId = req.user.id,
+        //},
+    })
+    .then((cartItem) =>{
+    res.render("user/userCart", {
+        cartItem:cartItem,
+        title
+    });
+})
+});
+
 
 // Ignore, from practical 
 
@@ -92,9 +131,19 @@ router.get(
 router.get('/login', (req, res) => {
 	res.render('user/login'); 
 });
+
+router.post('/login', (req, res, next) => {
+    passport.authenticate('local', {
+        successRedirect: '/', 
+        failureRedirect: '/user/login',
+        failureFlash: true
+    })(req, res, next);
+});
+
 router.get('/register', (req, res) => {
 	res.render('user/register'); 
 });
+
 router.post('/register', (req, res) => {
     errors = [];
     let {email,name, password, password2 } = req.body;
@@ -133,7 +182,7 @@ router.post('/register', (req, res) => {
                              role = "user";
                              User.create({ name, email, password,role})
                                 .then(user => {
-                                    //alertMessage(res, 'success', user.name + ' added.Please login', 'fas fa-sign-in-alt', true);
+                                    alertMessage(res, 'success', user.name + ' added.Please login', 'fas fa-sign-in-alt', true);
                                     res.redirect('/user/login');
                                 })
                                 .catch(err => console.log(err));                            
@@ -142,13 +191,6 @@ router.post('/register', (req, res) => {
                 }
             });
     }
-});
-router.post('/login', (req, res, next) => {
-    passport.authenticate('local', {
-        successRedirect: '/', 
-        failureRedirect: '/user/login',
-        failureFlash: true
-    })(req, res, next);
 });
 
 router.get('/userPage',ensureAuthenticated,(req,res) =>{
