@@ -8,7 +8,7 @@ const router = express.Router();
 const alertMessage=require('../helpers/messenger');
 // const Order = require('../models/order');
 // const OrderItem = require('../models/order');
-const userCart = {}
+const userCart = {1:{"ID":1, "Name":"FooBar", "Image":"r1", "Quantity":5, "SubtotalPrice":10.00}}
 
 const stripe = require('stripe')('sk_test_ns9DyHTray5Wihniw93C2ANH00IMJTVjKw', {
     apiVersion: '2020-03-02',
@@ -24,50 +24,50 @@ router.get('/checkout123', (req, res) => {
 // 1) Wait for owen to figure out how the image storage would be like
 // 2) Remember to change the product page name to the correct one later.
 
-// router.post('/productsList', (req, res, next) => {
-//     // 'Add to Cart' button passes value of product id to server
-//     // queries product id with database
-//     // stores each cartitem with id, name and quantity
-//     console.log("ADDDDDING")
-//     Product.findOne({
-//         where: {
-//             id: pass // Button with name: id
-//         }
-//     })
+router.post('/productsList', (req, res, next) => {
+    // 'Add to Cart' button passes value of product id to server
+    // queries product id with database
+    // stores each cartitem with id, name and quantity
+    console.log("ADDDDDING")
+    Product.findOne({
+        where: {
+            id: pass // Button with name: id
+        }
+    })
 
-//     .then((product) => {
-//         var id = product.id;
-//         console.log('ID IS ' + id)
-//         let name = product.product_name;
-//         if (userCart.length < 1) {
-//             let qty = 1 
-//             // Image field not decided yet, the rest is done.
-//             userCart[[id]] = {"ID":id, "Name":name, "Image":image, "Quantity":qty, "SubtotalPrice":product.price}
-//             console.log(userCart)
-//         }
+    .then((product) => {
+        var id = product.id;
+        console.log('ID IS ' + id)
+        let name = product.product_name;
+        if (userCart.length < 1) {
+            let qty = 1 
+            // Image field not decided yet, the rest is done.
+            userCart[[id]] = {"ID":id, "Name":name, "Image":image, "Quantity":qty, "SubtotalPrice":product.price}
+            console.log(userCart)
+        }
     
-//         else {
-//             var check = false;
-//             for (z in userCart) {
-//                 if (z == id) {
-//                     console.log("FOUND EXISTING PRODUCT IN CART")
-//                     userCart[z].Quantity += 1
-//                     userCart[z].SubtotalPrice = (parseFloat(userCart[z].SubtotalPrice) + parseFloat(product.price)).toFixed(2)
-//                     check = true;
-//                     console.log(userCart)
-//                 }
-//             }
-//             if (check == false) {
-//                 let qty = 1 
-//                 // Again, the Image field not decided yet, the rest is done.
-//                 userCart[[id]] = {"ID":id, "Name":name, "Image":image, "Quantity":qty, "SubtotalPrice":product.price}
-//                 console.log(userCart)
-//             }
-//         }})
+        else {
+            var check = false;
+            for (z in userCart) {
+                if (z == id) {
+                    console.log("FOUND EXISTING PRODUCT IN CART")
+                    userCart[z].Quantity += 1
+                    userCart[z].SubtotalPrice = (parseFloat(userCart[z].SubtotalPrice) + parseFloat(product.price)).toFixed(2)
+                    check = true;
+                    console.log(userCart)
+                }
+            }
+            if (check == false) {
+                let qty = 1 
+                // Again, the Image field not decided yet, the rest is done.
+                userCart[[id]] = {"ID":id, "Name":name, "Image":image, "Quantity":qty, "SubtotalPrice":product.price}
+                console.log(userCart)
+            }
+        }})
 
-//     res.redirect('/products/productsList')
-//     console.log("Added to cart");
-// });
+    res.redirect('/products/productsList')
+    console.log("Added to cart");
+});
 
 // Retrieve Cart
 // Done
