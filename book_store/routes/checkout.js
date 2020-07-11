@@ -8,20 +8,23 @@ const router = express.Router();
 const alertMessage=require('../helpers/messenger');
 // const Order = require('../models/order');
 // const OrderItem = require('../models/order');
-const userCart = {1:{"ID":1, "Name":"FooBar", "Image":"r1", "Quantity":5, "SubtotalPrice":10.00}}
+// const userCart = {1:{"ID":1, "Name":"Dynamic Book Name", "Image":"r1", "Quantity":5, "SubtotalPrice":10.00},
+// 2:{"ID":2, "Name":"Dynamic Book Name 2", "Image":"r2", "Quantity":10, "SubtotalPrice":20.00}}
+const userCart = {1:{"ID":1, "Name":"r1", "Author":"John Doe", 
+"Publisher":"The Publisher", "Genre":"Non-fiction", "Image":"r1", "Price":10.00, "SubtotalPrice":0}}
 
 const stripe = require('stripe')('sk_test_ns9DyHTray5Wihniw93C2ANH00IMJTVjKw', {
     apiVersion: '2020-03-02',
   });
 
-router.get('/checkout123', (req, res) => {
+router.get('/123', (req, res) => {
     res.render('checkout/checkout', {
         title:"Testing"
     })
 
 // Add Cart
 // To-do
-// 1) Wait for owen to figure out how the image storage would be like
+// 1) Wait for finished product pages
 // 2) Remember to change the product page name to the correct one later.
 
 router.post('/productsList', (req, res, next) => {
@@ -82,6 +85,32 @@ res.render('checkout/cart', {
     full_total_price
     })
 });
+
+// Update Cart / Proceed to Checkout
+router.post('/cart', (req, res) => {
+    if (req.body.checkoutButton == "Update") { 
+        for (ID in userCart) {
+            let query = req.body["Q"+ID]
+            console.log("Queried Quantity is " + query)
+            // newSubTotal = query * userCart[ID].SubtotalPrice
+            // console.log("Q is" + req.body["Q" + ID])
+
+        }
+        console.log(userCart)
+        res.redirect('cart');
+    }
+
+    else {
+        res.redirect('123')
+    }
+})
+
+// router.post('/update', (req, res) => {
+//     console.log("OTHER POST METHOD!")
+//     res.redirect('cart')
+// })
+
+//
 
 // Delete Item in Cart
 
@@ -147,4 +176,4 @@ router.post('/checkout', (req, res) => {
 
 });
 
-module.exports = router;
+module.exports = router, userCart;
