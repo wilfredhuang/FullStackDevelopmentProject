@@ -15,8 +15,11 @@ function confirmStripe(card) {
   payment_method: {
     card: card,
     billing_details: {
-      name: 'Jenny Rosen'
+      name: 'James Bond'
     }
+    //  Not working A request to confirm a PaymentIntent pi_1H47ztEsVjFQQiZ9KbgOCANp failed
+    // Dont on it
+    // confirm:true
   }
 })
 .then(function(result) {

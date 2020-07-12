@@ -5,5 +5,5 @@ var style = {
   };
   
 
-var card123 = elements.create("card");
+var card123 = elements.create("card", {style:style});
 card123.mount("#card-element");
