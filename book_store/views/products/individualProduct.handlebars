@@ -7,15 +7,18 @@
 <form action="/delivery/addToCart" method="post" id="addProduct">
 <section class="product-sec">
         <div class="container">
-            <h1>7 Day Self publish How to Write a Book</h1>
+            <h1>{{product.product_name}}</h1>
             <div class="row">
                 <div class="col-md-6 slider-sec">
-                    <!-- main slider carousel -->
+                    <img src="{{product.product_image}}" class="img-fluid" width="360" length="192">
+                    
+                    <!-- main slider carousel 
+
                     <div id="myCarousel" class="carousel slide">
-                        <!-- main slider carousel items -->
+                        main slider carousel items 
                         <div class="carousel-inner">
                             <div class="active item carousel-item" data-slide-number="0">
-                                <img src="../images/product1.jpg" class="img-fluid">
+                                <img src="http://books.google.com/books/content?id=4LqdDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" class="img-fluid" width="360" length="192">
                             </div>
                             <div class="item carousel-item" data-slide-number="1">
                                 <img src="../images/product2.jpg" class="img-fluid">
@@ -24,7 +27,7 @@
                                 <img src="../images/product3.jpg" class="img-fluid">
                             </div>
                         </div>
-                        <!-- main slider carousel nav controls -->
+                        main slider carousel nav controls 
                         <ul class="carousel-indicators list-inline">
                             <li class="list-inline-item active">
                                 <a id="carousel-selector-0" class="selected" data-slide-to="0" data-target="#myCarousel">
@@ -42,26 +45,31 @@
                             </a>
                             </li>
                         </ul>
+                        
                     </div>
-                    <!--/main slider carousel-->
+                    
+                    /main slider carousel-->
                 </div>
                 <div class="col-md-6 slider-content">
-                    <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's printer took a galley of type and Scrambled it to make a type and typesetting industry. Lorem Ipsum has been the book. </p>
-                    <p>t has survived not only fiveLorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's printer took a galley of type and</p>
+                    <p>{{product.details}}</p>
+                    <p>Author: {{product.author}}</p>
+                    <p>Publisher: {{product.publisher}}</p>
                     <ul>
+                        <!---
                         <li>
-                            <span class="name">Digital List Price</span><span class="clm">:</span>
-                            <span class="price">$4.71</span>
+                            <span class="name">Price</span><span class="clm">:</span>
+                            <span class="price">{{product.price}}</span>
                         </li>
+                        
                         <li>
                             <span class="name">Print List Price</span><span class="clm">:</span>
                             <span class="price">$10.99</span>
                         </li>
+                        --->
                         <li>
-                            <span class="name">Kindle Price</span><span class="clm">:</span>
-                            <span class="price final">$3.37</span>
+                            <span class="name">Price</span><span class="clm">:</span>
+                            <span class="price final">$ {{product.price}}</span>
                         </li>
-                        <li><span class="save-cost">Save $7.62 (69%)</span></li>
                     </ul>
                     <div class="btn-sec">
                         <button class="btn" type="submit" href="/index">Add To cart</button>

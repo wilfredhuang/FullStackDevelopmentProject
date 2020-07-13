@@ -11,17 +11,30 @@ const cartItem = require('../models/CartItem');
 
 
 router.get('/listProduct', (req, res) => {
-    const title = 'Products';
-    res.render('products/listProduct', {
-        title
+    productadmin.findAll({
+        order: [
+            ['product_name', 'ASC']
+        ],
+        raw: true
     })
+        .then((productadmin) => {
+            res.render('products/listProduct', {
+                productadmin: productadmin
+            });
+        })
 });
 
-router.get('/individualProduct1', (req, res) => {
-    const title = 'Products';
-    res.render('products/individualProduct1', {
-        title
+router.get('/individualProduct/:id', (req, res) => {
+    productadmin.findOne({
+        where: {
+            id: req.params.id
+        }
     })
+        .then((product) => {
+            res.render('products/individualProduct', {
+                product
+            });
+        })
 });
 
 router.get('/individualProduct2', (req, res) => {
@@ -74,8 +87,9 @@ router.post('/addProductAdmin', (req, res) => {
     let stock = req.body.stock;
     let details = req.body.details;
     let weight = req.body.weight;
+    let product_image = req.body.product_image;
     productadmin.create({
-        product_name, author, publisher, genre, price, stock, details, weight,
+        product_name, author, publisher, genre, price, stock, details, weight,product_image,
     }).then((product) => {
         res.redirect('/product/listProductAdmin')
     })
@@ -147,8 +161,9 @@ router.put('/updateProductAdmin/:id', (req, res) => {
     let stock = req.body.stock;
     let details = req.body.details;
     let weight = req.body.weight;
+    let product_image = req.body.product_image;
     productadmin.update({
-        product_name, author, publisher, genre, price, stock, details, weight,
+        product_name, author, publisher, genre, price, stock, details, weight,product_image,
     }, {
         where: {
             id: req.params.id

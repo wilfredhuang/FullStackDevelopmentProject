@@ -9,8 +9,6 @@ const cartItem = require("../models/CartItem");
 const order = require("../models/Order");
 
 
-module.exports = router;
-
 router.get('/userPage', (req, res) => {
     const title = 'User Information';
     res.render("user/userpage", {
