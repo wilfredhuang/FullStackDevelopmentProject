@@ -10,6 +10,16 @@ const Handlebars = require('handlebars')
 
 const { allowInsecurePrototypeAccess } = require('@handlebars/allow-prototype-access')
 
+//https
+const openssl = require('openssl-nodejs')
+const https = require('https');
+const fs = require('fs');
+const options = {
+	key: fs.readFileSync('key.pem'),
+	cert: fs.readFileSync('cert.crt')
+  };
+//admin 
+const AdminBroExpress = require('admin-bro-expressjs')
 
 // Stripe Payment System
 // Set your secret key. Remember to switch to your live secret key in production!
@@ -123,6 +133,7 @@ app.use('/user', userRoute);
 app.use('/product', productRoute);
 app.use('/delivery', deliveryRoute);
 app.use('/checkout', checkoutRoute);
+app.use('/admin',adminRoute);
 
 app.use(function(req, res, next) {
 	res.status(404).render('404');
@@ -130,8 +141,10 @@ app.use(function(req, res, next) {
 
 const port = 5000;
 
+/* changed to https so this is not needed
 app.listen(port, () => {
 	console.log(`Server started on port ${port}`);
 });
-
-
+*/
+//remember to use https://localhost:5000/
+https.createServer(options,app).listen(port);
