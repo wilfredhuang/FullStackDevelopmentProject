@@ -1,0 +1,140 @@
+<script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"
+        integrity="sha384-tsQFqpEReu7ZLhBV2VZlAu7zcOV+rXbYlF2cqB8txI/8aZajjp4Bqd+V6D5IgvKT" crossorigin="anonymous">
+</script>
+</script>
+
+{{#unless (emptyCart userCart) }}
+<!-- unless is the inverse of if, block would only render if value is false -->
+<div class="container">
+    <!-- First Section -->
+    <div class="card-header d-flex row">
+        <div class="d-flex align-items-center col-xs-6">
+            <i class="fa fa-shopping-cart pr-2" aria-hidden="true"></i>
+            <span>
+                Shopping Cart
+            </span>
+        </div>
+        <div class="col-xs-6 ml-auto">
+            <div><a href="/product/listProduct"><input type="submit" class="btn btn-default"
+                        value="Continue Shopping"></a> </div>
+        </div>
+    </div>
+    <form method="POST" action="">
+        <!-- End of First Section -->
+        <!-- Second Section (Display Product Row) -->
+        {{#each userCart}}
+        <div class="card-body d-flex flex-row row">
+            <div class="col-lg-3">
+                <img class="img-responsive" src="/images/{{Image}}.jpg" alt="prewiew" width="120" height="80">
+                <span> Weight:{{Weight}}g </span>
+            </div>
+            <div class="col-lg-3">
+                <p> {{Name}} </p>
+                <p> {{Author}} </p>
+                <p> {{Genre}} </p>
+            </div>
+            <div class="col-lg-3">
+                <p> ${{SubtotalPrice}} </p>
+            </div>
+            <div class="col-lg-3 quantity">
+                <div class="row">
+                    <div class="col-3">
+                        <input type="number" step="1" max="99" min="1" value="{{Quantity}}" class="qty" size="4"
+                            id="{{ID}}" onchange="update({{ID}}, this.value)" name="Q{{ID}}">
+                        {{!-- <div class="row">
+                            <div class="col-6">
+                                <input type="button" value="+" class="plus">
+                            </div>
+                            <div class="col-6">
+                                <input type="button" value="-" class="minus">
+                            </div>
+                        </div> --}}
+                    </div>
+                    <div class="col-4">
+                    </div>
+                    <div class="col-5">
+                        <button type="button" class="btn btn-outline-danger btn-xs"
+                            onclick="window.location.href = '/checkout/delete/{{ID}}';">
+                            <i class="fa fa-trash" aria-hidden="true" style="color:inherit;"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{/each}}
+        <!-- End of Second Section -->
+        <!-- Third Session Fee Calculation -->
+        <hr>
+                <div class="card-body d-flex flex-row row mt-5">
+            <div class="col-6">
+            </div>
+            <div class="col-3">
+                <p> Total Weight </p>
+            </div>
+            <div class="col-3">
+                <p> {{total_weight}}g ({{total_weight_oz}} oz) </p>
+            </div>
+        </div>
+        <div class="card-body d-flex flex-row row mt-5">
+            <div class="col-6">
+            </div>
+            <div class="col-3">
+                <p> Subtotal Price </p>
+            </div>
+            <div class="col-3">
+                <p> ${{full_subtotal_price}} </p>
+            </div>
+        </div>
+        <div class="card-body d-flex flex-row row">
+            <div class="col-6">
+            </div>
+            <div class="col-3">
+                <p> Shipping Fee </p>
+            </div>
+            <div class="col-3">
+                <p>${{shipping_fee}} </p>
+            </div>
+        </div>
+        <div class="card-body d-flex flex-row row">
+            <div class="col-6">
+            </div>
+            <div class="col-3">
+                <p> Discount </p>
+            </div>
+            <div class="col-3">
+                <p>-${{discounted_price}} </p>
+            </div>
+        </div>
+        <div class="card-body d-flex flex-row row">
+            <div class="col-6">
+            </div>
+            <div class="col-3">
+                <strong> Total </strong>
+            </div>
+            <div class="col-3">
+                <hr>
+                <p>${{full_total_price}} </p>
+            </div>
+        </div>
+        <!-- End of third session -->
+
+        <!-- Fourth Section Promo Code -->
+        <div class="card-footer d-flex flex-row row">
+{{!-- <form method="POST" action="/checkout/applyCoupon"> --}}
+                <div class="col-3"><input type="text" class="form-control" placeholder="Coupon Code" name="coupon">
+                </div>
+                <div class="col-4" align="left"><input type="submit" class="btn btn-default" value="Use Coupon" formmethod="POST" formaction="/checkout/applyCoupon"></div>
+{{!-- </form> --}}
+            <div class="col-5" align="right"><input name="checkoutButton" id="checkoutButton" type="submit"
+                    class="btn btn-default" value="Checkout"></div>
+        </div>
+        <!-- End of Fourth Section -->
+</div>
+</form>
+
+{{else}}
+<div class="container">
+    Your shopping cart is empty.
+</div>
+{{/unless}}

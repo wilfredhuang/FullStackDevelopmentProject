@@ -7,12 +7,15 @@ const bodyParser = require('body-parser');
 const exphbs = require('express-handlebars');
 const methodOverride = require('method-override');
 const Handlebars = require('handlebars')
+
 const { allowInsecurePrototypeAccess } = require('@handlebars/allow-prototype-access')
 
 
 // Stripe Payment System
 // Set your secret key. Remember to switch to your live secret key in production!
-const stripe = require('stripe')('sk_test_ns9DyHTray5Wihniw93C2ANH00IMJTVjKw');
+const stripe = require('stripe')('sk_test_ns9DyHTray5Wihniw93C2ANH00IMJTVjKw', {
+	apiVersion: '2020-03-02',
+  });
 
 // Bcrypt - Encrypt password - P4A1
 const bcrypt = require('bcryptjs');  // added here for debugging, but it's import only used in user.js
@@ -24,8 +27,9 @@ const mainRoute = require('./routes/main');
 const userRoute = require('./routes/user');
 const productRoute = require('./routes/product');
 const deliveryRoute = require('./routes/cart');
+const checkoutRoute = require('./routes/checkout');
 
-// // Library to use MySQL to store session objects
+// Library to use MySQL to store session objects
 const MySQLStore = require('express-mysql-session');
 const db = require('./config/db');// db.js config file
 
@@ -34,13 +38,17 @@ const flash = require('connect-flash');
 const FlashMessenger = require('flash-messenger');
 
 // Bring in database connection 
- const vidjotDB = require('./config/DBConnection');
+const vidjotDB = require('./config/DBConnection');
 // Connects to MySQL database 
- vidjotDB.setUpDB(false); // To set up database with new tables set (true)
+vidjotDB.setUpDB(false); // To set up database with new tables set (true)
 
 // Passport Config - P4A2
 // const authenticate = require('./config/passport'); 
 // authenticate.localStrategy(passport); 
+
+
+// Bring in Handlebars Helpers here
+const {convertUpper, adminCheck, emptyCart} = require('./helpers/hbs');
 
 // creates an express server
 const app = express();
@@ -48,7 +56,12 @@ const app = express();
 
 // Handlebars Middleware
 app.engine('handlebars', exphbs({
-	defaultLayout: 'main',						// Specify default template views/layout/main.handlebar
+	defaultLayout: 'main',	// Specify default template views/layout/main.handlebar
+	helpers: {
+		convertUpper: convertUpper,
+		adminCheck: adminCheck,
+		emptyCart: emptyCart
+	},					
 	handlebars: allowInsecurePrototypeAccess(Handlebars),
 }));
 app.set('view engine', 'handlebars');
@@ -67,9 +80,9 @@ app.use(methodOverride('_method'));
 app.use(cookieParser());
 
 // Express session middleware - uses MySQL to store session
-// app.use(session({
-// 	key: 'vidjot_session',
-// 	secret: 'tojiv',
+app.use(session({
+ 	key: 'vidjot_session',
+ 	secret: 'tojiv',
 // 	store: new MySQLStore({
 // 		host: db.host,
 // 		port: 3306,
@@ -82,21 +95,25 @@ app.use(cookieParser());
 // 		// The maximum age of a valid session; milliseconds: 
 // 		expiration: 900000,
 // 	}),
-// 	resave: false,
-// 	saveUninitialized: false,
-// }));
+ 	resave: false,
+ 	saveUninitialized: false,
+}));
 
 // Initilize Passport middleware - P4A2
 // app.use(passport.initialize());
 // app.use(passport.session());
 
 // Two flash messenging libraries - Flash (connect-flash) and Flash Messenger
-// app.use(flash());
-// app.use(FlashMessenger.middleware);
+app.use(flash());
+app.use(FlashMessenger.middleware);
 
 
 // Global variables
 app.use(function (req, res, next) {
+	res.locals.success_msg = req.flash('success_msg');
+	res.locals.error_msg = req.flash('error_msg');
+	res.locals.error = req.flash('error');
+	res.locals.user = req.user || null;
 	next();
 });
 
@@ -105,7 +122,11 @@ app.use('/', mainRoute);	// uses main.js routing under ./routes
 app.use('/user', userRoute);
 app.use('/product', productRoute);
 app.use('/delivery', deliveryRoute);
+app.use('/checkout', checkoutRoute);
 
+app.use(function(req, res, next) {
+	res.status(404).render('404');
+});
 
 const port = 5000;
 
