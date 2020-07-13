@@ -38,6 +38,7 @@ const userRoute = require('./routes/user');
 const productRoute = require('./routes/product');
 const deliveryRoute = require('./routes/cart');
 const checkoutRoute = require('./routes/checkout');
+const adminRoute = require('./routes/admin');
 
 // Library to use MySQL to store session objects
 const MySQLStore = require('express-mysql-session');
@@ -140,6 +141,7 @@ app.use(function(req, res, next) {
 });
 
 const port = 5000;
+
 
 /* changed to https so this is not needed
 app.listen(port, () => {
