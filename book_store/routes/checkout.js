@@ -12,10 +12,11 @@ const Coupon = require('../models/coupon');
 // const OrderItem = require('../models/order');
 // const userCart = {1:{"ID":1, "Name":"Dynamic Book Name", "Image":"r1", "Quantity":5, "SubtotalPrice":10.00},
 // 2:{"ID":2, "Name":"Dynamic Book Name 2", "Image":"r2", "Quantity":10, "SubtotalPrice":20.00}}
-const userCart = {1:{"ID":1, "Name":"r1", "Author":"John Doe", 
-"Publisher":"The Publisher", "Genre":"Non-fiction", "Image":"r1", "Price":10.00, "Stock":40, "Quantity":10, "SubtotalPrice":0, "Weight":300, "SubtotalWeight":0},
-2:{"ID":2, "Name":"r2", "Author":"John Lim", 
-"Publisher":"The Publisher", "Genre":"Fiction", "Image":"r2", "Price":5.50, "Stock":50, "Quantity":10, "SubtotalPrice":0, "Weight":500, "SubtotalWeight":0}}
+// const userCart = {1:{"ID":1, "Name":"r1", "Author":"John Doe", 
+// "Publisher":"The Publisher", "Genre":"Non-fiction", "Image":"r1", "Price":10.00, "Stock":40, "Quantity":10, "SubtotalPrice":0, "Weight":300, "SubtotalWeight":0},
+// 2:{"ID":2, "Name":"r2", "Author":"John Lim", 
+// "Publisher":"The Publisher", "Genre":"Fiction", "Image":"r2", "Price":5.50, "Stock":50, "Quantity":10, "SubtotalPrice":0, "Weight":500, "SubtotalWeight":0}}
+const userCart = {}
 let coupon_type;
 let discount = 0;
 let discount_limit = 0;
@@ -38,30 +39,35 @@ const stripe = require('stripe')('sk_test_ns9DyHTray5Wihniw93C2ANH00IMJTVjKw', {
 //     })
 // })
 
-// Add Cart
-// To-do
-// 1) Wait for finished product pages
-// 2) Remember to change the product page name to the correct one later.
-
-router.post('/productsList', (req, res, next) => {
+router.get('/listproduct/:id', (req, res, next) => {
     // 'Add to Cart' button passes value of product id to server
     // queries product id with database
-    // stores each cartitem with id, name and quantity
+    // stores each cartitesm with id, name and quantity
     console.log("ADDDDDING")
-    Product.findOne({
+    productadmin.findOne({
         where: {
-            id: pass // Button with name: id
+            id: req.params.id // Button with name: id
         }
     })
 
     .then((product) => {
         var id = product.id;
-        console.log('ID IS ' + id)
         let name = product.product_name;
+        let author = product.author;
+        let publisher = product.publisher;
+        let genre = product.genre;
+        let price =product.price;
+        let stock = product.stock;
+        let details = product.details;
+        let weight = product.weight;
+        let image = product.product_image;
+
+        console.log('ID IS ' + id)
         if (userCart.length < 1) {
             let qty = 1 
             // Image field not decided yet, the rest is done.
-            userCart[[id]] = {"ID":id, "Name":name, "Image":image, "Quantity":qty, "SubtotalPrice":product.price}
+            userCart[[id]] = {"ID":id, "Name":name, "Author":author, "Publisher":publisher, "Genre":genre, "Price":price, "Stock":stock,
+            "Weight":weight, "Image":image, "Quantity":qty, "SubtotalPrice":0.00, "SubtotalWeight":0}
             console.log(userCart)
         }
     
@@ -79,12 +85,14 @@ router.post('/productsList', (req, res, next) => {
             if (check == false) {
                 let qty = 1 
                 // Again, the Image field not decided yet, the rest is done.
-                userCart[[id]] = {"ID":id, "Name":name, "Image":image, "Quantity":qty, "SubtotalPrice":product.price}
+                // userCart[[id]] = {"ID":id, "Name":name, "Image":image, "Quantity":qty, "SubtotalPrice":product.price}
+                userCart[[id]] = {"ID":id, "Name":name, "Author":author, "Publisher":publisher, "Genre":genre, "Price":price, "Stock":stock,
+                "Weight":weight, "Image":image, "Quantity":qty, "SubtotalPrice":0.00, "SubtotalWeight":0}
                 console.log(userCart)
             }
         }})
 
-    res.redirect('/products/productsList')
+    res.redirect('/product/listproduct')
     console.log("Added to cart");
 });
 
