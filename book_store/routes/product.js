@@ -32,7 +32,8 @@ router.get('/listProduct', (req, res) => {
     })
         .then((productadmin) => {
             res.render('products/listProduct', {
-                productadmin: productadmin
+                productadmin: productadmin,
+                userCart
             });
         })
 });
@@ -45,7 +46,8 @@ router.get('/individualProduct/:id', (req, res) => {
     })
         .then((product) => {
             res.render('products/individualProduct', {
-                product
+                product,
+                userCart
             });
         })
 });
