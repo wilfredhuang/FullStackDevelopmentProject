@@ -58,5 +58,15 @@ module.exports = {
     capitaliseFirstLetter: function(string){
         return string.charAt(0).toUpperCase() + string.slice(1);
 
+    },
+
+    cartQty: function (userCart) {
+        let totalqty = 0;
+        for (z in userCart) {
+            // bugged
+            parseInt(totalqty = parseInt(totalqty) + userCart[z].Quantity);
+            // parseInt(totalqty) += (userCart[z].Quantity)
+        }
+        return parseInt(totalqty);
     }
 };

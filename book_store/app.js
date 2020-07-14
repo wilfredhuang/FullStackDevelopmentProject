@@ -59,7 +59,7 @@ vidjotDB.setUpDB(false); // To set up database with new tables set (true)
 
 
 // Bring in Handlebars Helpers here
-const {convertUpper, adminCheck, emptyCart} = require('./helpers/hbs');
+const {convertUpper, adminCheck, emptyCart, cartQty} = require('./helpers/hbs');
 
 // creates an express server
 const app = express();
@@ -73,6 +73,7 @@ app.engine('handlebars', exphbs({
 		convertUpper: convertUpper,
 		adminCheck: adminCheck,
 		emptyCart: emptyCart,
+		cartQty: cartQty,
 		formatDate: formatDate,
 		capitaliseFirstLetter:capitaliseFirstLetter,
 	},					
