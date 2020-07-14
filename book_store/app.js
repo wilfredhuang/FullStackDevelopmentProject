@@ -47,9 +47,14 @@ const FlashMessenger = require('flash-messenger');
 // creates an express server
 const app = express();
 
-
+const {formatDate} = require('./helpers/hbs');
+const {capitaliseFirstLetter} = require('./helpers/hbs')
 // Handlebars Middleware
 app.engine('handlebars', exphbs({
+	helpers:{
+		formatDate: formatDate,
+		capitaliseFirstLetter:capitaliseFirstLetter,
+	},
 	defaultLayout: 'main',						// Specify default template views/layout/main.handlebar
 	handlebars: allowInsecurePrototypeAccess(Handlebars),
 }));

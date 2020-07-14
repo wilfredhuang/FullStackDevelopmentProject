@@ -7,7 +7,9 @@ const EasyPost = require("@easypost/api");
 //const e = require("express");
 const apiKey = "EZTK29b55ab4ee7a437890e19551520f5dd0uaJjPiW9XsVqXYFNVI0kog";
 const api = new EasyPost(apiKey);
-
+const accountSid = 'AC7994551ea296710e5de3b74d7a93056c';
+const authToken = 'f5ac6a9439b75395ce54e9783d0f8877';
+const client = require('twilio')(accountSid, authToken);
 router.get("/checkout", (req, res) => {
   const title = "Check Out";
   cartItem.findAll({}).then((cartItem) => {
@@ -159,8 +161,22 @@ router.post("/processCheckout", (req, res) => {
                 dateEnd,
                 deliveryStatus
               }).then((Order) => {
-                //console.log(Order);
+                console.log(Order);
                 res.redirect("/delivery/checkout2");
+                let trackingCode = Order.dataValues.trackingCode;
+                api.Tracker.retrieve(trackingCode)
+                .then((t)=> {console.log(t.public_url)
+                let trackingURL = t.public_url;
+                client.messages
+                .create({
+                  body: 'Thank you for your purchase from the Book Store. Your tracking code is '+ trackingCode +' and check your delivery here!\n'+trackingURL,
+                  from: '+12059461964',
+                  to: '+6590251744'
+                })
+                .then(message => console.log(message.sid));}
+                );
+                
+                
                 // const trackingCodePage = Order.dataValues.trackingCode;
                 // console.log(trackingCodePage)
               })
@@ -206,6 +222,10 @@ router.get("/checkout2", (req, res) => {
       
     };
 });
+
+router.post("/deliveryUpdates", (req, res) => {
+
+})
 
 //view More Details of Order //still uses cart.js for example, will change later on
 router.get("/viewMoreOrder/:id", (req, res) => {

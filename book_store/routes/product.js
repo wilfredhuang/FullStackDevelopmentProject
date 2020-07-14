@@ -6,10 +6,6 @@ const productadmin = require('../models/ProductAdmin');
 const cartItem = require('../models/CartItem');
 
 
-// List videos belonging to current logged in user 
-
-
-
 router.get('/listProduct', (req, res) => {
     const title = 'Products';
     res.render('products/listProduct', {

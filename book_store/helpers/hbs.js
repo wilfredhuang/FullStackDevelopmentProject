@@ -3,7 +3,12 @@ const moment = require('moment');
 
 module.exports = {
     formatDate: function (date, targetFormat) {
-        return moment(date).format(targetFormat);
+        if (date == null){
+            return 'Unavailable';
+        }
+        else{
+            return moment(date).format(targetFormat);
+        }
     },
 
     //radioCheck
@@ -50,5 +55,9 @@ module.exports = {
                 return false;
         }
         return true;
+    },
+    capitaliseFirstLetter: function(string){
+        return string.charAt(0).toUpperCase() + string.slice(1);
+
     }
 };

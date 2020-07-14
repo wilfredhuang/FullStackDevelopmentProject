@@ -149,14 +149,27 @@ shipment
 // });
 
 
-const accountSid = 'AC7994551ea296710e5de3b74d7a93056c';
-const authToken = 'f5ac6a9439b75395ce54e9783d0f8877';
-const client = require('twilio')(accountSid, authToken);
+// const accountSid = 'AC7994551ea296710e5de3b74d7a93056c';
+// const authToken = 'f5ac6a9439b75395ce54e9783d0f8877';
+// const client = require('twilio')(accountSid, authToken);
 
-client.messages
-  .create({
-     body: 'This is the ship that made the Kessel Run in fourteen parsecs? Your tracking code is and check your delivery here!',
-     from: '+12059461964',
-     to: '+6590251744'
-   })
-  .then(message => console.log(message.sid));
+// client.messages
+//   .create({
+//      body: 'This is the ship that made the Kessel Run in fourteen parsecs? Your tracking code is and check your delivery here!',
+//      from: '+12059461964',
+//      to: '+6590251744'
+//    })
+//   .then(message => console.log(message.sid));
+
+//const webhook = new api.Webhook({ url: 'http://example.com/deliveryUpdates' });
+
+//webhook.save().then(console.log);
+//api.Webhook.retrieve('hook_20de88bbc9784a1c9512332c2c037765').then(console.log);
+/*
+const report = new api.Report({
+  type: 'shipment',
+  start_date: '2016-10-01',
+  end_date: '2016-10-31'
+});
+report.save().then(console.log);
+*/

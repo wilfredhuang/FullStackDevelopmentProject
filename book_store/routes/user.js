@@ -26,6 +26,7 @@ router.get('/userRecentOrder', (req, res) => {
         //}
     })
     .then((order) => {
+        console.log(order)
         res.render("user/userRecentOrder", {
             order:order,
             title
