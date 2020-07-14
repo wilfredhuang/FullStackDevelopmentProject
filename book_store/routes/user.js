@@ -7,6 +7,7 @@ const bcrypt = require('bcryptjs');
 const passport = require('passport');
 const cartItem = require("../models/CartItem");
 const order = require("../models/Order");
+const ensureAuthenticated = require('../helpers/auth');
 
 
 module.exports = router;
