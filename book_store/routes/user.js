@@ -194,7 +194,7 @@ router.post('/register', (req, res) => {
 });
 
 router.get('/userPage',ensureAuthenticated,(req,res) =>{
-    res.render('user/register'); 
+    res.render('user/userPage'); 
 });
 
 router.get('/userPage/changeinfo',ensureAuthenticated,(req,res) =>{

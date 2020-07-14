@@ -49,31 +49,28 @@ passport.use(new FacebookStrategy({
     clientSecret: "61403ba37105bae272df33dda173ec85" ,
     callbackURL: "https://localhost:5000/user/auth/facebook/callback"
   },
-  function(accessToken, refreshToken, profile, done) {
-    process.nextTick(function(){
-        facebookUser.findOne({ where: { id:profile.id} },function(err,user){//should be the problem line
-        if(err){
-            return done(err);
+  function(accessToken, refreshToken, profile, cb) {
+    /*var Newuser = {
+        'email': profile.emails[0].value,
+        'name' : profile.name.givenName + ' ' + profile.name.familyName,
+        'id'   : profile.id,
+        'token': accessToken
+    }
+    facebookUser.findOne({where:{id :profile.id}},function(err, user){
+        if (err){
+            console.log(err);
+        }if(user){
+            break;
+        }else{
+            facebookUser.create(Newuser);
+            break;
         }
-        if(user){
-            return done(null, user);
-        }
-        else {
-            var Newuser = {
-                'email': profile.emails[0].value,
-                'name' : profile.name.givenName + ' ' + profile.name.familyName,
-                'id'   : profile.id,
-                'token': accessToken
-            }
-            facebookUser.create(Newuser)
-                if(err)
-                    throw err;
-                return done(null, user);
-                }
-            });
+    })
+    */
+    User.findOrCreate({ facebookId: profile.id }, function (err, user) {
+        return cb(err, user);
         });
     }
-    
 ));
 
 module.exports = { localStrategy };
