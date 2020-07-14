@@ -4,7 +4,7 @@
             <span class="breadcrumb-item active">Products</span>
         </div>
     </div>
-<form action="/delivery/addToCart" method="post" id="addProduct">
+{{!-- <form id="addProduct"> --}}
 <section class="product-sec">
         <div class="container">
             <h1>{{product.product_name}}</h1>
@@ -72,14 +72,16 @@
                         </li>
                     </ul>
                     <div class="btn-sec">
-                        <button class="btn" type="submit" href="/index">Add To cart</button>
+                        <form action="/product/individualProduct/{{product.id}}" method="POST">
+                        <button name="atc" class="btn" type="submit" value="{{product.id}}" href="#">Add To cart</button>
                         <button class="btn black">Buy Now</button>
+                        </form>
                     </div>
                 </div>
             </div>
         </div>
     </section>
-</form>
+{{!-- </form> --}}
     <section class="related-books">
         <div class="container">
             <h2>You may also like these book</h2>

@@ -57,9 +57,9 @@ vidjotDB.setUpDB(false); // To set up database with new tables set (true)
 // const authenticate = require('./config/passport'); 
 // authenticate.localStrategy(passport); 
 
-
+global.userCart = {};
 // Bring in Handlebars Helpers here
-const {convertUpper, adminCheck, emptyCart} = require('./helpers/hbs');
+const {convertUpper, adminCheck, emptyCart, cartQty} = require('./helpers/hbs');
 
 // creates an express server
 const app = express();
@@ -73,6 +73,7 @@ app.engine('handlebars', exphbs({
 		convertUpper: convertUpper,
 		adminCheck: adminCheck,
 		emptyCart: emptyCart,
+		cartQty: cartQty,
 		formatDate: formatDate,
 		capitaliseFirstLetter:capitaliseFirstLetter,
 	},					
@@ -121,7 +122,6 @@ app.use(session({
 app.use(flash());
 app.use(FlashMessenger.middleware);
 
-
 // Global variables
 app.use(function (req, res, next) {
 	res.locals.success_msg = req.flash('success_msg');
@@ -141,6 +141,7 @@ app.use('/admin',adminRoute);
 
 app.use(function(req, res, next) {
 	res.status(404).render('404');
+
 });
 
 const port = 5000;

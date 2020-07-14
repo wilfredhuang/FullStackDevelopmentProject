@@ -9,7 +9,8 @@ const alertMessage=require('../helpers/messenger');
 const Coupon = require('../models/coupon');
 
 // variables below for coupon feature, dont change - wilfred
-const userCart = {}
+// switched userCart to global variable @app.js
+// const userCart = {}
 let coupon_type;
 let discount = 0;
 let discount_limit = 0;
@@ -244,6 +245,67 @@ router.get('/listproduct/:id', (req, res, next) => {
         }})
 
     res.redirect('/product/listproduct')
+    console.log("Added to cart");
+    console.log(userCart);
+});
+
+// Add Cart - individual page
+
+router.post('/individualProduct/:id', (req, res, next) => {
+    // 'Add to Cart' button passes value of product id to server
+    // queries product id with database
+    // stores each cartitesm with id, name and quantity
+    console.log("ADDDDDING")
+    productadmin.findOne({
+        where: {
+            id: req.params.id // Button with name: id
+        }
+    })
+
+    .then((product) => {
+        var id = product.id;
+        let name = product.product_name;
+        let author = product.author;
+        let publisher = product.publisher;
+        let genre = product.genre;
+        let price =product.price;
+        let stock = product.stock;
+        let details = product.details;
+        let weight = product.weight;
+        let image = product.product_image;
+
+        console.log('ID IS ' + id)
+        if (userCart.length < 1) {
+            let qty = 1 
+            // Image field not decided yet, the rest is done.
+            userCart[[id]] = {"ID":id, "Name":name, "Author":author, "Publisher":publisher, "Genre":genre, "Price":price, "Stock":stock,
+            "Weight":weight, "Image":image, "Quantity":qty, "SubtotalPrice":price, "SubtotalWeight":weight}
+            console.log(userCart)
+        }
+    
+        else {
+            var check = false;
+            for (z in userCart) {
+                if (z == id) {
+                    console.log("FOUND EXISTING PRODUCT IN CART")
+                    userCart[z].Quantity += 1
+                    userCart[z].SubtotalPrice = (parseFloat(userCart[z].SubtotalPrice) + parseFloat(product.price)).toFixed(2)
+                    userCart[z].SubtotalWeight = (parseFloat(userCart[z].SubtotalWeight) + parseFloat(product.weight)).toFixed(2)
+                    check = true;
+                    console.log(userCart)
+                }
+            }
+            if (check == false) {
+                let qty = 1 
+                // Again, the Image field not decided yet, the rest is done.
+                // userCart[[id]] = {"ID":id, "Name":name, "Image":image, "Quantity":qty, "SubtotalPrice":product.price}
+                userCart[[id]] = {"ID":id, "Name":name, "Author":author, "Publisher":publisher, "Genre":genre, "Price":price, "Stock":stock,
+                "Weight":weight, "Image":image, "Quantity":qty, "SubtotalPrice":price, "SubtotalWeight":weight}
+                console.log(userCart)
+            }
+        }})
+
+    res.redirect(`/product/individualProduct/${req.params.id}`)
     console.log("Added to cart");
     console.log(userCart);
 });
