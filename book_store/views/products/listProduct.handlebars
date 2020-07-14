@@ -61,15 +61,15 @@
                     </div>
                 </div>
             </div--->
-        <input type="text" placeholder="Search..">
+        <input type="text" id="mySearch" onkeyup="search()" placeholder="Search.." title="Type in a category">
         <h2>recently added books to our store</h2>
         <div class="recent-book-sec">
-            <ul>
+            <ul id="myMenu">
                 <div class="row">
                     {{#each productadmin}}
                     <div class="col-md-3">
 
-                        <li>
+                        <li name="{{product_name}}">
                             <div class="item">
                                 <img src="{{product_image}}" alt="img">
                                 <h3><a href="/product/individualProduct/{{id}}">{{product_name}}</a></h3>
