@@ -9,10 +9,14 @@ const order = require('../models/Order');
 const alertMessage=require('../helpers/messenger');
 const Coupon = require('../models/coupon');
 
+
 // Stripe Payment - secret key
 const stripe = require('stripe')('sk_test_ns9DyHTray5Wihniw93C2ANH00IMJTVjKw', {
     apiVersion: '2020-03-02',
   });
+
+const paynow = require('paynow-generator').paynowGenerator
+const QRCode = require('qrcode')
 
 // variables below for coupon feature, dont change - wilfred
 // switched userCart to global variable @app.js
@@ -533,6 +537,27 @@ router.post('/checkout', (req, res) => {
     })
     alertMessage(res, 'success', 'Order placed', 'fas fa-exclamation-circle', true)
     res.redirect('/')
+});
+
+
+
+
+router.get('/paynow', (req,res) => {
+    // let payNowString = paynow('proxyType','proxyValue','edit',price,'merchantName','additionalComments')
+    let payNowString = paynow('mobile','87551457','no',0.10,'Test Merchant Name','Testing paynow, hope it works')
+    let qr = QRCode.toDataURL(payNowString)
+    .then(url => {
+    //   console.log(url)
+      res.render('checkout/paynow', {
+        payNowString,
+        qr,
+        url
+    })
+
+    })
+    .catch(err => {
+      console.error(err)
+    });
 });
 
 module.exports = router;
