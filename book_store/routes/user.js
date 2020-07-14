@@ -9,8 +9,15 @@ const cartItem = require("../models/CartItem");
 const order = require("../models/Order");
 const ensureAuthenticated = require('../helpers/auth');
 
+router.get("/auth/facebook", passport.authenticate("facebook",{scope: 'email'}));
 
-module.exports = router;
+router.get(
+    "/auth/facebook/callback",
+    passport.authenticate("facebook", {
+      successRedirect: "/",
+      failureRedirect: "/login"
+    })
+  );
 
 router.get('/userPage',(req, res) => {
     const title = 'User Information';
@@ -27,6 +34,7 @@ router.get('/userRecentOrder', (req, res) => {
         //}
     })
     .then((order) => {
+        console.log(order)
         res.render("user/userRecentOrder", {
             order:order,
             title
@@ -121,6 +129,17 @@ router.get('/userCart', (req, res) => {
 //        object as error */
 //     })(req, res, next);
 // });
+router.get('/login', (req, res) => {
+	res.render('user/login'); 
+});
+
+router.post('/login', (req, res, next) => {
+    passport.authenticate('local', {
+        successRedirect: '/', 
+        failureRedirect: '/user/login',
+        failureFlash: true
+    })(req, res, next);
+});
 
 router.get('/register', (req, res) => {
 	res.render('user/register'); 
@@ -179,8 +198,7 @@ router.get('/userPage',ensureAuthenticated,(req,res) =>{
     res.render('user/register'); 
 });
 
-router.get('/userPage/changeinfo',(req,res) =>{
-
+router.get('/userPage/changeinfo',ensureAuthenticated,(req,res) =>{
     res.render('user/changeinfo');
 });
 

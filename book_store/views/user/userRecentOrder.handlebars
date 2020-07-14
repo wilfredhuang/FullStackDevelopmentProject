@@ -26,7 +26,8 @@
                     <table class="table table-striped" id="myTable">
                         <thead>
                             <tr>
-                                <th>Order ID</th>
+                                <th>Order No</th>
+                                <th>Date Sent</th>
                                 <th>Date Received</th>
                                 <th>Delivery Type</th>
                                 <th>Delivery Status</th>
@@ -37,9 +38,10 @@
                             {{#each order}}
                             <tr>
                                 <td><a href="/delivery/viewMoreOrder/{{id}}">{{id}}</a></td>
-                                <td>12/12/12</td>
+                                <td>{{formatDate dateStart 'DD MMM YYYY'}}</td>
+                                <td>{{formatDate dateEnd 'DD MMM YYYY'}}</td>
                                 <td>Normal Shipping</td>
-                                <td>Delivered</td>
+                                <td id="deliveryStatus">{{capitaliseFirstLetter deliveryStatus}}</td>
                             </tr>
                             {{/each}}
                             {{else}}

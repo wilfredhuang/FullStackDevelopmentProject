@@ -1,3 +1,5 @@
+// testing ground
+
 const EasyPost = require("@easypost/api");
 
 const apiKey = "EZTK29b55ab4ee7a437890e19551520f5dd0uaJjPiW9XsVqXYFNVI0kog";
@@ -19,13 +21,12 @@ const toAddress = new api.Address({
 //console.log(toAddress)
 //Test retrive information
 
-
 //const webhook = new api.Webhook({ url: 'http://example.com' });
 
 //webhook.save().then(console.log);
 
 //api.Address.retrieve('adr_a829cf7045d140eb95c917b01f1b2ae8').then(address => {
-  //console.log(address.id);
+//console.log(address.id);
 //}).catch(console.log);
 console.log("=========")
 api.Shipment.retrieve('shp_e0f451a768394ab68621772b79c166db').then((s) => {
@@ -148,16 +149,27 @@ shipment
 //      */
 // });
 
+// const accountSid = 'AC7994551ea296710e5de3b74d7a93056c';
+// const authToken = 'f5ac6a9439b75395ce54e9783d0f8877';
+// const client = require('twilio')(accountSid, authToken);
+
+// client.messages
+//   .create({
+//      body: 'This is the ship that made the Kessel Run in fourteen parsecs? Your tracking code is and check your delivery here!',
+//      from: '+12059461964',
+//      to: '+6590251744'
+//    })
+//   .then(message => console.log(message.sid));
+
+//const webhook = new api.Webhook({ url: 'http://example.com/deliveryUpdates' });
+
+//webhook.save().then(console.log);
+//api.Webhook.retrieve('hook_20de88bbc9784a1c9512332c2c037765').then(console.log);
 /*
-const accountSid = 'AC7994551ea296710e5de3b74d7a93056c';
-const authToken = 'f5ac6a9439b75395ce54e9783d0f8877';
-const client = require('twilio')(accountSid, authToken);
-const trackingCode = '2e13124'
-const trackingURL = 'https://track.easypost.com/djE6dHJrXzlmNzc3ZTQzMmFlNzQ0MGQ5Nzc5NjE3MWI4NTBjOTQy'
-client.messages
-  .create({
-     body: 'This is the ship that made the Kessel Run in fourteen parsecs? Your tracking code is '+trackingCode+' and check your delivery here!\n'+trackingURL,
-     from: '+12059461964',
-     to: '+6590251744'
-   })
-  .then(message => console.log(message.sid));*/
+const report = new api.Report({
+  type: 'shipment',
+  start_date: '2016-10-01',
+  end_date: '2016-10-31'
+});
+report.save().then(console.log);
+*/
