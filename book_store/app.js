@@ -59,13 +59,11 @@ vidjotDB.setUpDB(false); // To set up database with new tables set (true)
 
 global.userCart = {};
 // Bring in Handlebars Helpers here
-const {convertUpper, adminCheck, emptyCart, cartQty} = require('./helpers/hbs');
+const {convertUpper, adminCheck, emptyCart, cartQty, formatDate, capitaliseFirstLetter} = require('./helpers/hbs');
 
 // creates an express server
 const app = express();
 
-const {formatDate} = require('./helpers/hbs');
-const {capitaliseFirstLetter} = require('./helpers/hbs')
 // Handlebars Middleware
 app.engine('handlebars', exphbs({
 	defaultLayout: 'main',	// Specify default template views/layout/main.handlebar
