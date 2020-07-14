@@ -4,9 +4,15 @@ const moment = require('moment');
 const product = require('../models/Product');
 const productadmin = require('../models/ProductAdmin');
 const cartItem = require('../models/CartItem');
+const order = require('../models/Order');
 
 const alertMessage=require('../helpers/messenger');
 const Coupon = require('../models/coupon');
+
+// Stripe Payment - secret key
+const stripe = require('stripe')('sk_test_ns9DyHTray5Wihniw93C2ANH00IMJTVjKw', {
+    apiVersion: '2020-03-02',
+  });
 
 // variables below for coupon feature, dont change - wilfred
 // switched userCart to global variable @app.js
@@ -497,8 +503,27 @@ router.get('/delete/:id', (req, res) => {
     res.redirect('/checkout/cart');
 });
 
+router.get('/checkout', (req, res) => {
+    console.log("Full total price is " + full_total_price);
+    const paymentIntent = stripe.paymentIntents.create({
+        amount: Math.ceil((full_total_price * 100)),
+        currency: 'sgd',
+        payment_method_types: ['card'],
+        receipt_email:'whjw1536@gmail.com',
+    })
 
+    .then((paymentIntent) => {
+        console.log(paymentIntent)
+        console.log("Client secret is " + paymentIntent.client_secret)
+        res.render('checkout/checkout', { client_secret: paymentIntent.client_secret });
+    })
+});
 
+router.post('/checkout', (req, res) => {
+    // create order
+    res.redirect('/')
+    alertMessage(res, 'success', 'Order placed', 'fas fa-exclamation-circle', true)
+});
 
 module.exports = router;
 
