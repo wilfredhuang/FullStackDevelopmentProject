@@ -28,12 +28,12 @@ const toAddress = new api.Address({
 //api.Address.retrieve('adr_a829cf7045d140eb95c917b01f1b2ae8').then(address => {
 //console.log(address.id);
 //}).catch(console.log);
-// console.log("=========")
-// api.Shipment.retrieve('shp_e0f451a768394ab68621772b79c166db').then((s) => {
-//   console.log(s.tracker.created_at)
-//   console.log(s.tracker.updated_at)
+console.log("=========")
+api.Shipment.retrieve('shp_e0f451a768394ab68621772b79c166db').then((s) => {
+  console.log(s.tracker.created_at)
+  console.log(s.tracker.updated_at)
 
-// });
+});
 
 //api.Address.retrieve('adr_a829cf7045d140eb95c917b01f1b2ae8').then(console.log);
 

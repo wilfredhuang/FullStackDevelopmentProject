@@ -19,7 +19,7 @@ router.get(
     })
   );
 
-router.get('/userPage', (req, res) => {
+router.get('/userPage',(req, res) => {
     const title = 'User Information';
     res.render("user/userpage", {
         title
@@ -199,7 +199,6 @@ router.get('/userPage',ensureAuthenticated,(req,res) =>{
 });
 
 router.get('/userPage/changeinfo',ensureAuthenticated,(req,res) =>{
-
     res.render('user/changeinfo');
 });
 

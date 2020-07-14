@@ -129,7 +129,6 @@ router.post("/processCheckout", (req, res) => {
         });
 
         //shipment.save()//.then(console.log);
-
         shipment.save().then((s) => {
           s.buy(shipment.lowestRate(["USPS"], ["First"])).then((t) => {
             console.log("=============");
