@@ -57,8 +57,9 @@ vidjotDB.setUpDB(false); // To set up database with new tables set (true)
 // const authenticate = require('./config/passport'); 
 // authenticate.localStrategy(passport); 
 
+global.userCart = {};
 // Bring in Handlebars Helpers here
-const {convertUpper, adminCheck, emptyCart, formatDate, capitaliseFirstLetter} = require('./helpers/hbs');
+const {convertUpper, adminCheck, emptyCart, cartQty, formatDate, capitaliseFirstLetter} = require('./helpers/hbs');
 
 // creates an express server
 const app = express();
@@ -70,6 +71,7 @@ app.engine('handlebars', exphbs({
 		convertUpper: convertUpper,
 		adminCheck: adminCheck,
 		emptyCart: emptyCart,
+		cartQty: cartQty,
 		formatDate: formatDate,
 		capitaliseFirstLetter:capitaliseFirstLetter,
 	},					
