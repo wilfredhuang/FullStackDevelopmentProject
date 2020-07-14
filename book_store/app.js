@@ -57,15 +57,12 @@ vidjotDB.setUpDB(false); // To set up database with new tables set (true)
 // const authenticate = require('./config/passport'); 
 // authenticate.localStrategy(passport); 
 
-
 // Bring in Handlebars Helpers here
-const {convertUpper, adminCheck, emptyCart} = require('./helpers/hbs');
+const {convertUpper, adminCheck, emptyCart, formatDate, capitaliseFirstLetter} = require('./helpers/hbs');
 
 // creates an express server
 const app = express();
 
-const {formatDate} = require('./helpers/hbs');
-const {capitaliseFirstLetter} = require('./helpers/hbs')
 // Handlebars Middleware
 app.engine('handlebars', exphbs({
 	defaultLayout: 'main',	// Specify default template views/layout/main.handlebar

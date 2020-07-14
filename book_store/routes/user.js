@@ -7,6 +7,12 @@ const bcrypt = require('bcryptjs');
 const passport = require('passport');
 const cartItem = require("../models/CartItem");
 const order = require("../models/Order");
+
+//EasyPost API
+const EasyPost = require("@easypost/api");
+const apiKey = "EZTK29b55ab4ee7a437890e19551520f5dd0uaJjPiW9XsVqXYFNVI0kog"; //EasyPost API
+const api = new EasyPost(apiKey);
+
 const ensureAuthenticated = require('../helpers/auth');
 
 router.get("/auth/facebook", passport.authenticate("facebook",{scope: 'email'}));
@@ -27,18 +33,38 @@ router.get('/userPage',(req, res) => {
 });
 
 router.get('/userRecentOrder', (req, res) => {
-    const title = 'Recent Orders';
+    const title = 'Order History';
     order.findAll({
-        //where:{
-          //  id: req.params.id,
-        //}
+        // where:{
+        //     userId: req.user.id,
+        // }
     })
     .then((order) => {
-        console.log(order)
-        res.render("user/userRecentOrder", {
-            order:order,
-            title
-        });
+        //console.log(order)
+        // var i;
+        // for (i = 0; i<order.length; i++){
+        //     console.log(i,"th")
+        //     console.log(order[i].dataValues)
+        //     let shipmentId = order[i].dataValues.shipmentId
+        //     api.Shipment.retrieve(shipmentId).then(console.log);
+        // }
+        
+        //console.log(order[0].dataValues)
+        console.log("===================================")
+        let shipmentIdInfo = order[0].dataValues.shippingId
+        console.log('hello')
+        console.log()
+        api.Shipment.retrieve(shipmentIdInfo)//.then((o)=>{
+            //console.log(o)
+            // let dateReceived = o.tracker.est_delivery_date
+            // console.log(dateReceived)
+            res.render("user/userRecentOrder", {
+                order:order,
+                title
+            });
+        //});
+        console.log("boi")
+        
     })
     .catch(err => console.log(err));
 });
