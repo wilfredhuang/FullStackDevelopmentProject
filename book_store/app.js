@@ -57,7 +57,7 @@ vidjotDB.setUpDB(false); // To set up database with new tables set (true)
 // const authenticate = require('./config/passport'); 
 // authenticate.localStrategy(passport); 
 
-
+global.userCart = {};
 // Bring in Handlebars Helpers here
 const {convertUpper, adminCheck, emptyCart, cartQty} = require('./helpers/hbs');
 
