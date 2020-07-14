@@ -222,8 +222,6 @@ router.get("/checkout2", (req, res) => {
     };
 });
 
-router.post("/deliveryUpdates", (req, res) => {});
-
 //view More Details of Order //still uses cart.js for example, will change later on
 router.get("/viewMoreOrder/:id", (req, res) => {
   const title = "Order Details";
