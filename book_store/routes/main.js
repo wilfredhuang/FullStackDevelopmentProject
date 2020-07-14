@@ -1,55 +1,55 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
 const cartItem = require("../models/CartItem");
-const alertMessage = require('../helpers/messenger');
+const alertMessage = require("../helpers/messenger");
 
-router.get('/', (req, res) => {
-    const title = 'Bookstore Home Page';
-    res.render('index', {            // renders views/index.handlebars
-        title
-    })
+router.get("/", (req, res) => {
+  const title = "Bookstore Home Page";
+  res.render("index", {
+    // renders views/index.handlebars
+    title,
+  });
 });
 
-router.get('/index', (req, res) => {
-    const title = 'Bookstore Home Page';
-    res.render('index', {            // renders views/index.handlebars
-        title
-    })
+router.get("/index", (req, res) => {
+  const title = "Bookstore Home Page";
+  res.render("index", {
+    // renders views/index.handlebars
+    title,
+  });
 });
 
-router.get('/about', (req, res) => {
-    const title = 'About Us';
-    res.render('about', {            
-        title
-    })
+router.get("/about", (req, res) => {
+  const title = "About Us";
+  res.render("about", {
+    title,
+  });
 });
 
-router.get('/faq', (req, res) => {
-    const title = 'FAQs';
-    res.render('faq', {            
-        title
-    })
+router.get("/faq", (req, res) => {
+  const title = "FAQs";
+  res.render("faq", {
+    title,
+  });
 });
 
-router.get('/privacy-policy', (req, res) => {
-    const title = 'Privacy Policy';
-    res.render('privacy-policy', {            
-        title
-    })
+router.get("/privacy-policy", (req, res) => {
+  const title = "Privacy Policy";
+  res.render("privacy-policy", {
+    title,
+  });
 });
 
-router.get('/terms-conditions', (req, res) => {
-    const title = 'Terms and Conditions';
-    res.render('terms-conditions', {            
-        title
-    })
+router.get("/terms-conditions", (req, res) => {
+  const title = "Terms and Conditions";
+  res.render("terms-conditions", {
+    title,
+  });
 });
 
 //create Product page
 
-
 //list Product Pages for Admin
-
 
 //update existing product page
 /* 
@@ -62,11 +62,11 @@ router.get('/', (req, res) => {
 
 */
 //Shipping Details Page
-router.get('/shipping', (req, res) => {
-    const title = 'Shipping';
-    res.render('shipping', {            
-        title
-    })
+router.get("/shipping", (req, res) => {
+  const title = "Shipping";
+  res.render("shipping", {
+    title,
+  });
 });
 /* later add this in
 router.get('/product-single.html', (req, res) => {
@@ -78,27 +78,27 @@ router.get('/product-single.html', (req, res) => {
 */
 
 // Login Page
-router.get('/login', (req, res) => {
-    const title = 'Login Page';
-    res.render('user/login', {            
-        title
-    })
+router.get("/login", (req, res) => {
+  const title = "Login Page";
+  res.render("user/login", {
+    title,
+  });
 });
 
 // Register Page
-router.get('/register', (req, res) => {
-    const title = 'Registration Page';
-    res.render('user/register', {            
-        title
-    })
+router.get("/register", (req, res) => {
+  const title = "Registration Page";
+  res.render("user/register", {
+    title,
+  });
 });
 
 //forgetPassword page
-router.get('/forgetPassword', (req, res) => {
-    const title = 'Forget Password';
-    res.render('user/forgetPassword', {            
-        title
-    })
+router.get("/forgetPassword", (req, res) => {
+  const title = "Forget Password";
+  res.render("user/forgetPassword", {
+    title,
+  });
 });
 
 // // Exercise 2 solution
@@ -119,6 +119,5 @@ router.get('/forgetPassword', (req, res) => {
 //         error_msg: error_msg
 //     })
 // });
-
 
 module.exports = router;
