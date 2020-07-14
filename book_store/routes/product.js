@@ -23,10 +23,6 @@ let sub_discount_limit = 0;
 let sub_discounted_price = 0;
 let full_total_price = 0;
 
-// List videos belonging to current logged in user 
-
-
-
 router.get('/listProduct', (req, res) => {
     productadmin.findAll({
         order: [

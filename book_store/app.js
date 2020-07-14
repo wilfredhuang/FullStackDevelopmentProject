@@ -59,14 +59,13 @@ vidjotDB.setUpDB(false); // To set up database with new tables set (true)
 
 
 // Bring in Handlebars Helpers here
-const {convertUpper, adminCheck, emptyCart, cartQty} = require('./helpers/hbs');
-
-global.userCart = {};
+const {convertUpper, adminCheck, emptyCart} = require('./helpers/hbs');
 
 // creates an express server
 const app = express();
 
-
+const {formatDate} = require('./helpers/hbs');
+const {capitaliseFirstLetter} = require('./helpers/hbs')
 // Handlebars Middleware
 app.engine('handlebars', exphbs({
 	defaultLayout: 'main',	// Specify default template views/layout/main.handlebar
@@ -74,7 +73,8 @@ app.engine('handlebars', exphbs({
 		convertUpper: convertUpper,
 		adminCheck: adminCheck,
 		emptyCart: emptyCart,
-		cartQty: cartQty
+		formatDate: formatDate,
+		capitaliseFirstLetter:capitaliseFirstLetter,
 	},					
 	handlebars: allowInsecurePrototypeAccess(Handlebars),
 }));
@@ -121,7 +121,6 @@ app.use(session({
 app.use(flash());
 app.use(FlashMessenger.middleware);
 
-
 // Global variables
 app.use(function (req, res, next) {
 	res.locals.success_msg = req.flash('success_msg');
@@ -141,6 +140,7 @@ app.use('/admin',adminRoute);
 
 app.use(function(req, res, next) {
 	res.status(404).render('404');
+
 });
 
 const port = 5000;
@@ -153,4 +153,3 @@ app.listen(port, () => {
 */
 //remember to use https://localhost:5000/
 https.createServer(options,app).listen(port);
-

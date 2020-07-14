@@ -1,9 +1,13 @@
 const moment = require('moment');
 
-
 module.exports = {
     formatDate: function (date, targetFormat) {
-        return moment(date).format(targetFormat);
+        if (date == null){
+            return 'Unavailable';
+        }
+        else{
+            return moment(date).format(targetFormat);
+        }
     },
 
     //radioCheck
@@ -51,14 +55,8 @@ module.exports = {
         }
         return true;
     },
+    capitaliseFirstLetter: function(string){
+        return string.charAt(0).toUpperCase() + string.slice(1);
 
-    cartQty: function(userCart){
-        let totalqty = 0;
-        for (z in userCart) {
-            // bugged
-            parseInt(totalqty = parseInt(totalqty) + userCart[z].Quantity);
-            // parseInt(totalqty) += (userCart[z].Quantity)
-        }
-        return parseInt(totalqty);
     }
 };
