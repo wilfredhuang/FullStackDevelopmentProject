@@ -10,10 +10,22 @@ const Handlebars = require('handlebars')
 
 const { allowInsecurePrototypeAccess } = require('@handlebars/allow-prototype-access')
 
+//https
+const openssl = require('openssl-nodejs')
+const https = require('https');
+const fs = require('fs');
+const options = {
+	key: fs.readFileSync('key.pem'),
+	cert: fs.readFileSync('cert.crt')
+  };
+//admin 
+const AdminBroExpress = require('admin-bro-expressjs')
 
 // Stripe Payment System
 // Set your secret key. Remember to switch to your live secret key in production!
-const stripe = require('stripe')('sk_test_ns9DyHTray5Wihniw93C2ANH00IMJTVjKw');
+const stripe = require('stripe')('sk_test_ns9DyHTray5Wihniw93C2ANH00IMJTVjKw', {
+	apiVersion: '2020-03-02',
+  });
 
 // Bcrypt - Encrypt password - P4A1
 const bcrypt = require('bcryptjs');  // added here for debugging, but it's import only used in user.js
@@ -26,6 +38,7 @@ const userRoute = require('./routes/user');
 const productRoute = require('./routes/product');
 const deliveryRoute = require('./routes/cart');
 const checkoutRoute = require('./routes/checkout');
+const adminRoute = require('./routes/admin');
 
 // Library to use MySQL to store session objects
 const MySQLStore = require('express-mysql-session');
@@ -36,13 +49,17 @@ const flash = require('connect-flash');
 const FlashMessenger = require('flash-messenger');
 
 // Bring in database connection 
- const vidjotDB = require('./config/DBConnection');
+const vidjotDB = require('./config/DBConnection');
 // Connects to MySQL database 
- vidjotDB.setUpDB(false); // To set up database with new tables set (true)
+vidjotDB.setUpDB(false); // To set up database with new tables set (true)
 
 // Passport Config - P4A2
 // const authenticate = require('./config/passport'); 
 // authenticate.localStrategy(passport); 
+
+
+// Bring in Handlebars Helpers here
+const {convertUpper, adminCheck, emptyCart} = require('./helpers/hbs');
 
 // creates an express server
 const app = express();
@@ -51,11 +68,14 @@ const {formatDate} = require('./helpers/hbs');
 const {capitaliseFirstLetter} = require('./helpers/hbs')
 // Handlebars Middleware
 app.engine('handlebars', exphbs({
-	helpers:{
+	defaultLayout: 'main',	// Specify default template views/layout/main.handlebar
+	helpers: {
+		convertUpper: convertUpper,
+		adminCheck: adminCheck,
+		emptyCart: emptyCart,
 		formatDate: formatDate,
 		capitaliseFirstLetter:capitaliseFirstLetter,
-	},
-	defaultLayout: 'main',						// Specify default template views/layout/main.handlebar
+	},					
 	handlebars: allowInsecurePrototypeAccess(Handlebars),
 }));
 app.set('view engine', 'handlebars');
@@ -117,6 +137,7 @@ app.use('/user', userRoute);
 app.use('/product', productRoute);
 app.use('/delivery', deliveryRoute);
 app.use('/checkout', checkoutRoute);
+app.use('/admin',adminRoute);
 
 app.use(function(req, res, next) {
 	res.status(404).render('404');
@@ -124,8 +145,11 @@ app.use(function(req, res, next) {
 
 const port = 5000;
 
+
+/* changed to https so this is not needed
 app.listen(port, () => {
 	console.log(`Server started on port ${port}`);
 });
-
-
+*/
+//remember to use https://localhost:5000/
+https.createServer(options,app).listen(port);

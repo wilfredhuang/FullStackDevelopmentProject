@@ -26,6 +26,9 @@ const ProductAdmin = db.define('productadmin',
         weight: {
             type: Sequelize.STRING
         },
+        product_image: {
+            type: Sequelize.STRING
+        },
     });
 
 
