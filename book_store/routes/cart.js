@@ -5,11 +5,13 @@ const alertMessage = require("../helpers/messenger");
 const cartItem = require("../models/CartItem");
 const EasyPost = require("@easypost/api");
 //const e = require("express");
-const apiKey = "EZTK29b55ab4ee7a437890e19551520f5dd0uaJjPiW9XsVqXYFNVI0kog";
+const apiKey = "EZTK29b55ab4ee7a437890e19551520f5dd0uaJjPiW9XsVqXYFNVI0kog"; //EasyPost API
 const api = new EasyPost(apiKey);
-const accountSid = 'AC7994551ea296710e5de3b74d7a93056c';
-const authToken = 'f5ac6a9439b75395ce54e9783d0f8877';
-const client = require('twilio')(accountSid, authToken);
+
+const accountSid = "AC7994551ea296710e5de3b74d7a93056c";
+const authToken = "f5ac6a9439b75395ce54e9783d0f8877";
+const client = require("twilio")(accountSid, authToken); //Twilio API
+
 router.get("/checkout", (req, res) => {
   const title = "Check Out";
   cartItem.findAll({}).then((cartItem) => {
@@ -60,8 +62,7 @@ router.get("/removeItem/:id", (req, res) => {
 router.post("/processCheckout", (req, res) => {
   let fullName = req.body.fullName.toString();
   let email = req.body.email.toString();
-  let phoneNumber = '+'+ req.body.phoneNumber.toString();
-  console.log(phoneNumber)
+  let phoneNumber = "+" + req.body.phoneNumber.toString();
   let address = req.body.address;
   let address1 = req.body.address1;
   let city = req.body.city.toString();
@@ -126,69 +127,67 @@ router.post("/processCheckout", (req, res) => {
           from_address: fromAddress,
           parcel: parcel,
         });
+
         //shipment.save()//.then(console.log);
-        shipment
-          .save()
-          .then((s) => {
-            s.buy(shipment.lowestRate(["USPS"], ["First"]))
-            .then((t) => {
-              console.log("=============")
-              console.log(t.id)
-              let shippingId = t.id
-              let addressId = t.to_address.id
-              let trackingId = t.tracker.id
-              let trackingCode = t.tracker.tracking_code
-              let dateStart = t.created_at
-              let dateEnd = t.tracker.est_delivery_date
-              let deliveryStatus = t.tracker.status
-              //console.log(shippingId)
-              //console.log(addressId)
-              Order.create({
-                fullName,
-                phoneNumber,
-                address, 
-                address1,
-                city,
-                country,
-                postalCode,
-                deliverFee,
-                totalPrice,
-                shippingId,
-                addressId,
-                trackingId,
-                trackingCode,
-                dateStart,
-                dateEnd,
-                deliveryStatus
-              }).then((Order) => {
-                console.log(Order);
-                res.redirect("/delivery/checkout2");
-                let trackingCode = Order.dataValues.trackingCode;
-                api.Tracker.retrieve(trackingCode)
-                .then((t)=> {console.log(t.public_url)
+
+        shipment.save().then((s) => {
+          s.buy(shipment.lowestRate(["USPS"], ["First"])).then((t) => {
+            console.log("=============");
+            console.log(t.id);
+            let shippingId = t.id;
+            let addressId = t.to_address.id;
+            let trackingId = t.tracker.id;
+            let trackingCode = t.tracker.tracking_code;
+            let dateStart = t.created_at;
+            let dateEnd = t.tracker.est_delivery_date;
+            let deliveryStatus = t.tracker.status;
+            //console.log(shippingId)
+            //console.log(addressId)
+            Order.create({
+              fullName,
+              phoneNumber,
+              address,
+              address1,
+              city,
+              country,
+              postalCode,
+              deliverFee,
+              totalPrice,
+              shippingId,
+              addressId,
+              trackingId,
+              trackingCode,
+              dateStart,
+              dateEnd,
+              deliveryStatus,
+            }).then((Order) => {
+              console.log(Order);
+              res.redirect("/delivery/checkout2");
+              let trackingCode = Order.dataValues.trackingCode;
+              api.Tracker.retrieve(trackingCode).then((t) => {
+                console.log(t.public_url);
                 let trackingURL = t.public_url;
                 client.messages
-                .create({
-                  body: 'Thank you for your purchase from the Book Store. Your tracking code is '+ trackingCode +' and check your delivery here!\n'+trackingURL,
-                  from: '+12059461964',
-                  to: '+6590251744'
-                })
-                .then(message => console.log(message.sid));}
-                );
-                
-                
-                // const trackingCodePage = Order.dataValues.trackingCode;
-                // console.log(trackingCodePage)
-              })
-            })
-          }
-          );
+                  .create({
+                    body:
+                      "Thank you for your purchase from the Book Store. Your tracking code is " +
+                      trackingCode +
+                      " and check your delivery here!\n" +
+                      trackingURL,
+                    from: "+12059461964",
+                    to: "+6590251744",
+                  })
+                  .then((message) => console.log(message.sid));
+              });
+            });
+          });
+        });
         //console.log(checkAddress);
-        //console.log("its true");
-         
+        console.log("its true");
+
         //res.redirect("/delivery/checkout2");
       } else {
-        console.log(checkAddress);
+        //console.log(checkAddress);
         console.log("its false");
         alertMessage(
           res,
@@ -207,6 +206,8 @@ router.post("/processCheckout", (req, res) => {
     });
 });
 
+router.post("/deliveryUpdates", (req, res) => {});
+
 // Dont touch, stripe code -W
 // router.get('/checkout', async (req, res) => {
 //   const intent = // ... Fetch or create the PaymentIntent
@@ -219,37 +220,34 @@ router.get("/checkout2", (req, res) => {
   res.render("delivery/thankYou"),
     {
       title,
-      
     };
 });
 
-router.post("/deliveryUpdates", (req, res) => {
-
-})
+router.post("/deliveryUpdates", (req, res) => {});
 
 //view More Details of Order //still uses cart.js for example, will change later on
 router.get("/viewMoreOrder/:id", (req, res) => {
   const title = "Order Details";
-  
+
   Order.findOne({
     where: {
       id: req.params.id,
     },
   }).then((order) => {
-    console.log("===========")
-    const shippingId = order.shippingId
-    console.log(shippingId)
+    console.log("===========");
+    const shippingId = order.shippingId;
+    console.log(shippingId);
     api.Shipment.retrieve(shippingId).then((s) => {
-      console.log(s.tracker.created_at)
-      console.log(s.tracker.updated_at)
-      const deliveryStatus = s.tracker.status
-      const trackingURL = s.tracker.public_url
-      
+      console.log(s.tracker.created_at);
+      console.log(s.tracker.updated_at);
+      const deliveryStatus = s.tracker.status;
+      const trackingURL = s.tracker.public_url;
+
       res.render("products/viewMoreOrder", {
         order: order,
         title,
         deliveryStatus,
-        trackingURL
+        trackingURL,
       });
     });
   });

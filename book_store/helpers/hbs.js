@@ -1,6 +1,5 @@
 const moment = require('moment');
 
-
 module.exports = {
     formatDate: function (date, targetFormat) {
         if (date == null){
