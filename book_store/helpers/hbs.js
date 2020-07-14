@@ -50,5 +50,15 @@ module.exports = {
                 return false;
         }
         return true;
+    },
+
+    cartQty: function(userCart){
+        let totalqty = 0;
+        for (z in userCart) {
+            // bugged
+            parseInt(totalqty = parseInt(totalqty) + userCart[z].Quantity);
+            // parseInt(totalqty) += (userCart[z].Quantity)
+        }
+        return parseInt(totalqty);
     }
 };

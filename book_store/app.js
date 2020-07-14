@@ -59,7 +59,9 @@ vidjotDB.setUpDB(false); // To set up database with new tables set (true)
 
 
 // Bring in Handlebars Helpers here
-const {convertUpper, adminCheck, emptyCart} = require('./helpers/hbs');
+const {convertUpper, adminCheck, emptyCart, cartQty} = require('./helpers/hbs');
+
+global.userCart = {};
 
 // creates an express server
 const app = express();
@@ -71,7 +73,8 @@ app.engine('handlebars', exphbs({
 	helpers: {
 		convertUpper: convertUpper,
 		adminCheck: adminCheck,
-		emptyCart: emptyCart
+		emptyCart: emptyCart,
+		cartQty: cartQty
 	},					
 	handlebars: allowInsecurePrototypeAccess(Handlebars),
 }));
@@ -150,3 +153,4 @@ app.listen(port, () => {
 */
 //remember to use https://localhost:5000/
 https.createServer(options,app).listen(port);
+
