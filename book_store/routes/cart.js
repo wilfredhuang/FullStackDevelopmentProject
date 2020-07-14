@@ -8,6 +8,10 @@ const EasyPost = require("@easypost/api");
 const apiKey = "EZTK29b55ab4ee7a437890e19551520f5dd0uaJjPiW9XsVqXYFNVI0kog";
 const api = new EasyPost(apiKey);
 
+const accountSid = 'AC7994551ea296710e5de3b74d7a93056c';
+const authToken = 'f5ac6a9439b75395ce54e9783d0f8877';
+const client = require('twilio')(accountSid, authToken);
+
 router.get("/checkout", (req, res) => {
   const title = "Check Out";
   cartItem.findAll({}).then((cartItem) => {

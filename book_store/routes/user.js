@@ -11,7 +11,7 @@ const order = require("../models/Order");
 
 module.exports = router;
 
-router.get('/userPage', (req, res) => {
+router.get('/userPage',(req, res) => {
     const title = 'User Information';
     res.render("user/userpage", {
         title
@@ -121,5 +121,66 @@ router.get('/userCart', (req, res) => {
 //     })(req, res, next);
 // });
 
+router.get('/register', (req, res) => {
+	res.render('user/register'); 
+});
+
+router.post('/register', (req, res) => {
+    errors = [];
+    let {email,name, password, password2 } = req.body;
+    if (password !== password2){
+        errors.push({ text: 'Passwords do not match' });
+    }
+    if (password.length < 4) {
+        errors.push({ text: 'Password must be at least 4 characters' });
+    }
+    if (errors.length > 0) {
+        res.render('user/register', {
+            errors,
+            name,
+            email,
+            password,
+            password2
+        });
+    }
+    else {
+        User.findOne({ where: { email: req.body.email } })
+            .then(user => {
+                if (user) {
+                    res.render('user/register', {
+                        error: user.email + ' already registered',
+                        name,
+                        email,
+                        password,
+                        password2
+                    });
+                } else {
+                    bcrypt.genSalt(10, function(err, salt) {
+                        if (err) return next(err);
+                        bcrypt.hash(password, salt, function(err, hash) {
+                            if (err) return next(err);
+                             password = hash;
+                             role = "user";
+                             User.create({ name, email, password,role})
+                                .then(user => {
+                                    alertMessage(res, 'success', user.name + ' added.Please login', 'fas fa-sign-in-alt', true);
+                                    res.redirect('/user/login');
+                                })
+                                .catch(err => console.log(err));                            
+                        });
+                    });
+                }
+            });
+    }
+});
+
+router.get('/userPage',ensureAuthenticated,(req,res) =>{
+    res.render('user/register'); 
+});
+
+router.get('/userPage/changeinfo',(req,res) =>{
+
+    res.render('user/changeinfo');
+});
 
 module.exports = router;

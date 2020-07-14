@@ -6,88 +6,33 @@
 </div>
 <section class="static about-sec">
     <div class="container">
+        <h1>Hello,{{user}}</h1>
+    </div>
+</section>
+<section class="static about-sec">
+    <div class="container">
         <div class="row">
-            <div class="tab col-3">
-                <button class="tab">Navigation</button>
-                <a href="/user/userPage">
-                    <button class="active-tab">User Info</button>
-                </a>
-                <a href="/user/userRecentOrder">
-                    <button class="inactive-tab">Recent Orders</button>
-                </a>
-                <a href="/user/userCart">
-                    <button class="inactive-tab">Cart</button>
-                </a>
+            <div style="padding:50px; " class="col-sm-12 col-md-4 col-lg-4 d-flex justify-content-center">
+                <a style="padding:30px;width:270px; " class="btn" href="/user/userRecentOrder"><i
+                        class="fas fa-history fa-2x"></i> Order History</a>
             </div>
-            <div class="col-9">
-                <div id="userProfile">
-                    <h2>User Profile</h2>
-                    <br>
-                    <table border="0">
-                        <tr>
-                            <td>Name:</td>
-                        </tr>
-                        <tr>
-                            <td id="nameinfo"></td>
-                        </tr>
-                        <tr>
-                            <td>&nbsp;</td>
-                        </tr>
-                        <tr>
-                            <td>Email:</td>
-                        </tr>
-                        <tr>
-                            <td id="emailinfo"></td>
-                        </tr>
-                        <tr>
-                            <td>&nbsp;</td>
-                        </tr>
-                        <tr>
-                            <td>User ID:</td>
-                        </tr>
-                        <tr>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <td>&nbsp;</td>
-                        </tr>
-                        <tr>
-                            <td>Address:</td>
-                        </tr>
-                        <tr>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <td>&nbsp;</td>
-                        </tr>
-                        <tr>
-                            <td>Postal:</td>
-                        </tr>
-                        <tr>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <td>&nbsp;</td>
-                        </tr>
-                        <tr>
-                            <td>Country:</td>
-                        </tr>
-                        <tr>
-                            <td></td>
-                        </tr>
-                    </table>
-                    <tr>
-                        <td></td>
-                    </tr>
-                    </table>
-                    <p></p>
-                    <a class="btn" href="/">Update Particulars</a>
-                    <p></p>
-                    <a class="btn" href="/forgetPassword">Change Password</a>
-                    <p></p>
-                    <p></p>
-                    <a class="btn" href="/">Add Security Question</a>
-                </div>
+            <div style="padding:50px; " class="col-sm-12 col-md-4 col-lg-4 d-flex justify-content-center ">
+                <a style="padding:30px;width:270px; " class="btn" href="/user/userPage/changeinfo"><i
+                        class="fas fa-user-shield fa-2x"></i> Change/Set Info</a>
+            </div>
+            <div style="padding:50px;" class="col-sm-12 col-md-4 col-lg-4 d-flex justify-content-center">
+                <a style="padding:30px;width:270px; " class="btn" href="/user/userPage/requestrefund"><i
+                        class="fas fa-hand-holding-usd fa-2x"></i> Request Refund</a>
+            </div>
+        </div>
+        <div class="row">
+            <div style="padding:50px;" class="col-sm-12 col-md-6 col-lg-6 d-flex justify-content-center">
+                <a style="padding:30px;width:270px; " class="btn" href="/user/userPage/setaddress"><i
+                        class="fas fa-map-marker-alt fa-2x"></i> Set Address</a>
+            </div>
+            <div style="padding:50px;" class="col-sm-12 col-md-6 col-lg-6 d-flex justify-content-center">
+                <a style="padding:30px;width:270px; " class="btn" href="/user/userPage/wishlist"><i
+                        class="fas fa-clipboard-list fa-2x"></i> Wishlist</a>
             </div>
         </div>
     </div>
