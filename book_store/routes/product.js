@@ -493,14 +493,14 @@ router.post('/cart', (req, res) => {
 
 // Delete Item in Cart
 
-router.get('/delete/:id', (req, res) => {
+router.get('/deleteCartItem/:id', (req, res) => {
     console.log(userCart[req.params.id])
     console.log(req.params.id)
     console.log('Before Delete' + userCart)
     delete userCart[req.params.id];
     console.log('After Delete' + userCart)
     alertMessage(res, 'success', req.params.id + ' is successfully deleted', 'fas fa-sign-in-alt', true)
-    res.redirect('/checkout/cart');
+    res.redirect('/product/cart');
 });
 
 router.get('/checkout', (req, res) => {
@@ -520,9 +520,19 @@ router.get('/checkout', (req, res) => {
 });
 
 router.post('/checkout', (req, res) => {
+    let fullName = req.body.fullName
+    let phoneNumber = req.body.phoneNumber
+    let address = req.body.address
+    let address1 = req.body.address1
+    let city = req.body.city
+    let country = req.body.country
+    let postalCode = req.body.postalCode
     // create order
-    res.redirect('/')
+    order.create({
+        fullName, phoneNumber, address, address1, city, country, postalCode
+    })
     alertMessage(res, 'success', 'Order placed', 'fas fa-exclamation-circle', true)
+    res.redirect('/')
 });
 
 module.exports = router;

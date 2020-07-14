@@ -1,4 +1,5 @@
 // Set your publishable key: remember to change this to your live publishable key in production
+
 // See your keys here: https://dashboard.stripe.com/account/apikeys
 var stripe123 = Stripe('pk_test_Ef7sYvL8k3tWVTxjADPpT4T700HuZCROoX');
 var elements = stripe123.elements();
@@ -15,7 +16,6 @@ card123.mount("#card-element");
 function myFoo() {
   alert(document.getElementById('test123').value)
 }
-
 
 // function confirmStripe(card) {
 //   var displayError = document.getElementById('card-errors');
@@ -97,19 +97,20 @@ function confirmStripe(card) {
           console.log("Confirm Card Payment went Wrong!")
         })
     });
+}
+
 
 // // Handle real-time validation errors from the card Element.
-card.on('change', function(event) {
+card123.on('change', function(event) {
   var displayError = document.getElementById('card-errors');
   if (event.error) {
     displayError.textContent = event.error.message;
+    document.getElementById('submit').disabled = true;
   } else {
     displayError.textContent = '';
+    document.getElementById('submit').disabled = false;
   }
 });
-
-
-// Unused for now 
 
 // Handle form submission.
 // var form = document.getElementById('payment-form');
@@ -141,5 +142,3 @@ card.on('change', function(event) {
 //   // Submit the form
 //   form.submit();
 // }
-}
-
