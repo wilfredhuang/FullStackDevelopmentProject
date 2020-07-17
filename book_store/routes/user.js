@@ -8,6 +8,7 @@ const passport = require('passport');
 const cartItem = require("../models/CartItem");
 const order = require("../models/Order");
 const ensureAuthenticated = require('../helpers/auth');
+const { v1: uuidv1 } = require('uuid');
 
 router.get("/auth/facebook", passport.authenticate("facebook",{scope: 'email'}));
 
@@ -163,6 +164,7 @@ router.post('/register', (req, res) => {
         });
     }
     else {
+        console.log(password2)
         User.findOne({ where: { email: req.body.email } })
             .then(user => {
                 if (user) {
@@ -179,8 +181,7 @@ router.post('/register', (req, res) => {
                         bcrypt.hash(password, salt, function(err, hash) {
                             if (err) return next(err);
                              password = hash;
-                             role = "user";
-                             User.create({ name, email, password,role})
+                             User.create({ id:uuidv1() , name, email, password,isadmin:false})
                                 .then(user => {
                                     alertMessage(res, 'success', user.name + ' added.Please login', 'fas fa-sign-in-alt', true);
                                     res.redirect('/user/login');
@@ -193,12 +194,47 @@ router.post('/register', (req, res) => {
     }
 });
 
+router.get('/logout', function(req, res){
+    req.logout();
+    res.redirect('/');
+  });
+
 router.get('/userPage',ensureAuthenticated,(req,res) =>{
     res.render('user/userPage'); 
 });
 
-router.get('/userPage/changeinfo',ensureAuthenticated,(req,res) =>{
+router.post('/userPage/changeinfo',(req,res) =>{
+    errors = [];
+    let {email,name, password, password2 } = req.body;
+    console.log(req.body);
+    bcrypt.genSalt(10, function(err, salt) {
+        if (err) return next(err);
+        bcrypt.hash(password, salt, function(err, hash) {
+            if (err) return next(err);
+            password = hash;
+            if (password != user.password){
+                error.push({text:"Wrong password"});
+            }else{
+                if (name != null){
+                    req.session.passport.user.name = name;
+                }
+                if (email != null){
+                    req.session.passport.user.email = email;
+                }
+                if (password2 != null){
+                    bcrypt.hash(password2, salt, function(err, hash) {
+                        if (err) return next(err);
+                        password2 = hash;
+                        req.session.passport.user.password = password2;
+                    });
+                }   
+            }
+        });
+    });
+    
+});
 
+router.get('/changeinfo', function(req, res){
     res.render('user/changeinfo');
 });
 

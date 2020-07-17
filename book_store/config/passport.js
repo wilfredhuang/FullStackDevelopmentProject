@@ -2,6 +2,7 @@ const LocalStrategy = require('passport-local').Strategy;
 const bcrypt = require('bcryptjs');
 const passport = require('passport')
   , FacebookStrategy = require('passport-facebook').Strategy;
+const { v1: uuidv1 } = require('uuid');
 
 // Load user model
 const User = require('../models/User');
@@ -47,29 +48,26 @@ function localStrategy(passport) {
 passport.use(new FacebookStrategy({
     clientID: "239865340604409" ,
     clientSecret: "61403ba37105bae272df33dda173ec85" ,
-    callbackURL: "https://localhost:5000/user/auth/facebook/callback"
+    callbackURL: "https://localhost:5000/user/auth/facebook/callback",
+    enableProof: true
   },
   function(accessToken, refreshToken, profile, cb) {
-    /*var Newuser = {
-        'email': profile.emails[0].value,
-        'name' : profile.name.givenName + ' ' + profile.name.familyName,
-        'id'   : profile.id,
-        'token': accessToken
-    }
-    facebookUser.findOne({where:{id :profile.id}},function(err, user){
-        if (err){
-            console.log(err);
-        }if(user){
-            break;
-        }else{
-            facebookUser.create(Newuser);
-            break;
-        }
-    })
-    */
-    User.findOrCreate({ facebookId: profile.id }, function (err, user) {
-        return cb(err, user);
-        });
+    User.findOne({where:{facebookId: profile.id}})
+        .then(user => {
+            if (!user){
+                User.create({id:uuidv1(),
+                            name:profile.displayName,
+                            facebookId:profile.id,
+                            email:profile.email.value,
+                            facebookToken: accessToken,
+                            isadmin : false
+                        }).then(user =>{
+                            return cb(null,user);
+                        })
+            }else{
+                return cb(null,user);
+            }
+        })
     }
 ));
 
