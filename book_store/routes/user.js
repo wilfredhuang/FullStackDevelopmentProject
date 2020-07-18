@@ -9,8 +9,45 @@ const cartItem = require("../models/CartItem");
 const order = require("../models/Order");
 const ensureAuthenticated = require('../helpers/auth');
 const { v1: uuidv1 } = require('uuid');
+const nodemailer = require('nodemailer');
+const jwt = require('jsonwebtoken');
+const SECRET = 'fX7UvuRP55';
 
-router.get("/auth/facebook", passport.authenticate("facebook",{scope: 'email'}));
+
+
+//nodemailer 
+let transporter = nodemailer.createTransport({
+    host: 'mail.gmx.com',
+    port: 587,
+    secure: false, // true for 465, false for other ports
+    auth: {
+        user: 'legitbookstore@gmx.com', // generated ethereal user
+        pass: 'legitbookPass'  // generated ethereal password
+    },
+    tls: {
+        rejectUnauthorized: false
+    },
+  });
+
+//jwt middleware
+function authenticateToken(req, res, next) {
+  const authHeader = req.headers['authorization']
+  const token = authHeader && authHeader.split(' ')[1]
+  if (token == null) return res.sendStatus(401)
+
+  jwt.verify(token, SECRET, (err, user) => {
+    console.log(err)
+    if (err) return res.sendStatus(403)
+    req.user = user
+    next()
+  })
+}
+
+router.get('/confirmation/:token',authenticateToken,(req,res)=>{
+    user.update({confirmed : true})
+    res.render("/");
+});
+router.get("/auth/facebook", passport.authenticate("facebook",{scope: ['email']}));
 
 router.get(
     "/auth/facebook/callback",
@@ -164,7 +201,6 @@ router.post('/register', (req, res) => {
         });
     }
     else {
-        console.log(password2)
         User.findOne({ where: { email: req.body.email } })
             .then(user => {
                 if (user) {
@@ -181,9 +217,27 @@ router.post('/register', (req, res) => {
                         bcrypt.hash(password, salt, function(err, hash) {
                             if (err) return next(err);
                              password = hash;
-                             User.create({ id:uuidv1() , name, email, password,isadmin:false})
+                             theid = uuidv1()
+                             User.create({ id:theid , name, email, password,isadmin:false,confirmed:false})
                                 .then(user => {
-                                    alertMessage(res, 'success', user.name + ' added.Please login', 'fas fa-sign-in-alt', true);
+                                    alertMessage(res, 'success', user.name + ' added.Please Verify you account', 'fas fa-sign-in-alt', true);
+                                    jwt.sign(
+                                        {
+                                          user: theid, 
+                                        },
+                                        SECRET,
+                                        {
+                                          expiresIn: '1d',
+                                        },
+                                        (err, emailToken) => {
+                                          const url = `https://localhost:5000/user/confirmation/${emailToken}`;
+                                          transporter.sendMail({
+                                            to: req.body.email,
+                                            subject: 'Confirm Email',
+                                            html: `Please click this email to confirm your email: <a href="${url}">${url}</a>`,
+                                          });
+                                        },
+                                      );
                                     res.redirect('/user/login');
                                 })
                                 .catch(err => console.log(err));                            
@@ -216,16 +270,16 @@ router.post('/userPage/changeinfo',(req,res) =>{
                 error.push({text:"Wrong password"});
             }else{
                 if (name != null){
-                    req.session.passport.user.name = name;
+                    User.update({name : name})
                 }
                 if (email != null){
-                    req.session.passport.user.email = email;
+                    User.update({email : email})
                 }
                 if (password2 != null){
                     bcrypt.hash(password2, salt, function(err, hash) {
                         if (err) return next(err);
                         password2 = hash;
-                        req.session.passport.user.password = password2;
+                        User.update({password : password2})
                     });
                 }   
             }

@@ -48,19 +48,21 @@ function localStrategy(passport) {
 passport.use(new FacebookStrategy({
     clientID: "239865340604409" ,
     clientSecret: "61403ba37105bae272df33dda173ec85" ,
-    callbackURL: "https://localhost:5000/user/auth/facebook/callback",
-    enableProof: true
+    callbackURL: "/user/auth/facebook/callback",
+    enableProof: true,
+    profileFields: ['id', 'emails', 'name']
   },
   function(accessToken, refreshToken, profile, cb) {
     User.findOne({where:{facebookId: profile.id}})
         .then(user => {
             if (!user){
                 User.create({id:uuidv1(),
-                            name:profile.displayName,
+                            name:profile.name.givenName + " " + profile.name.familyName,
                             facebookId:profile.id,
-                            email:profile.email.value,
+                            email:profile.emails[0].value,
                             facebookToken: accessToken,
-                            isadmin : false
+                            isadmin : false,
+                            confirmed : true
                         }).then(user =>{
                             return cb(null,user);
                         })

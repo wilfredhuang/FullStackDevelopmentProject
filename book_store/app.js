@@ -6,9 +6,21 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const exphbs = require('express-handlebars');
 const methodOverride = require('method-override');
-const Handlebars = require('handlebars')
+const Handlebars = require('handlebars');
+const nodemailer = require('nodemailer');
 
 const { allowInsecurePrototypeAccess } = require('@handlebars/allow-prototype-access')
+
+//nodemailer 
+let transporter = nodemailer.createTransport({
+    host: 'mail.gmx.com',
+    port: 587,
+    secure: false, // true for 465, false for other ports
+    auth: {
+        user: 'legitbookstore@gmx.com', // generated ethereal user
+        pass: 'legitbookPass'  // generated ethereal password
+    },
+  });
 
 //https
 const openssl = require('openssl-nodejs')
