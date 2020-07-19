@@ -100,10 +100,11 @@
 	<script>
 		function submitUserForm() {
 			var response = grecaptcha.getResponse();
+			//const captcha = document.querySelector("#g-recaptcha-response").value;
 			//console.log()
 			console.log(response)
 			if (response.length == 0) {
-				//document.getElementById('g-recaptcha-error').innerHTML = response;
+				//document.getElementById('g-recaptcha-error').innerHTML = captcha;
 				document.getElementById('g-recaptcha-error').innerHTML = '<p style="color:red;">Please complete the recaptcha</p>';
 				return false;
 			}
