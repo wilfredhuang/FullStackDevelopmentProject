@@ -14,12 +14,18 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
+	<!---Favicon --->
+	<link rel="icon" href="https://img.icons8.com/emoji/48/000000/orange-book.png" />
+
 	<!-- FontAwesome (Using for Some UI) - W -->
 	<script src="https://kit.fontawesome.com/af00ae0421.js" crossorigin="anonymous"></script>
 
 	{{!-- Stripe --}}
 	<script src="https://js.stripe.com/v3/">
 	</script>
+
+	<!---Google Recaptcha --->
+	<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 
 	<!-- Bootstrap CSS -->
 	<!---
@@ -55,7 +61,9 @@
 </head>
 
 <body>
-	{{>_navbar}}
+	<div class="navbar-white sticky-top bg-white border-bottom">
+		{{>_navbar}}
+	</div>
 	<div class="container">
 		{{>_msg}}
 		{{>_errors}}
@@ -74,6 +82,7 @@
 	<script src="/js/searchOrderID.js"></script>
 	<script src="/js/product_searchbook.js"></script>
 	<script src="/js/cart_functions.js"></script>
+	<script src="/js/easypostAPI.js"></script>
 	<script src="/js/main.js"></script>
 	<!--- JS Files from video jotter --->
 	<!---
@@ -88,5 +97,47 @@
 			rootSelector: '[data-toggle=confirmation]',
 		});
 	</script>
+	<script>
+		function submitUserForm() {
+			var response = grecaptcha.getResponse();
+			//console.log()
+			console.log(response)
+			if (response.length == 0) {
+				//document.getElementById('g-recaptcha-error').innerHTML = response;
+				document.getElementById('g-recaptcha-error').innerHTML = '<p style="color:red;">Please complete the recaptcha</p>';
+				return false;
+			}
+			return true;
+		}
+		function verifyCaptcha() {
+			document.getElementById('g-recaptcha-error').innerHTML = '';
+		}
+	</script>
+	<!---<script>
+		document.getElementById("checkDeliveryForm".addEventListener('submit', submitForm);
+		
+		function submitForm(e){
+			e.preventDefault();
+			console.log(1234)
+			const trackingId = document.querySelector("trackingIdInput").value;
+			const captcha = document.querySelector("#g-recaptcha-response").value;
+			console.log("main handlebars")
+			console.log(captcha)
+			fetch('delivery/checkingDelivery',{
+				method:'POST',
+				headers:{
+					'Accept':'appliaction/json, text/plain, */*',
+					'Content-type':"application/json"
+				}
+				body.JSON.stringify({trackingId:trackingId, captcha:captcha})
+			})
+			.then((res) => res.json())
+			.then((data) => 
+			console.log(data)
+			alert(data));
+		}
+		)
+	</script> --->
 </body>
+
 </html>

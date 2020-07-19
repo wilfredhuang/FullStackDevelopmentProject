@@ -4,6 +4,7 @@ const Order = require("../models/Order");
 const alertMessage = require("../helpers/messenger");
 const cartItem = require("../models/CartItem");
 const EasyPost = require("@easypost/api");
+const { request } = require("express");
 //const e = require("express");
 const apiKey = "EZTK29b55ab4ee7a437890e19551520f5dd0uaJjPiW9XsVqXYFNVI0kog"; //EasyPost API
 const api = new EasyPost(apiKey);
@@ -11,6 +12,9 @@ const api = new EasyPost(apiKey);
 const accountSid = "AC7994551ea296710e5de3b74d7a93056c";
 const authToken = "f5ac6a9439b75395ce54e9783d0f8877";
 const client = require("twilio")(accountSid, authToken); //Twilio API
+
+//Google Recaptcha Secret Key
+const secretKey = "6Le367IZAAAAAJ042sFATGXzwqHsO6N3f38W4G81";
 
 router.get("/checkout", (req, res) => {
   const title = "Check Out";
@@ -248,6 +252,83 @@ router.get("/viewMoreOrder/:id", (req, res) => {
       });
     });
   });
+});
+
+router.get("/checkDelivery", (req, res) => {
+  const title = "Shipping Tracking";
+  res.render("delivery/checkDelivery", {
+    title,
+  });
+});
+
+router.post("/checkingDelivery", (req, res) => {
+  const title = "Shipping Tracking";
+  let trackingId = req.body.trackingIdInput;
+  //console.log(shippingId)
+  //trk_f10a3961f7c4419184aca1dabc09e4f8
+  console.log(trackingId);
+  // console.log(req.body.captcha);
+  // if (
+  //   req.body.captcha === undefined ||
+  //   req.body.captcha === "" ||
+  //   req.body.captcha === null
+  // ) {
+  //   return res.json({ success: false, msg: "Please select captcha" });
+  // }
+  // const verifyURL =
+  //   "https://www.google.com/recaptcha/api/siteverify?secret=" +
+  //   secretKey +
+  //   "&response=" +
+  //   req.body.captcha +
+  //   "&remoteip=" +
+  //   req.connection.remoteAddress;
+  // console.log(verifyURL);
+
+  // request(verifyURL, (err, response, body) => {
+  //   body = JSON.parse(body);
+  //   console.log(body)
+
+  //   if (body.success !== undefined && !body.success) {
+  //     return res.json({ "success": false, "msg": "Failed captcha" });
+  //   } else {
+  //     return res.json({ "success": true, "msg": "Successful captcha" });
+  //   }
+  // });
+
+  api.Tracker.retrieve(trackingId)
+    .then((s) => {
+      console.log(s);
+      let deliveryStatus = s.status;
+      let URL = s.public_url;
+      let carrierType = s.carrier;
+      let createdAt = s.created_at;
+      let updatedAt = s.updated_at;
+      console.log("correct btw");
+      res.render("delivery/deliveryStatusPage", {
+        title,
+        deliveryStatus,
+        URL,
+        carrierType,
+        createdAt,
+        updatedAt,
+        trackingId,
+      });
+    }) //.then(console.log)
+    .catch((e) => {
+      //console.log(e)
+      //console.log(e.error.error.code)
+      console.log(e);
+      let errorCode = e.error.error.code;
+      let errorMessage = "Please enter a valid tracking number";
+      if (errorCode == "TRACKER.NOT_FOUND") {
+        //check if tracking code not found
+        //console.log("hello")
+        res.render("delivery/deliveryStatusPageWrong", {
+          title,
+          errorMessage,
+        });
+      }
+    });
 });
 
 module.exports = router;

@@ -61,7 +61,9 @@ textarea {
 .page-wrap {
   min-height: 100vh;
 }
-
+.fixed-top{
+  background-color: white;
+}
 section {
   float: left;
   width: 100%; }

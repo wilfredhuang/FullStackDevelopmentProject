@@ -1,0 +1,28 @@
+<div class="breadcrumb">
+    <div class="container">
+        <a class="breadcrumb-item" href="/index">Home</a>
+        <span class="breadcrumb-item active">Check Delivery</span>
+    </div>
+</div>
+<section class="static about-sec">
+    <div class="container">
+        <h1>Shipment Tracking</h1>
+        <form method="POST" action="/delivery/checkingDelivery" id="checkDeliveryForm"
+            onsubmit="return submitUserForm();">
+            <p>Enter your tracking ID below.</p>
+            <div class="form-group control-label">
+                <label for="deliveryId">Tracking ID:</label>
+                <div class="input-group mb-3">
+                    <input type="text" name="trackingIdInput" class="form-control" placeholder="TrackingID" required>
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary" type="submit" value="Submit">Track</button>
+                    </div>
+                </div>
+                <p>E.g. insert shipping id example here</p>
+                <div class="g-recaptcha" data-sitekey="6Le367IZAAAAAPdbALKH99mQXdhrk7FhIhgzIwkw"
+                    data-callback="verifyCaptcha"></div>
+                <div id="g-recaptcha-error"></div>
+            </div>
+        </form>
+    </div>
+</section>
