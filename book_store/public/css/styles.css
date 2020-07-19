@@ -226,7 +226,7 @@ header .cart {
   margin-right: 10px;
   position: relative;
   margin-top: 2px !important; }
-  header .cart .quntity {
+  /* header .cart .quntity {
     font-size: 9px;
     position: absolute;
     top: -3px;
@@ -237,7 +237,7 @@ header .cart {
     border-radius: 50%;
     text-align: center;
     color: #fff;
-    padding: 1px 0; }
+    padding: 1px 0; } */
 
 .slider {
   float: left;

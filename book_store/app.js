@@ -6,9 +6,21 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const exphbs = require('express-handlebars');
 const methodOverride = require('method-override');
-const Handlebars = require('handlebars')
+const Handlebars = require('handlebars');
+const nodemailer = require('nodemailer');
 
 const { allowInsecurePrototypeAccess } = require('@handlebars/allow-prototype-access')
+
+//nodemailer 
+let transporter = nodemailer.createTransport({
+    host: 'mail.gmx.com',
+    port: 587,
+    secure: false, // true for 465, false for other ports
+    auth: {
+        user: 'legitbookstore@gmx.com', // generated ethereal user
+        pass: 'legitbookPass'  // generated ethereal password
+    },
+  });
 
 //https
 const openssl = require('openssl-nodejs')
@@ -57,8 +69,9 @@ vidjotDB.setUpDB(false); // To set up database with new tables set (true)
 // const authenticate = require('./config/passport'); 
 // authenticate.localStrategy(passport); 
 
+global.userCart = {};
 // Bring in Handlebars Helpers here
-const {convertUpper, adminCheck, emptyCart, formatDate, capitaliseFirstLetter} = require('./helpers/hbs');
+const {convertUpper, adminCheck, emptyCart, cartQty, formatDate, capitaliseFirstLetter} = require('./helpers/hbs');
 
 // creates an express server
 const app = express();
@@ -70,6 +83,7 @@ app.engine('handlebars', exphbs({
 		convertUpper: convertUpper,
 		adminCheck: adminCheck,
 		emptyCart: emptyCart,
+		cartQty: cartQty,
 		formatDate: formatDate,
 		capitaliseFirstLetter:capitaliseFirstLetter,
 	},					

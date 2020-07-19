@@ -4,12 +4,23 @@ const moment = require('moment');
 const product = require('../models/Product');
 const productadmin = require('../models/ProductAdmin');
 const cartItem = require('../models/CartItem');
+const order = require('../models/Order');
 
 const alertMessage=require('../helpers/messenger');
 const Coupon = require('../models/coupon');
 
+
+// Stripe Payment - secret key
+const stripe = require('stripe')('sk_test_ns9DyHTray5Wihniw93C2ANH00IMJTVjKw', {
+    apiVersion: '2020-03-02',
+  });
+
+const paynow = require('paynow-generator').paynowGenerator
+const QRCode = require('qrcode')
+
 // variables below for coupon feature, dont change - wilfred
-const userCart = {}
+// switched userCart to global variable @app.js
+// const userCart = {}
 let coupon_type;
 let discount = 0;
 let discount_limit = 0;
@@ -31,7 +42,8 @@ router.get('/listProduct', (req, res) => {
     })
         .then((productadmin) => {
             res.render('products/listProduct', {
-                productadmin: productadmin
+                productadmin: productadmin,
+                userCart
             });
         })
 });
@@ -44,7 +56,8 @@ router.get('/individualProduct/:id', (req, res) => {
     })
         .then((product) => {
             res.render('products/individualProduct', {
-                product
+                product,
+                userCart
             });
         })
 });
@@ -248,6 +261,67 @@ router.get('/listproduct/:id', (req, res, next) => {
     console.log(userCart);
 });
 
+// Add Cart - individual page
+
+router.post('/individualProduct/:id', (req, res, next) => {
+    // 'Add to Cart' button passes value of product id to server
+    // queries product id with database
+    // stores each cartitesm with id, name and quantity
+    console.log("ADDDDDING")
+    productadmin.findOne({
+        where: {
+            id: req.params.id // Button with name: id
+        }
+    })
+
+    .then((product) => {
+        var id = product.id;
+        let name = product.product_name;
+        let author = product.author;
+        let publisher = product.publisher;
+        let genre = product.genre;
+        let price =product.price;
+        let stock = product.stock;
+        let details = product.details;
+        let weight = product.weight;
+        let image = product.product_image;
+
+        console.log('ID IS ' + id)
+        if (userCart.length < 1) {
+            let qty = 1 
+            // Image field not decided yet, the rest is done.
+            userCart[[id]] = {"ID":id, "Name":name, "Author":author, "Publisher":publisher, "Genre":genre, "Price":price, "Stock":stock,
+            "Weight":weight, "Image":image, "Quantity":qty, "SubtotalPrice":price, "SubtotalWeight":weight}
+            console.log(userCart)
+        }
+    
+        else {
+            var check = false;
+            for (z in userCart) {
+                if (z == id) {
+                    console.log("FOUND EXISTING PRODUCT IN CART")
+                    userCart[z].Quantity += 1
+                    userCart[z].SubtotalPrice = (parseFloat(userCart[z].SubtotalPrice) + parseFloat(product.price)).toFixed(2)
+                    userCart[z].SubtotalWeight = (parseFloat(userCart[z].SubtotalWeight) + parseFloat(product.weight)).toFixed(2)
+                    check = true;
+                    console.log(userCart)
+                }
+            }
+            if (check == false) {
+                let qty = 1 
+                // Again, the Image field not decided yet, the rest is done.
+                // userCart[[id]] = {"ID":id, "Name":name, "Image":image, "Quantity":qty, "SubtotalPrice":product.price}
+                userCart[[id]] = {"ID":id, "Name":name, "Author":author, "Publisher":publisher, "Genre":genre, "Price":price, "Stock":stock,
+                "Weight":weight, "Image":image, "Quantity":qty, "SubtotalPrice":price, "SubtotalWeight":weight}
+                console.log(userCart)
+            }
+        }})
+
+    res.redirect(`/product/individualProduct/${req.params.id}`)
+    console.log("Added to cart");
+    console.log(userCart);
+});
+
 // Retrieve Cart
 // Done
 router.get('/cart', (req, res) => { 
@@ -423,18 +497,68 @@ router.post('/cart', (req, res) => {
 
 // Delete Item in Cart
 
-router.get('/delete/:id', (req, res) => {
+router.get('/deleteCartItem/:id', (req, res) => {
     console.log(userCart[req.params.id])
     console.log(req.params.id)
     console.log('Before Delete' + userCart)
     delete userCart[req.params.id];
     console.log('After Delete' + userCart)
     alertMessage(res, 'success', req.params.id + ' is successfully deleted', 'fas fa-sign-in-alt', true)
-    res.redirect('/checkout/cart');
+    res.redirect('/product/cart');
+});
+
+router.get('/checkout', (req, res) => {
+    console.log("Full total price is " + full_total_price);
+    const paymentIntent = stripe.paymentIntents.create({
+        amount: Math.ceil((full_total_price * 100)),
+        currency: 'sgd',
+        payment_method_types: ['card'],
+        receipt_email:'whjw1536@gmail.com',
+    })
+
+    .then((paymentIntent) => {
+        console.log(paymentIntent)
+        console.log("Client secret is " + paymentIntent.client_secret)
+        res.render('checkout/checkout', { client_secret: paymentIntent.client_secret });
+    })
+});
+
+router.post('/checkout', (req, res) => {
+    let fullName = req.body.fullName
+    let phoneNumber = req.body.phoneNumber
+    let address = req.body.address
+    let address1 = req.body.address1
+    let city = req.body.city
+    let country = req.body.country
+    let postalCode = req.body.postalCode
+    // create order
+    order.create({
+        fullName, phoneNumber, address, address1, city, country, postalCode
+    })
+    alertMessage(res, 'success', 'Order placed', 'fas fa-exclamation-circle', true)
+    res.redirect('/')
 });
 
 
 
+
+router.get('/paynow', (req,res) => {
+    // let payNowString = paynow('proxyType','proxyValue','edit',price,'merchantName','additionalComments')
+    let payNowString = paynow('mobile','87551457','no',0.10,'Test Merchant Name','Testing paynow, hope it works')
+    let qr = QRCode.toDataURL(payNowString)
+    .then(url => {
+    //   console.log(url)
+      res.render('checkout/paynow', {
+        payNowString,
+        qr,
+        url
+    })
+
+    })
+    .catch(err => {
+      console.error(err)
+    });
+});
 
 module.exports = router;
 

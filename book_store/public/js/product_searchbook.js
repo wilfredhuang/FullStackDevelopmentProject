@@ -1,5 +1,3 @@
-const { Json } = require("sequelize/types/lib/utils");
-
 function getBook() {
     const title = document.getElementById('product_name').value;
     const author = document.getElementById('author');
@@ -50,3 +48,24 @@ function getBook() {
 
 
 //AIzaSyA6Q9oqGie8vr5XgkvlTkhFvufujR2UPOk
+
+
+
+function search() {
+  // Declare variables
+  var input, filter, ul, li, a, i;
+  input = document.getElementById("mySearch");
+  filter = input.value.toUpperCase();
+  ul = document.getElementById("myMenu");
+  li = ul.getElementsByTagName("li");
+
+  // Loop through all list items, and hide those who don't match the search query
+  for (i = 0; i < li.length; i++) {
+    a = li[i].getElementsByTagName("a")[0];
+    if (a.innerHTML.toUpperCase().indexOf(filter) > -1) {
+      li[i].style.display = "";
+    } else {
+      li[i].style.display = "none";
+    }
+  }
+}

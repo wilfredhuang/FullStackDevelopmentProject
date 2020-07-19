@@ -8,27 +8,30 @@
         <div class="container">
             <h1>My Account / Register</h1>
             <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's printer took a galley of type and scrambled it to make a type specimen book. It has survived not only fiveLorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem </p>
-            <div class="form">
-                <form>
-                    <div class="row">
-                        <div class="col-md-4">
-                            <input placeholder="Enter User Name" required>
-                            <span class="required-star">*</span>
+            <form method="POST" action="/user/register">
+                        <!--- add in forms here--->
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" name="email" class="form-control">
                         </div>
-                        <div class="col-md-4">
-                            <input type="password" placeholder="Password" required>
-                            <span class="required-star">*</span>
+                        <div class="form-group">
+                            <label for="name">Username</label>
+                            <input  name="name" class="form-control">
                         </div>
-                        <div class="col-md-4">
-                            <input type="password" placeholder="Repeat Password" required>
-                            <span class="required-star">*</span>
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <input type="password" name="password" class="form-control">
                         </div>
-                        <div class="col-lg-8 col-md-12">
-                            <button class="btn black">Register</button>
-                            <h5>Registered?<a href="login">Login here</a></h5>
+                        <div class="form-group">
+                            <label for="password2"> Confirm Password</label>
+                            <input type="password" name="password2" class="form-control">
                         </div>
-                    </div>
-                </form>
+                        <div class="row">
+                            <div>
+                                <button class="btn black" type="submit">Sign in</button>
+                            </div>
+                        </div>
+                    </form>
             </div>
         </div>
     </section>
