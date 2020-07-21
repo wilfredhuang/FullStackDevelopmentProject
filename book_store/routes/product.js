@@ -605,7 +605,7 @@ router.get('/paynow', (req,res) => {
 
 // router.get('/paynow', (req,res) => {
 //     // let payNowString = paynow('proxyType','proxyValue','edit',price,'merchantName','additionalComments')
-//     let payNowString = paynow('mobile','87551457','no',0.10,'Test Merchant Name','Testing paynow, hope it works')
+//     let payNowString = paynow('mobile','testnum','no',0.10,'Test Merchant Name','Testing paynow, hope it works')
 //     let payNowString = paynow('mobile','87558054','no',0.10,'Test Merchant Name','Testing paynow, hope it works')
 //     // let testvar = req.session.testvar
 //     let qr = QRCode.toDataURL(payNowString)

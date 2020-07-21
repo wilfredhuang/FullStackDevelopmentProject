@@ -67,5 +67,17 @@ module.exports = {
             totalqty = parseInt(totalqty) + parseInt(qty)
         }
         return totalqty;
+    },
+
+    isSg:function (country_var) {
+        if (country_var == "Singapore")  {
+            return true;
+        }
+
+        else {
+            return false;
+        }
     }
+
+
 };

@@ -83,7 +83,7 @@ function confirmStripe(card123) {
     payment_method: {
       card: card123,
       billing_details: {
-        name: 'req.user.name'
+        name: 'placebo name'
       }
       //  Not working A request to confirm a PaymentIntent pi_1H47ztEsVjFQQiZ9KbgOCANp failed
       // Dont on it
