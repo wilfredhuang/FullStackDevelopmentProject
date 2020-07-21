@@ -67,9 +67,10 @@
             <ul id="myMenu">
                 <div class="row">
                     {{#each productadmin}}
-                    <div class="col-md-3">
+                    <li name="{{product_name}}" class="col-md-3">
+                    <div >
 
-                        <li name="{{product_name}}">
+                        
                             <div class="item">
                                 <img src="{{product_image}}" alt="img">
                                 <h3><a href="/product/individualProduct/{{id}}">{{product_name}}</a></h3>
@@ -78,9 +79,10 @@
                                             href="/product/listproduct/{{id}}">Buy Now</a></h6>
                                 </form>
                             </div>
-                        </li>
-
+                        
                     </div>
+                    </li>
+
                     {{/each}}
 
                     <!---
