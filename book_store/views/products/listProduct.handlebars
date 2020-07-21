@@ -61,8 +61,9 @@
                     </div>
                 </div>
             </div--->
-        <input type="text" id="mySearch" onkeyup="search()" placeholder="Search.." title="Type in a category">
-        <h2>recently added books to our store</h2>
+
+        <input type="text" id="mySearch" onkeyup="search()" placeholder="Search for books" title="Type in a category">
+        <h2>Books in our store</h2>
         <div class="recent-book-sec">
             <ul id="myMenu">
                 <div class="row">
@@ -72,7 +73,7 @@
 
                         
                             <div class="item">
-                                <img src="{{product_image}}" alt="img">
+                                <a href="/product/individualProduct/{{id}}"><img src="{{product_image}}" alt="{{product_name}}"></a>
                                 <h3><a href="/product/individualProduct/{{id}}">{{product_name}}</a></h3>
                                 <form action="/listproducts">
                                     <h6><span class="price">${{price}}</span> / <a
