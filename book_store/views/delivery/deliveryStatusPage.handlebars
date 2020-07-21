@@ -17,12 +17,13 @@
                 <p>Tracking ID: {{trackingId}}</p>
                 <p>Created on: {{formatDate createdAt 'DD MMM YYYY hh:mm:ss'}}</p>
                 <p>Updated on: {{formatDate updatedAt 'DD MMM YYYY hh:mm:ss'}}</p>
-                <p>Delivery Information:</p>
+                <p>Delivery Information: {{statusDetail}}</p>
                 <p>Carrier: {{carrierType}}</p>
                 <p>Click <a href="{{URL}}">here</a> to check your delivery information</p>
             </div>
             <div class="col-6 col-md-6">
-                <p>QR CODE HERE</p>
+                <p>QR Code</p>
+                <img src={{showQRCODE}} class="img-fluid" alt="QRCODE" width="250" height="250">
             </div>
         </div>
         <hr>

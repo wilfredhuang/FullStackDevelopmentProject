@@ -16,6 +16,11 @@ const client = require("twilio")(accountSid, authToken); //Twilio API
 //Google Recaptcha Secret Key
 const secretKey = "6Le367IZAAAAAJ042sFATGXzwqHsO6N3f38W4G81";
 
+//QR Code
+var QRCode = require('qrcode')
+
+
+
 router.get("/checkout", (req, res) => {
   const title = "Check Out";
   cartItem.findAll({}).then((cartItem) => {
@@ -300,19 +305,26 @@ router.post("/checkingDelivery", (req, res) => {
       console.log(s);
       let deliveryStatus = s.status;
       let URL = s.public_url;
+      let statusDetail = s.status_detail
       let carrierType = s.carrier;
       let createdAt = s.created_at;
       let updatedAt = s.updated_at;
+      QRCode.toDataURL(URL, function (err, url) {
+        let showQRCODE = url;
+        console.log(url)
+        res.render("delivery/deliveryStatusPage", {
+          title,
+          deliveryStatus,
+          statusDetail,
+          URL,
+          carrierType,
+          createdAt,
+          updatedAt,
+          trackingId,
+          showQRCODE
+        });})
       console.log("correct btw");
-      res.render("delivery/deliveryStatusPage", {
-        title,
-        deliveryStatus,
-        URL,
-        carrierType,
-        createdAt,
-        updatedAt,
-        trackingId,
-      });
+      
     }) //.then(console.log)
     .catch((e) => {
       //console.log(e)

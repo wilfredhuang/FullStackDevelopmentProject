@@ -67,5 +67,9 @@ module.exports = {
             totalqty = parseInt(totalqty) + parseInt(qty)
         }
         return totalqty;
+    },
+
+    remove_undersocre: function(string) { 
+        return string.replace(/ /g, "_"); 
     }
 };
