@@ -16,7 +16,8 @@ const stripe = require('stripe')('sk_test_ns9DyHTray5Wihniw93C2ANH00IMJTVjKw', {
   });
 
 const paynow = require('paynow-generator').paynowGenerator
-const QRCode = require('qrcode')
+const QRCode = require('qrcode');
+const { CheckboxRadioContainer } = require('admin-bro');
 
 // variables below for coupon feature, dont change - wilfred
 // switched req.session.userCart to global variable @app.js
@@ -563,6 +564,59 @@ router.get('/paynow', (req,res) => {
       console.error(err)
     });
 });
+
+// 
+// router.post('/checkout', (req, res) => {
+//     let fullName = req.body.fullName
+//     let phoneNumber = req.body.phoneNumber
+//     let address = req.body.address
+//     let address1 = req.body.address1
+//     let city = req.body.city
+//     let country = req.body.country
+//     req.session.country = req.body.country
+//     let country = req.session.country
+//     let postalCode = req.body.postalCode
+//     console.log("country is " +  country)
+//     // create order
+//     order.create({
+//         fullName, phoneNumber, address, address1, city, country, postalCode
+//     })
+//     alertMessage(res, 'success', 'Order placed', 'fas fa-exclamation-circle', true)
+//     res.redirect('/')
+//     // order.create({
+//     //     fullName, phoneNumber, address, address1, city, country, postalCode
+//     // })
+//     // alertMessage(res, 'success', 'Order placed', 'fas fa-exclamation-circle', true)
+//     res.redirect('selectPayment')
+// });
+
+// router.get('/selectPayment', (req, res) => {
+//     // using helper 'isSg' to determine if paynow option should be displayed when country session variable is 'Singapore'
+//     country = req.session.country
+//     res.render('checkout/selectPayment',{
+//         country
+//     })
+// })
+
+
+// router.post('/selectPayment', (req, res) => {
+//     res.redirect('paynow')
+// })
+
+// router.get('/paynow', (req,res) => {
+//     // let payNowString = paynow('proxyType','proxyValue','edit',price,'merchantName','additionalComments')
+//     let payNowString = paynow('mobile','87551457','no',0.10,'Test Merchant Name','Testing paynow, hope it works')
+//     let payNowString = paynow('mobile','87558054','no',0.10,'Test Merchant Name','Testing paynow, hope it works')
+//     // let testvar = req.session.testvar
+//     let qr = QRCode.toDataURL(payNowString)
+//     .then(url => {
+//     //   console.log(url)
+// router.get('/paynow', (req,res) => {
+//     });
+// });
+
+
+
 
 module.exports = router;
 

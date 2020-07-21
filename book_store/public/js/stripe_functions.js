@@ -75,13 +75,13 @@ function myFoo() {
 //   });
 //   }
 
-function confirmStripe(card) {
-  console.log(card)
+function confirmStripe(card123) {
+  console.log(card123)
   // alert(card)
   // alert(document.getElementById('submit').value)
   stripe123.confirmCardPayment(document.getElementById('submit').value, {
     payment_method: {
-      card: card,
+      card: card123,
       billing_details: {
         name: 'req.user.name'
       }
