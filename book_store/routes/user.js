@@ -8,8 +8,46 @@ const passport = require('passport');
 const cartItem = require("../models/CartItem");
 const order = require("../models/Order");
 const ensureAuthenticated = require('../helpers/auth');
+const { v1: uuidv1 } = require('uuid');
+const nodemailer = require('nodemailer');
+const jwt = require('jsonwebtoken');
+const SECRET = 'fX7UvuRP55';
 
-router.get("/auth/facebook", passport.authenticate("facebook",{scope: 'email'}));
+
+
+//nodemailer 
+let transporter = nodemailer.createTransport({
+    host: 'mail.gmx.com',
+    port: 587,
+    secure: false, // true for 465, false for other ports
+    auth: {
+        user: 'legitbookstore@gmx.com', // generated ethereal user
+        pass: 'legitbookPass'  // generated ethereal password
+    },
+    tls: {
+        rejectUnauthorized: false
+    },
+  });
+
+//jwt middleware
+function authenticateToken(req, res, next) {
+  const authHeader = req.headers['authorization']
+  const token = authHeader && authHeader.split(' ')[1]
+  if (token == null) return res.sendStatus(401)
+
+  jwt.verify(token, SECRET, (err, user) => {
+    console.log(err)
+    if (err) return res.sendStatus(403)
+    req.user = user
+    next()
+  })
+}
+
+router.get('/confirmation/:token',authenticateToken,(req,res)=>{
+    user.update({confirmed : true})
+    res.render("/");
+});
+router.get("/auth/facebook", passport.authenticate("facebook",{scope: ['email']}));
 
 router.get(
     "/auth/facebook/callback",
@@ -19,7 +57,7 @@ router.get(
     })
   );
 
-router.get('/userPage',(req, res) => {
+router.get('/userPage', (req, res) => {
     const title = 'User Information';
     res.render("user/userpage", {
         title
@@ -34,7 +72,6 @@ router.get('/userRecentOrder', (req, res) => {
         //}
     })
     .then((order) => {
-        console.log(order)
         res.render("user/userRecentOrder", {
             order:order,
             title
@@ -180,10 +217,27 @@ router.post('/register', (req, res) => {
                         bcrypt.hash(password, salt, function(err, hash) {
                             if (err) return next(err);
                              password = hash;
-                             role = "user";
-                             User.create({ name, email, password,role})
+                             theid = uuidv1()
+                             User.create({ id:theid , name, email, password,isadmin:false,confirmed:false})
                                 .then(user => {
-                                    alertMessage(res, 'success', user.name + ' added.Please login', 'fas fa-sign-in-alt', true);
+                                    alertMessage(res, 'success', user.name + ' added.Please Verify you account', 'fas fa-sign-in-alt', true);
+                                    jwt.sign(
+                                        {
+                                          user: theid, 
+                                        },
+                                        SECRET,
+                                        {
+                                          expiresIn: '1d',
+                                        },
+                                        (err, emailToken) => {
+                                          const url = `https://localhost:5000/user/confirmation/${emailToken}`;
+                                          transporter.sendMail({
+                                            to: req.body.email,
+                                            subject: 'Confirm Email',
+                                            html: `Please click this email to confirm your email: <a href="${url}">${url}</a>`,
+                                          });
+                                        },
+                                      );
                                     res.redirect('/user/login');
                                 })
                                 .catch(err => console.log(err));                            
@@ -194,11 +248,47 @@ router.post('/register', (req, res) => {
     }
 });
 
+router.get('/logout', function(req, res){
+    req.logout();
+    res.redirect('/');
+  });
+
 router.get('/userPage',ensureAuthenticated,(req,res) =>{
-    res.render('user/register'); 
+    res.render('user/userPage'); 
 });
 
-router.get('/userPage/changeinfo',ensureAuthenticated,(req,res) =>{
+router.post('/userPage/changeinfo',(req,res) =>{
+    errors = [];
+    let {email,name, password, password2 } = req.body;
+    console.log(req.body);
+    bcrypt.genSalt(10, function(err, salt) {
+        if (err) return next(err);
+        bcrypt.hash(password, salt, function(err, hash) {
+            if (err) return next(err);
+            password = hash;
+            if (password != user.password){
+                error.push({text:"Wrong password"});
+            }else{
+                if (name != null){
+                    User.update({name : name})
+                }
+                if (email != null){
+                    User.update({email : email})
+                }
+                if (password2 != null){
+                    bcrypt.hash(password2, salt, function(err, hash) {
+                        if (err) return next(err);
+                        password2 = hash;
+                        User.update({password : password2})
+                    });
+                }   
+            }
+        });
+    });
+    
+});
+
+router.get('/changeinfo', function(req, res){
     res.render('user/changeinfo');
 });
 

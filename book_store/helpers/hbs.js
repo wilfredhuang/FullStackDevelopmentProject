@@ -63,10 +63,9 @@ module.exports = {
     cartQty: function (userCart) {
         let totalqty = 0;
         for (z in userCart) {
-            // bugged
-            parseInt(totalqty = parseInt(totalqty) + userCart[z].Quantity);
-            // parseInt(totalqty) += (userCart[z].Quantity)
+            let qty = userCart[z].Quantity 
+            totalqty = parseInt(totalqty) + parseInt(qty)
         }
-        return parseInt(totalqty);
+        return totalqty;
     }
 };

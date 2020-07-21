@@ -1,47 +1,54 @@
 <div class="breadcrumb">
     <div class="container">
         <a class="breadcrumb-item" href="/">Home</a>
-        <span class="breadcrumb-item active">Recent Order</span>
+        <span class="breadcrumb-item active">Order History</span>
     </div>
 </div>
 <section class="static about-sec">
     <div class="container">
         <div class="row">
-            <div class="tab col-3">
+            <div class="tab col-12 col-md-2">
                 <button class="tab">Navigation</button>
                 <a href="/user/userPage">
                     <button class="inactive-tab">User Info</button>
                 </a>
                 <a href="/user/userRecentOrder">
-                    <button class="active-tab">Recent Orders</button>
+                    <button class="active-tab">Order History</button>
                 </a>
                 <a href="/user/userCart">
                     <button class="inactive-tab">Cart</button>
                 </a>
             </div>
-            <div id="recentOrders" class="col-9">
-                <h2>Recent Orders</h2>
+            <div id="recentOrders" class="col-10">
+                <br>
+                <h2>Order History</h2>
+                <br>
+                <form class="form-inline my-2 my-lg-0">
+                    <input class="form-control mr-sm-2" id="searchOrderInput" onkeyup="searchOrderFunction()"
+                        type="search" placeholder="Search Order No" aria-label="Search">
+                </form>
                 <br>
                 <div>
-                    <table class="table table-striped" id="myTable">
+                    <table class="table table-striped" id="orderTable">
                         <thead>
                             <tr>
                                 <th>Order No</th>
-                                <th>Date Sent</th>
-                                <th>Date Received</th>
-                                <th>Delivery Type</th>
+                                <th>Order Date</th>
+                                <th>Order ID</th>
                                 <th>Delivery Status</th>
+                                <th></th>
                             </tr>
                         </thead>
                         <tbody>
                             {{#if order}}
                             {{#each order}}
                             <tr>
-                                <td><a href="/delivery/viewMoreOrder/{{id}}">{{id}}</a></td>
+                                <td>{{id}}</td>
                                 <td>{{formatDate dateStart 'DD MMM YYYY'}}</td>
-                                <td>{{formatDate dateEnd 'DD MMM YYYY'}}</td>
-                                <td>Normal Shipping</td>
+                                <td>{{shippingId}}</td>
                                 <td id="deliveryStatus">{{capitaliseFirstLetter deliveryStatus}}</td>
+                                <td><a href="/delivery/viewMoreOrder/{{id}}">View More <i class="fa fa-chevron-right"
+                                            aria-hidden="true"></i></a></td>
                             </tr>
                             {{/each}}
                             {{else}}
