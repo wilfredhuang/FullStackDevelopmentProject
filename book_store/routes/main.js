@@ -5,6 +5,12 @@ const alertMessage = require("../helpers/messenger");
 
 router.get("/", (req, res) => {
   const title = "Bookstore Home Page";
+  if (!req.session.userCart) {
+    req.session.userCart = {};
+    // ssn = req.session.userCart;
+  }
+
+  console.log(req.session)
   res.render("index", {
     // renders views/index.handlebars
     title,
@@ -13,6 +19,12 @@ router.get("/", (req, res) => {
 
 router.get("/index", (req, res) => {
   const title = "Bookstore Home Page";
+  if (!req.session.userCart) {
+    req.session.userCart = {};
+    // ssn = req.session.userCart;
+  }
+
+  console.log(req.session)
   res.render("index", {
     // renders views/index.handlebars
     title,

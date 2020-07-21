@@ -69,7 +69,7 @@ vidjotDB.setUpDB(false); // To set up database with new tables set (true)
 // const authenticate = require('./config/passport'); 
 // authenticate.localStrategy(passport); 
 
-global.userCart = {};
+// global.userCart = {};
 // Bring in Handlebars Helpers here
 const {convertUpper, adminCheck, emptyCart, cartQty, formatDate, capitaliseFirstLetter} = require('./helpers/hbs');
 
@@ -138,6 +138,7 @@ app.use(function (req, res, next) {
 	res.locals.error_msg = req.flash('error_msg');
 	res.locals.error = req.flash('error');
 	res.locals.user = req.user || null;
+	res.locals.UC = req.session.userCart;
 	next();
 });
 

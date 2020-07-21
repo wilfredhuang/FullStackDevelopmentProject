@@ -19,8 +19,8 @@ const paynow = require('paynow-generator').paynowGenerator
 const QRCode = require('qrcode')
 
 // variables below for coupon feature, dont change - wilfred
-// switched userCart to global variable @app.js
-// const userCart = {}
+// switched req.session.userCart to global variable @app.js
+// const req.session.userCart = {}
 let coupon_type;
 let discount = 0;
 let discount_limit = 0;
@@ -42,8 +42,7 @@ router.get('/listProduct', (req, res) => {
     })
         .then((productadmin) => {
             res.render('products/listProduct', {
-                productadmin: productadmin,
-                userCart
+                productadmin: productadmin
             });
         })
 });
@@ -56,8 +55,7 @@ router.get('/individualProduct/:id', (req, res) => {
     })
         .then((product) => {
             res.render('products/individualProduct', {
-                product,
-                userCart
+                product
             });
         })
 });
@@ -226,39 +224,44 @@ router.get('/listproduct/:id', (req, res, next) => {
         let image = product.product_image;
 
         console.log('ID IS ' + id)
-        if (userCart.length < 1) {
+        // if statement probably not working already due to length only available for array and not objects
+        // however leave it as it works fine due to the else statement
+        if (req.session.userCart.length < 1) {
             let qty = 1 
             // Image field not decided yet, the rest is done.
-            userCart[[id]] = {"ID":id, "Name":name, "Author":author, "Publisher":publisher, "Genre":genre, "Price":price, "Stock":stock,
+            // Double square bracket to store variable 'keys'
+            req.session.userCart[[id]] = {"ID":id, "Name":name, "Author":author, "Publisher":publisher, "Genre":genre, "Price":price, "Stock":stock,
             "Weight":weight, "Image":image, "Quantity":qty, "SubtotalPrice":price, "SubtotalWeight":weight}
-            console.log(userCart)
+            console.log(req.session.userCart)
         }
     
         else {
             var check = false;
-            for (z in userCart) {
+            for (z in req.session.userCart) {
                 if (z == id) {
                     console.log("FOUND EXISTING PRODUCT IN CART")
-                    userCart[z].Quantity += 1
-                    userCart[z].SubtotalPrice = (parseFloat(userCart[z].SubtotalPrice) + parseFloat(product.price)).toFixed(2)
-                    userCart[z].SubtotalWeight = (parseFloat(userCart[z].SubtotalWeight) + parseFloat(product.weight)).toFixed(2)
+                    req.session.userCart[z].Quantity += 1
+                    req.session.userCart[z].SubtotalPrice = (parseFloat(req.session.userCart[z].SubtotalPrice) + parseFloat(product.price)).toFixed(2)
+                    req.session.userCart[z].SubtotalWeight = (parseFloat(req.session.userCart[z].SubtotalWeight) + parseFloat(product.weight)).toFixed(2)
                     check = true;
-                    console.log(userCart)
+                    console.log(req.session.userCart)
                 }
             }
             if (check == false) {
                 let qty = 1 
                 // Again, the Image field not decided yet, the rest is done.
-                // userCart[[id]] = {"ID":id, "Name":name, "Image":image, "Quantity":qty, "SubtotalPrice":product.price}
-                userCart[[id]] = {"ID":id, "Name":name, "Author":author, "Publisher":publisher, "Genre":genre, "Price":price, "Stock":stock,
+                // req.session.userCart[[id]] = {"ID":id, "Name":name, "Image":image, "Quantity":qty, "SubtotalPrice":product.price}
+                req.session.userCart[[id]] = {"ID":id, "Name":name, "Author":author, "Publisher":publisher, "Genre":genre, "Price":price, "Stock":stock,
                 "Weight":weight, "Image":image, "Quantity":qty, "SubtotalPrice":price, "SubtotalWeight":weight}
-                console.log(userCart)
+                console.log(req.session.userCart)
             }
-        }})
+        }
+        req.session.save();
+    })
 
     res.redirect('/product/listproduct')
     console.log("Added to cart");
-    console.log(userCart);
+    console.log(req.session.userCart);
 });
 
 // Add Cart - individual page
@@ -287,39 +290,41 @@ router.post('/individualProduct/:id', (req, res, next) => {
         let image = product.product_image;
 
         console.log('ID IS ' + id)
-        if (userCart.length < 1) {
+        if (req.session.userCart.length < 1) {
             let qty = 1 
             // Image field not decided yet, the rest is done.
-            userCart[[id]] = {"ID":id, "Name":name, "Author":author, "Publisher":publisher, "Genre":genre, "Price":price, "Stock":stock,
+            req.session.userCart[[id]] = {"ID":id, "Name":name, "Author":author, "Publisher":publisher, "Genre":genre, "Price":price, "Stock":stock,
             "Weight":weight, "Image":image, "Quantity":qty, "SubtotalPrice":price, "SubtotalWeight":weight}
-            console.log(userCart)
+            console.log(req.session.userCart)
         }
     
         else {
             var check = false;
-            for (z in userCart) {
+            for (z in req.session.userCart) {
                 if (z == id) {
                     console.log("FOUND EXISTING PRODUCT IN CART")
-                    userCart[z].Quantity += 1
-                    userCart[z].SubtotalPrice = (parseFloat(userCart[z].SubtotalPrice) + parseFloat(product.price)).toFixed(2)
-                    userCart[z].SubtotalWeight = (parseFloat(userCart[z].SubtotalWeight) + parseFloat(product.weight)).toFixed(2)
+                    req.session.userCart[z].Quantity += 1
+                    req.session.userCart[z].SubtotalPrice = (parseFloat(req.session.userCart[z].SubtotalPrice) + parseFloat(product.price)).toFixed(2)
+                    req.session.userCart[z].SubtotalWeight = (parseFloat(req.session.userCart[z].SubtotalWeight) + parseFloat(product.weight)).toFixed(2)
                     check = true;
-                    console.log(userCart)
+                    console.log(req.session.userCart)
                 }
             }
             if (check == false) {
                 let qty = 1 
                 // Again, the Image field not decided yet, the rest is done.
-                // userCart[[id]] = {"ID":id, "Name":name, "Image":image, "Quantity":qty, "SubtotalPrice":product.price}
-                userCart[[id]] = {"ID":id, "Name":name, "Author":author, "Publisher":publisher, "Genre":genre, "Price":price, "Stock":stock,
+                // req.session.userCart[[id]] = {"ID":id, "Name":name, "Image":image, "Quantity":qty, "SubtotalPrice":product.price}
+                req.session.userCart[[id]] = {"ID":id, "Name":name, "Author":author, "Publisher":publisher, "Genre":genre, "Price":price, "Stock":stock,
                 "Weight":weight, "Image":image, "Quantity":qty, "SubtotalPrice":price, "SubtotalWeight":weight}
-                console.log(userCart)
+                console.log(req.session.userCart)
             }
-        }})
+        }
+        req.session.save();
+    })
 
     res.redirect(`/product/individualProduct/${req.params.id}`)
     console.log("Added to cart");
-    console.log(userCart);
+    console.log(req.session.userCart);
 });
 
 // Retrieve Cart
@@ -330,13 +335,13 @@ router.get('/cart', (req, res) => {
     // console.log(time2)
     
     // Get Subtotal Price of each item
-    for (z in userCart) {
-        userCart[z].SubtotalPrice = (userCart[z].Quantity * userCart[z].Price).toFixed(2);
+    for (z in req.session.userCart) {
+        req.session.userCart[z].SubtotalPrice = (req.session.userCart[z].Quantity * req.session.userCart[z].Price).toFixed(2);
     }
     
-    for (z in userCart) {
-        userCart[z].SubtotalWeight = (userCart[z].Quantity * userCart[z].Weight)
-        // console.log(`Subtotal Weight is ${userCart[z].SubtotalWeight}`)
+    for (z in req.session.userCart) {
+        req.session.userCart[z].SubtotalWeight = (req.session.userCart[z].Quantity * req.session.userCart[z].Weight)
+        // console.log(`Subtotal Weight is ${req.session.userCart[z].SubtotalWeight}`)
     }
     
     // Get the full subtotal price of all items
@@ -348,8 +353,8 @@ router.get('/cart', (req, res) => {
     let total_weight = 0;
     let total_weight_oz = 0;
     
-    for (z in userCart) {
-        total_weight = total_weight + userCart[z].SubtotalWeight
+    for (z in req.session.userCart) {
+        total_weight = total_weight + req.session.userCart[z].SubtotalWeight
     }
     
     // Round up to next number regardless of decimal value with ceil function
@@ -357,8 +362,8 @@ router.get('/cart', (req, res) => {
     
     if (coupon_type == "OVERALL") {
         console.log("Coupon TYPE IS OVERALL")
-        for (z in userCart) {
-            full_subtotal_price = (parseFloat(full_subtotal_price) + parseFloat(userCart[z].SubtotalPrice)).toFixed(2)
+        for (z in req.session.userCart) {
+            full_subtotal_price = (parseFloat(full_subtotal_price) + parseFloat(req.session.userCart[z].SubtotalPrice)).toFixed(2)
             console.log(full_subtotal_price)
         }
         discounted_price = ((parseFloat(full_subtotal_price) + parseFloat(shipping_fee)) * (parseFloat(discount))).toFixed(2)
@@ -374,8 +379,8 @@ router.get('/cart', (req, res) => {
     
     else if (coupon_type == "SHIP") {
         console.log("Coupon TYPE IS SHIP")
-        for (z in userCart) {
-            full_subtotal_price = (parseFloat(full_subtotal_price) + parseFloat(userCart[z].SubtotalPrice)).toFixed(2)
+        for (z in req.session.userCart) {
+            full_subtotal_price = (parseFloat(full_subtotal_price) + parseFloat(req.session.userCart[z].SubtotalPrice)).toFixed(2)
             console.log(full_subtotal_price)
         }
         shipping_discounted_price = parseFloat(shipping_fee) * (shipping_discount)
@@ -394,8 +399,8 @@ router.get('/cart', (req, res) => {
     
     else if (coupon_type == "SUB") {
         console.log("Coupon TYPE IS SUB")
-        for (z in userCart) {
-            full_subtotal_price = (parseFloat(full_subtotal_price) + parseFloat(userCart[z].SubtotalPrice)).toFixed(2)
+        for (z in req.session.userCart) {
+            full_subtotal_price = (parseFloat(full_subtotal_price) + parseFloat(req.session.userCart[z].SubtotalPrice)).toFixed(2)
             console.log(full_subtotal_price)
         }
         sub_discounted_price = parseFloat(full_subtotal_price) * (sub_discount)
@@ -416,8 +421,8 @@ router.get('/cart', (req, res) => {
     }
     
     else {
-        for (z in userCart) {
-            full_subtotal_price = (parseFloat(full_subtotal_price) + parseFloat(userCart[z].SubtotalPrice)).toFixed(2)
+        for (z in req.session.userCart) {
+            full_subtotal_price = (parseFloat(full_subtotal_price) + parseFloat(req.session.userCart[z].SubtotalPrice)).toFixed(2)
             console.log(full_subtotal_price)
         }
         full_total_price = (parseFloat(full_subtotal_price) + parseFloat(shipping_fee)).toFixed(2)
@@ -427,7 +432,6 @@ router.get('/cart', (req, res) => {
         discount,
         discounted_price,
         full_subtotal_price,
-        userCart,
         full_total_price,
         shipping_fee,
         total_weight,
@@ -478,15 +482,15 @@ router.post('/applyCoupon', (req,res) => {
 // Update Cart / Proceed to Checkout
 router.post('/cart', (req, res) => {
     if (req.body.checkoutButton == "Update") { 
-        for (ID in userCart) {
+        for (ID in req.session.userCart) {
             let query = req.body["Q"+ID]
             console.log("Queried Quantity is " + query)
-            userCart[ID].Quantity = query
-            // newSubTotal = query * userCart[ID].SubtotalPrice
+            req.session.userCart[ID].Quantity = query
+            // newSubTotal = query * req.session.userCart[ID].SubtotalPrice
             // console.log("Q is" + req.body["Q" + ID])
 
         }
-        console.log(userCart)
+        console.log(req.session.userCart)
         res.redirect('cart');
     }
 
@@ -498,11 +502,11 @@ router.post('/cart', (req, res) => {
 // Delete Item in Cart
 
 router.get('/deleteCartItem/:id', (req, res) => {
-    console.log(userCart[req.params.id])
+    console.log(req.session.userCart[req.params.id])
     console.log(req.params.id)
-    console.log('Before Delete' + userCart)
-    delete userCart[req.params.id];
-    console.log('After Delete' + userCart)
+    console.log('Before Delete' + req.session.userCart)
+    delete req.session.userCart[req.params.id];
+    console.log('After Delete' + req.session.userCart)
     alertMessage(res, 'success', req.params.id + ' is successfully deleted', 'fas fa-sign-in-alt', true)
     res.redirect('/product/cart');
 });
@@ -544,7 +548,7 @@ router.post('/checkout', (req, res) => {
 
 router.get('/paynow', (req,res) => {
     // let payNowString = paynow('proxyType','proxyValue','edit',price,'merchantName','additionalComments')
-    let payNowString = paynow('mobile','87551457','no',0.10,'Test Merchant Name','Testing paynow, hope it works')
+    let payNowString = paynow('mobile','87558054','no',0.10,'Test Merchant Name','Testing paynow, hope it works')
     let qr = QRCode.toDataURL(payNowString)
     .then(url => {
     //   console.log(url)
