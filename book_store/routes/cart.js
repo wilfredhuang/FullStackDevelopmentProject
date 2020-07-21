@@ -309,6 +309,7 @@ router.post("/checkingDelivery", (req, res) => {
       let carrierType = s.carrier;
       let createdAt = s.created_at;
       let updatedAt = s.updated_at;
+      let carrierService = s.carrier_detail.service;
       QRCode.toDataURL(URL, function (err, url) {
         let showQRCODE = url;
         console.log(url)
@@ -318,6 +319,7 @@ router.post("/checkingDelivery", (req, res) => {
           statusDetail,
           URL,
           carrierType,
+          carrierService,
           createdAt,
           updatedAt,
           trackingId,
@@ -331,14 +333,17 @@ router.post("/checkingDelivery", (req, res) => {
       //console.log(e.error.error.code)
       console.log(e);
       let errorCode = e.error.error.code;
-      let errorMessage = "Please enter a valid tracking number";
       if (errorCode == "TRACKER.NOT_FOUND") {
         //check if tracking code not found
         //console.log("hello")
-        res.render("delivery/deliveryStatusPageWrong", {
-          title,
-          errorMessage,
-        });
+        alertMessage(
+          res,
+          "danger",
+          "Please enter a valid tracking number",
+          "fas faexclamation-circle",
+          true
+        );
+        res.redirect("checkDelivery");
       }
     });
 });
