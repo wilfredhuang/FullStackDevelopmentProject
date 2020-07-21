@@ -18,3 +18,15 @@ function searchAddress(){
 //     console.log("===================================")
 //     console.log(shippingId)
 // }
+
+//const webhook = new api.Webhook({ url: 'http://example.com/deliveryUpdates' });
+
+//webhook.save().then(console.log);
+//api.Webhook.retrieve('hook_20de88bbc9784a1c9512332c2c037765').then(console.log);
+
+// const report = new api.Report({
+//   type: 'shipment',
+//   start_date: '2016-10-01',
+//   end_date: '2016-10-31'
+// });
+// report.save().then(console.log);

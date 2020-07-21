@@ -18,7 +18,6 @@ const toAddress = new api.Address({
   phone: "310-808-5243",
 });
 
-//console.log(toAddress)
 //Test retrive information
 
 //const webhook = new api.Webhook({ url: 'http://example.com' });
@@ -84,10 +83,6 @@ fromAddress.save().then((addr) => {
   console.log(addr.id);
 }); */
 
-/* es2017 with async/await: */
-/*await fromAddress.save();
-console.log(fromAddress.id);
-*/
 /*
 const parcel = new api.Parcel({
   length: 9,
@@ -121,68 +116,3 @@ shipment
     s.buy(shipment.lowestRate(["USPS"], ["First"])).then(console.log)
   );
 */
-
-// this address will not be verified
-// const toAddress2 = new api.Address({
-//   verify: ['delivery'],
-//   street1: '417 montgomery streat', // street1 will be cleaned up
-//   city: 'SAN FRANCISCO',
-//   state: 'CA',
-//   zip: '94104',
-//   country: 'US',
-//   company: 'EasyPost',
-//   phone: '415-123-4567',
-// });
-
-// toAddress2.save().then((addr) => {
-//   // verifiableAddress is updated, and also passed into
-//   // the promise resolve.
-//   console.log(addr.street1);
-//   // 417 Montgomery Street
-
-//   console.log(addr.verifications);
-//   /*
-//   { delivery:
-//    { success: true,
-//      errors: [],
-//        } }
-//      */
-// });
-
-// const accountSid = 'AC7994551ea296710e5de3b74d7a93056c';
-// const authToken = 'f5ac6a9439b75395ce54e9783d0f8877';
-// const client = require('twilio')(accountSid, authToken);
-
-// client.messages
-//   .create({
-//      body: 'This is the ship that made the Kessel Run in fourteen parsecs? Your tracking code is and check your delivery here!',
-//      from: '+12059461964',
-//      to: '+6590251744'
-//    })
-//   .then(message => console.log(message.sid));
-
-//const webhook = new api.Webhook({ url: 'http://example.com/deliveryUpdates' });
-
-//webhook.save().then(console.log);
-//api.Webhook.retrieve('hook_20de88bbc9784a1c9512332c2c037765').then(console.log);
-/*
-const report = new api.Report({
-  type: 'shipment',
-  start_date: '2016-10-01',
-  end_date: '2016-10-31'
-});
-report.save().then(console.log);
-*/
-
-
-
-var QRCode = require('qrcode')
- 
-// QRCode.toString('I am a pony!',{type:'terminal'}, function (err, url) {
-//   console.log(url)
-// })
-
-QRCode.toDataURL('http://example.com', {type:'terminal'},function (err, url) {
-  
-  console.log(url)
-})
