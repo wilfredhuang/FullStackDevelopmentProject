@@ -116,3 +116,9 @@ shipment
     s.buy(shipment.lowestRate(["USPS"], ["First"])).then(console.log)
   );
 */
+
+//api.Shipment.retrieve('shp_ac606b3af8c54782b5f7f05f15061368').then(console.log);
+
+ api.Shipment.retrieve('shp_ac606b3af8c54782b5f7f05f15061368').then(s => {
+   s.refund().then(() => console.log(s));
+ });

@@ -119,7 +119,8 @@ router.post("/processCheckout", (req, res) => {
     street1: "1 E 161st St.",
     city: "Bronx",
     state: "NY",
-    zip: "10451",
+    //zip: "10451",
+    zip: "12412352551",
   });
   toAddress
     .save()
@@ -248,13 +249,103 @@ router.get("/viewMoreOrder/:id", (req, res) => {
       console.log(s.tracker.updated_at);
       const deliveryStatus = s.tracker.status;
       const trackingURL = s.tracker.public_url;
-
-      res.render("products/viewMoreOrder", {
-        order: order,
-        title,
-        deliveryStatus,
-        trackingURL,
-      });
+      if (deliveryStatus == "pre_transit"){
+        let progressPercentage =25;
+        let progressColour = "bg-info";
+        let progressColourText = "text-info";
+        res.render("products/viewMoreOrder", {
+          order: order,
+          title,
+          deliveryStatus,
+          trackingURL,
+          progressPercentage,
+          progressColour,
+          progressColourText
+        });
+      }
+      else if (deliveryStatus == "in_transit"){
+        let progressPercentage = 50;
+        let progressColour = "bg-info";
+        let progressColourText = "text-info";
+        res.render("products/viewMoreOrder", {
+          order: order,
+          title,
+          deliveryStatus,
+          trackingURL,
+          progressPercentage,
+          progressColour,
+          progressColourText
+        });
+      }
+      else if (deliveryStatus == "out_for_delivery"){
+        let progressPercentage = 75;
+        let progressColour = "bg-info";
+        let progressColourText = "text-info";
+        res.render("products/viewMoreOrder", {
+          order: order,
+          title,
+          deliveryStatus,
+          trackingURL,
+          progressPercentage,
+          progressColour,
+          progressColourText
+        });
+      }
+      else if (deliveryStatus == "delivered"){
+        let progressPercentage = 100;
+        let progressColour = "bg-success";
+        let progressColourText = "text-success";
+        res.render("products/viewMoreOrder", {
+          order: order,
+          title,
+          deliveryStatus,
+          trackingURL,
+          progressPercentage,
+          progressColour,
+          progressColourText
+        });
+      }
+      else if (deliveryStatus == "return_to_sender"){
+        let progressPercentage = 0;
+        let progressColour = "bg-info";
+        let progressColourText = "text-info";
+        res.render("products/viewMoreOrder", {
+          order: order,
+          title,
+          deliveryStatus,
+          trackingURL,
+          progressPercentage,
+          progressColour,
+          progressColourText
+        });
+      }
+      else if (deliveryStatus == "failure"){
+        let progressPercentage = 100;
+        let progressColour = "bg-danger";
+        let progressColourText = "text-danger";
+        res.render("products/viewMoreOrder", {
+          order: order,
+          title,
+          deliveryStatus,
+          trackingURL,
+          progressPercentage,
+          progressColour,
+          progressColourText
+        });
+      }
+      else{
+        let progressPercentage = 0;
+        let progressColour = "bg-dark";
+        let progressColourText = "text-dark";
+        res.render("products/viewMoreOrder", {
+          order: order,
+          title,
+          deliveryStatus,
+          trackingURL,
+          progressPercentage,
+          progressColour,
+          progressColourText
+        });}
     });
   });
 });
@@ -405,7 +496,7 @@ router.post("/checkingDelivery", (req, res) => {
       else if (deliveryStatus == "return_to_sender"){
         let progressPercentage = 0;
         let progressColour = "bg-info";
-        let progressColourText = "";
+        let progressColourText = "text-info";
         QRCode.toDataURL(URL, function (err, url) {
           let showQRCODE = url;
           //console.log(url)
