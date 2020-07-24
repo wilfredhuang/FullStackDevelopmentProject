@@ -65,14 +65,14 @@ router.get('/userPage', (req, res) => {
 });
 
 router.get('/userRecentOrder', (req, res) => {
-    const title = 'Recent Orders';
+    const title = 'Order History';
     order.findAll({
         //where:{
           //  id: req.params.id,
         //}
     })
     .then((order) => {
-        res.render("user/userRecentOrder", {
+        res.render("user/userRecentOrder1", {
             order:order,
             title
         });
