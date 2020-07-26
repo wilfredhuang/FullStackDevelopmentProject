@@ -70,6 +70,7 @@ module.exports = {
     },
 
     isSg:function (country_var) {
+        console.log(`The user country is ${country_var}`)
         if (country_var == "Singapore")  {
             return true;
         }

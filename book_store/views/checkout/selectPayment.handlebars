@@ -1,16 +1,16 @@
 <div class="container">
-    {{#if (isSg country)}}
+    {{#if (isSg countryShipment)}}
     <h3> Payment </h3>
     <h4> We accept PayNow payment for Singaporean Residents, 
     do note that you would have to wait slightly longer for order confirmation</h4>
     <h4> Stripe payment is instantaneous, we highly recommend it</h4>
     <div class="row">
         <div class="col-lg-6">
-            <form method="POST" action="#">
-            <input type="submit" class="btn btn-default" value="PayNow" formaction="/product/paynow">
+            <form method="POST" action="/">
+            <input type="submit" class="btn btn-default" value="PayNow" formaction="/product/goToPayNow">
         </div>
         <div class="col-lg-6">
-            <input type="submit" class="btn btn-default" value="Stripe">
+            <input type="submit" class="btn btn-default" value="Stripe" formaction="/product/goToStripe">
             </form>
         </div>
     </div>
@@ -21,7 +21,9 @@
         <div class="col-lg-3">
         </div>
         <div class="col-lg-6">
-            <button type="button" class="btn btn-primary btn-lg">Stripe</button>
+            <form method="POST" action="/">
+            <input type="submit" class="btn btn-default" formaction="/product/goToStripe" value="Stripe"></input>
+            </form>
         </div>
             <div class="col-lg-3">
         </div>

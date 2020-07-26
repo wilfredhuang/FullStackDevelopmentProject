@@ -6,7 +6,19 @@ const alertMessage = require("../helpers/messenger");
 router.get("/", (req, res) => {
   const title = "Bookstore Home Page";
   if (!req.session.userCart) {
+    // Initialise session variables on the server start-up
     req.session.userCart = {};
+    req.session.coupon_type;
+    req.session.discount = 0;
+    req.session.discount_limit = 0;
+    req.session.discounted_price = 0;
+    req.session.shipping_discount = 0;
+    req.session.shipping_discount_limit = 0;
+    req.session.shipping_discounted_price = 0;
+    req.session.sub_discount = 0;
+    req.session.sub_discount_limit = 0;
+    req.session.sub_discounted_price = 0;
+    req.session.full_total_price = 0;
     // ssn = req.session.userCart;
   }
 
