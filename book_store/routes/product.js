@@ -190,6 +190,7 @@ router.put('/updateProductAdmin/:id', (req, res) => {
 
 // Here is the start of Cart and Payment Features - Wilfred
 
+// Add to Cart from 'List of Products Page'
 router.get('/listproduct/:id', (req, res, next) => {
     // 'Add to Cart' button passes value of product id to server
     // queries product id with database
@@ -254,7 +255,7 @@ router.get('/listproduct/:id', (req, res, next) => {
     console.log(req.session.userCart);
 });
 
-// Add Cart - individual page
+// Add to Cart - individual page
 
 router.post('/individualProduct/:id', (req, res, next) => {
     // 'Add to Cart' button passes value of product id to server
@@ -317,9 +318,10 @@ router.post('/individualProduct/:id', (req, res, next) => {
     console.log(req.session.userCart);
 });
 
-// Retrieve Cart
-// Done
-
+// POST request before redirecting to Cart
+// Why? Because when a session update the cart, session variable is updated, but the
+// contents displayed on the page won't show unless we refresh once more (Reason: Unknown)
+// Using this POST request to handle and update the information instead of router.get will solve that problem
 router.post('/goToCart', (req,res)=> {    
     req.session.full_subtotal_price = 0;
     shipping_fee = (10).toFixed(2);
@@ -396,6 +398,10 @@ router.post('/goToCart', (req,res)=> {
     req.session.save();
     res.redirect('cart')
 })
+
+// Retrieve Cart
+// Make sure to use POST request to handle updated cart info or you need to double refresh
+
 router.get('/cart', (req, res) => { 
     // let time = moment("2020-05-10", "YYYY/MM/DD");
     // let time2 = time.toString();
@@ -433,10 +439,6 @@ router.get('/cart', (req, res) => {
     
     console.log("FULL SUB PRICE IS " + req.session.full_subtotal_price)
     res.render('checkout/cart', {
-        // discount,
-        // discounted_price,
-        // full_subtotal_price,
-        // full_total_price,
         total_weight,
         total_weight_oz
         })
@@ -471,19 +473,22 @@ router.post('/applyCoupon', (req,res) => {
         }
         // discount = coupon.discount;
         // discount_limit = coupon.limit;
+        // line below allows us to redirect to another POST request to handle cart update
         res.redirect(307, 'goToCart')
         // res.redirect("cart")
     })
 
+    // line below notify user if code entered not in db
     .catch(()=> {
         alertMessage(res, 'danger', 'code ' + req.body.coupon + ' is invalid', 'fas fa-exclamation-circle', true)
         res.redirect("cart")
     })
 })
 
-//
 
-// Update Cart / Proceed to Checkout
+// Update Cart
+// When a user want to change the product qty in cart page
+
 router.post('/cart', (req, res) => {
     if (req.body.checkoutButton == "Update") { 
         for (ID in req.session.userCart) {
@@ -515,6 +520,8 @@ router.post('/cart', (req, res) => {
 })
 
 // Delete Item in Cart
+// Recalculate req.session.full_subtotal_price when item is deleted
+// must set req.session.full_subtotal_price = 0 otherwise it will be incremented value
 
 router.get('/deleteCartItem/:id', (req, res) => {
     console.log(req.session.userCart[req.params.id])
@@ -598,9 +605,12 @@ router.get('/deleteCartItem/:id', (req, res) => {
     res.redirect('/product/cart');
 });
 
+
+// Checkout Form
 router.get('/checkout', (req, res) => {
     res.render('checkout/checkout');
 });
+
 
 router.post('/checkout', (req, res) => {
     // Old variables
@@ -619,14 +629,10 @@ router.post('/checkout', (req, res) => {
     req.session.city = req.body.city
     req.session.countryShipment = req.body.country
     req.session.postalCode = req.body.postalCode
-    // create order
-    // order.create({
-    //     fullName, phoneNumber, address, address1, city, country, postalCode
-    // })
-    // alertMessage(res, 'success', 'Order placed', 'fas fa-exclamation-circle', true)
     res.redirect('selectPayment')
 });
 
+// After checkout form filled, select payment page
 router.get('/selectPayment', (req,res)=> {
     const title = "Select Payment"
     res.render('checkout/selectPayment', {
@@ -658,6 +664,15 @@ router.get('/stripepayment', (req, res) => {
         })
 })
 
+router.post('/stripepayment', (req,res) => {
+    // create order
+    // order.create({
+    //     fullName, phoneNumber, address, address1, city, country, postalCode
+    // })
+    alertMessage(res, 'success', 'Order placed', 'fas fa-exclamation-circle', true)
+    res.redirect('/')
+})
+
 router.get('/paynow', (req,res) => {
     // let payNowString = paynow('proxyType','proxyValue','edit',price,'merchantName','additionalComments')
     let payNowString = paynow('mobile','87558054','no',req.session.full_total_price,'Test Merchant Name','Testing paynow')
@@ -675,6 +690,17 @@ router.get('/paynow', (req,res) => {
       console.error(err)
     });
 });
+
+router.post('/paynow', (req,res)=> {
+    alertMessage(res, 'success', 'Order placed, the administrator will shortly confirm your payment', 'fas fa-exclamation-circle', true)
+    res.redirect('/')
+})
+
+// Admin Side
+
+router.get('/createCoupon', (req,res) => {
+    res.render('createCoupon')
+})
 
 
 module.exports = router;
