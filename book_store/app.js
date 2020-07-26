@@ -140,6 +140,21 @@ app.use(function (req, res, next) {
 	res.locals.error = req.flash('error');
 	res.locals.user = req.user || null;
 	res.locals.UC = req.session.userCart;
+	res.locals.billingAddress = req.session.billingAddress;
+	res.locals.countryShipment = req.session.countryShipment;
+	res.locals.coupon_type = req.session.coupon_type;
+	res.locals.discount = req.session.discount;
+	res.locals.discount_limit = req.session.discount_limit;
+	res.locals.discounted_price = req.session.discounted_price;
+	res.locals.shipping_discount = req.session.shipping_discount;
+	res.locals.shipping_discount_limit = req.session.shipping_discount_limit;
+	res.locals.shipping_discounted_price = req.session.shipping_discounted_price;
+	res.locals.sub_discount = req.session.sub_discount;
+	res.locals.sub_discount_limit = req.session.sub_discount_limit;
+	res.locals.sub_discounted_price = req.session.sub_discounted_price;
+	res.locals.full_subtotal_price = req.session.full_subtotal_price;
+	res.locals.full_total_price = req.session.full_total_price;
+	res.locals.shipping_fee = req.session.shipping_fee;
 	next();
 });
 
