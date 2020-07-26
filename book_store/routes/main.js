@@ -77,21 +77,6 @@ router.get('/product-single.html', (req, res) => {
 });
 */
 
-// Login Page
-router.get('/login', (req, res) => {
-    const title = 'Login Page';
-    res.render('user/login', {            
-        title
-    })
-});
-
-// Register Page
-router.get('/register', (req, res) => {
-    const title = 'Registration Page';
-    res.render('user/register', {            
-        title
-    })
-});
 
 //forgetPassword page
 router.get('/forgetPassword', (req, res) => {

@@ -11,6 +11,8 @@ const nodemailer = require('nodemailer');
 
 const { allowInsecurePrototypeAccess } = require('@handlebars/allow-prototype-access')
 
+
+
 //nodemailer 
 let transporter = nodemailer.createTransport({
     host: 'mail.gmx.com',
