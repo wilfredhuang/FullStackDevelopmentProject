@@ -121,7 +121,7 @@ router.post("/processCheckout", (req, res) => {
     street1: "1 E 161st St.",
     city: "Bronx",
     state: "NY",
-    //zip: "10451",
+    //zip: "10451", //Actual zipcode
     zip: "12412352551",
   });
   toAddress
@@ -193,12 +193,9 @@ router.post("/processCheckout", (req, res) => {
             });
           });
         });
-        //console.log(checkAddress);
         console.log("its true");
-
         //res.redirect("/delivery/checkout2");
       } else {
-        //console.log(checkAddress);
         console.log("its false");
         alertMessage(
           res,
@@ -347,7 +344,8 @@ router.get("/viewMoreOrder/:id", (req, res) => {
           progressPercentage,
           progressColour,
           progressColourText
-        });}
+        });
+      }
     });
   });
 });
