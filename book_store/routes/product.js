@@ -324,9 +324,10 @@ router.post('/individualProduct/:id', (req, res, next) => {
 // Using this POST request to handle and update the information instead of router.get will solve that problem
 router.post('/goToCart', (req,res)=> {    
     req.session.full_subtotal_price = 0;
-    shipping_fee = (10).toFixed(2);
+    req.session.shipping_fee = (10).toFixed(2);
     let total_weight = 0;
     let total_weight_oz = 0;
+    req.session.full_total_price = 0;
     if (req.session.coupon_type == "OVERALL") {
         console.log("Coupon TYPE IS OVERALL")
         for (z in req.session.userCart) {
@@ -395,7 +396,7 @@ router.post('/goToCart', (req,res)=> {
         }
         req.session.full_total_price = (parseFloat(req.session.full_subtotal_price) + parseFloat(req.session.shipping_fee)).toFixed(2)
     }
-    req.session.save();
+    
     res.redirect('cart')
 })
 
@@ -435,9 +436,6 @@ router.get('/cart', (req, res) => {
     // Round up to next number regardless of decimal value with ceil function
     total_weight_oz = Math.ceil((total_weight * 0.035274))
 
-
-    
-    console.log("FULL SUB PRICE IS " + req.session.full_subtotal_price)
     res.render('checkout/cart', {
         total_weight,
         total_weight_oz
@@ -471,6 +469,7 @@ router.post('/applyCoupon', (req,res) => {
             req.session.discount_limit = coupon.limit
             alertMessage(res, 'success', `${(coupon.discount * 100)}% off your subtotal (excluding shipping) (save up to $${coupon.limit})`, 'fas fa-exclamation-circle', true)
         }
+
         // discount = coupon.discount;
         // discount_limit = coupon.limit;
         // line below allows us to redirect to another POST request to handle cart update
