@@ -17,35 +17,26 @@ const SECRET = 'fX7UvuRP55';
 
 //nodemailer 
 let transporter = nodemailer.createTransport({
-    host: 'mail.gmx.com',
-    port: 587,
-    secure: false, // true for 465, false for other ports
+    host: 'smtp.googlemail.com',
+    port: 465,
+    secure: true, // true for 465, false for other ports
     auth: {
-        user: 'legitbookstore@gmx.com', // generated ethereal user
-        pass: 'legitbookPass'  // generated ethereal password
+        user: 'superlegitemail100percent@gmail.com', // generated ethereal user
+        pass: 'Passw0rdyes'  // generated ethereal password
     },
     tls: {
         rejectUnauthorized: false
     },
   });
 
-//jwt middleware
-function authenticateToken(req, res, next) {
-  const authHeader = req.headers['authorization']
-  const token = authHeader && authHeader.split(' ')[1]
-  if (token == null) return res.sendStatus(401)
-
-  jwt.verify(token, SECRET, (err, user) => {
-    console.log(err)
-    if (err) return res.sendStatus(403)
-    req.user = user
-    next()
-  })
-}
-
-router.get('/confirmation/:token',authenticateToken,(req,res)=>{
-    user.update({confirmed : true})
-    res.render("/");
+router.get('/confirmation/:token',async(req,res)=>{
+    const token = jwt.verify(req.params.token, SECRET);
+    User.findOne({ where: { id: token.user } })
+        .then(user => {
+            user.update({confirmed:true});
+            console.log("email verified")
+        })
+    res.redirect("https://localhost:5000/user/login");
 });
 router.get("/auth/facebook", passport.authenticate("facebook",{scope: ['email']}));
 
@@ -231,6 +222,7 @@ router.post('/register', (req, res) => {
                                         },
                                         (err, emailToken) => {
                                           const url = `https://localhost:5000/user/confirmation/${emailToken}`;
+                                          console.log(url);
                                           transporter.sendMail({
                                             to: req.body.email,
                                             subject: 'Confirm Email',
