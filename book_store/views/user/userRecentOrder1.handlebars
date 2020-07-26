@@ -10,13 +10,22 @@
             <div class="tab col-12 col-md-2">
                 <button class="tab">Navigation</button>
                 <a href="/user/userPage">
-                    <button class="inactive-tab">User Info</button>
+                    <button class="inactive-tab">User Page</button>
+                </a>
+                <a href="/user/changeinfo">
+                    <button class="inactive-tab">Change Info</button>
+                </a>
+                <a href="/user/userPage/setaddress">
+                    <button class="inactive-tab">Set Address</button>
                 </a>
                 <a href="/user/userRecentOrder">
                     <button class="active-tab">Order History</button>
                 </a>
                 <a href="/user/userCart">
                     <button class="inactive-tab">Cart</button>
+                </a>
+                <a href="/user/userPage/wishlist">
+                    <button class="inactive-tab">Wishlist</button>
                 </a>
             </div>
             <div id="recentOrders" class="col-10">
@@ -28,57 +37,78 @@
                         type="search" placeholder="Search Order No" aria-label="Search">
                 </form>
                 <br>
-                {{#if order}}
-                {{#each order}}
-                <div class="card mb-4">
-                    {{!-- <div class="card-header">
+                <div id="myItems">
+                    {{#if order}}
+                    {{#each order}}
+                    <div class="card mb-4" id="eachCard">
+                        {{!-- <div class="card-header">
                         Order No: {{id}}
                     </div> --}}
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-10">
-                                <h5 class="card-title">Order No: {{id}}</h5>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-10">
+                                    <h5 class="card-title">Order No: {{id}}</h5>
+                                </div>
+                                <div class="col-md-2 mb-4">
+                                    <button class="card-link"
+                                        style="background-color:white;border:none; text-align:center; display:inline-block;"
+                                        data-toggle="collapse" data-target="#collapse{{id}}" aria-expanded="false"
+                                        aria-controls="collapse{{id}}">More Info <i class="fas fa-chevron-down"></i>
+                                    </button>
+                                </div>
                             </div>
-                            <div class="col-md-2">
-                                <button class="card-link" data-toggle="collapse" data-target="#collapse{{id}}"
-                                    aria-expanded="false" aria-controls="collapse{{id}}">More Info<i
-                                        class="fas fa-chevron-down"></i>
-                                </button>
+                            <h6 class="card-subtitle mb-2 text-muted">Shipping ID: {{shippingId}}</h6>
+                            <p class="card-text">Order Date: {{formatDate dateStart 'DD MMM YYYY'}}</p>
+                            <p class="card-text">Delivery Status: {{deliveryStatus}}</p>
+                            <div class="text-right">
+                                <a href="/delivery/viewMoreOrder/{{id}}">View More <i class="fa fa-chevron-right"
+                                        aria-hidden="true"></i></a>
                             </div>
                         </div>
-                        <h6 class="card-subtitle mb-2 text-muted">Shipping ID: {{shippingId}}</h6>
-                        <p class="card-text">Order Date: {{formatDate dateStart 'DD MMM YYYY'}}</p>
-                        <p class="card-text">Delivery Status: {{capitaliseFirstLetter deliveryStatus}}</p>
-                        <div class="text-right">
-                            <a href="/delivery/viewMoreOrder/{{id}}">Order Information <i class="fa fa-chevron-right"
-                                    aria-hidden="true"></i></a>
-                        </div>
-                    </div>
-                    <div class="accordion toggle" id="orderAccordion">
-                        <div id="collapse{{id}}" class="collapse" aria-labelledby="heading{{id}}"
-                            data-parent="#storyAccordion">
-                            <div class="card-body">
-                                <h5 class="card-title">Product Information</h5>
-                                <p class="card-text">hello world</p>
-                            </div>
-                            <div class="card-body">
-                                <h5 class="card-title">Address Information</h5>
-                                <p class="card-text">{{address}}</p>
+                        <div class="accordion toggle" id="orderAccordion">
+                            <div id="collapse{{id}}" class="collapse" aria-labelledby="heading{{id}}"
+                                data-parent="#orderAccordion">
+                                <hr>
+                                <div class="card-body">
+                                    <h5 class="card-title">Product Information</h5>
+                                    <p class="card-text">hello world</p>
+                                </div>
+                                <div class="card-footer">
+                                    <div class="row">
+                                        <div class="col-md-9">
+                                            <h5 class="card-title">Address Information</h5>
+                                            <address>
+                                                {{address}}
+                                                <br>
+                                                {{address1}}, {{city}}, {{country}}
+                                                <br>
+                                                {{phoneNumber}}
+                                            </address>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <p class="card-text">Subtotal: </p>
+                                            <p class="card-text">Delivery Fee: Free</p>
+                                            <p class="card-text">Total Price: ${{totalPrice}}</p>
+
+                                        </div>
+                                    </div>
+                                    {{!-- <p class="card-text">{{address}}</p>
                                 <p class="card-text">{{address1}}</p>
                                 <p class="card-text">{{city}}</p>
                                 <p class="card-text">{{country}}</p>
-                                <p class="card-text">{{postalCode}}</p>
+                                <p class="card-text">{{postalCode}}</p> --}}
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    {{!-- <div class="card-footer text-right">
+                        {{!-- <div class="card-footer text-right">
                         <btn>hello</btn>
                     </div> --}}
+                    </div>
+                    {{/each}}
+                    {{else}}
+                    <p>There is no current orders</p>
+                    {{/if}}
                 </div>
-                {{/each}}
-                {{else}}
-                <p>There is no current orders</p>
-                {{/if}}
             </div>
         </div>
     </div>

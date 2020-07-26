@@ -19,6 +19,8 @@ const secretKey = "6Le367IZAAAAAJ042sFATGXzwqHsO6N3f38W4G81";
 //QR Code
 var QRCode = require('qrcode')
 
+//NodeMailer
+const nodemailer = require('nodemailer');
 
 
 router.get("/checkout", (req, res) => {

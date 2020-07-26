@@ -18,6 +18,9 @@ const toAddress = new api.Address({
   phone: "310-808-5243",
 });
 
+api.Shipment.retrieve('shp_ac606b3af8c54782b5f7f05f15061368').then((s)=> console.log(s.status));
+
+
 //Test retrive information
 
 //const webhook = new api.Webhook({ url: 'http://example.com' });
@@ -119,6 +122,6 @@ shipment
 
 //api.Shipment.retrieve('shp_ac606b3af8c54782b5f7f05f15061368').then(console.log);
 
- api.Shipment.retrieve('shp_ac606b3af8c54782b5f7f05f15061368').then(s => {
-   s.refund().then(() => console.log(s));
- });
+//  api.Shipment.retrieve('shp_ac606b3af8c54782b5f7f05f15061368').then(s => {
+//    s.refund().then(() => console.log(s));
+//  });

@@ -51,8 +51,8 @@
                     <hr>
                     <div class="row">
                         <div class="col">
-                            <p>Name: {{order.fullName}}</p>
                             <p>Order ID: {{order.id}}</p>
+                            <p>Name: {{order.fullName}}</p>
                             <p>{{order.address}}</p>
                             <p>{{order.address1}}</p>
                             <p>City: {{order.city}}</p>
@@ -64,8 +64,12 @@
                     <h3>Shipping Information</h3>
                     <hr>
                     <div>
-                        <p>Tracking Code: </p>
+                        <p>Order Date: {{formatDate order.dateStart 'DD MMM YYYY'}}</p>
+                        <p>USPS Tracking Code: </p>
                         <p>{{order.trackingCode}}</p>
+                        <p>EasyPost Tracking Code: </p>
+                        <p>{{order.trackingId}}</p>
+                        
                     </div>
                 </div>
                 <div class="right-sidebar">

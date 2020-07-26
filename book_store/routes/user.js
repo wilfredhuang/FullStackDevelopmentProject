@@ -17,12 +17,12 @@ const SECRET = 'fX7UvuRP55';
 
 //nodemailer 
 let transporter = nodemailer.createTransport({
-    host: 'mail.gmx.com',
-    port: 587,
-    secure: false, // true for 465, false for other ports
+    host: 'smtp.googlemail.com',
+    port: 465,
+    secure: true, // true for 465, false for other ports
     auth: {
-        user: 'legitbookstore@gmx.com', // generated ethereal user
-        pass: 'legitbookPass'  // generated ethereal password
+        user: 'superlegitemail100percent@gmail.com', // generated ethereal user
+        pass: 'Passw0rdyes'  // generated ethereal password
     },
     tls: {
         rejectUnauthorized: false
@@ -66,6 +66,9 @@ router.get('/userPage', (req, res) => {
 
 router.get('/userRecentOrder', (req, res) => {
     const title = 'Order History';
+
+
+    // Need to intergrate this later on
     order.findAll({
         //where:{
           //  id: req.params.id,
