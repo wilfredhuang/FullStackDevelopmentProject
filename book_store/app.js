@@ -155,6 +155,7 @@ app.use(function (req, res, next) {
 	res.locals.full_subtotal_price = req.session.full_subtotal_price;
 	res.locals.full_total_price = req.session.full_total_price;
 	res.locals.shipping_fee = req.session.shipping_fee;
+	res.locals.public_coupon = req.session.public_coupon; 
 	next();
 });
 

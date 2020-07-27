@@ -698,7 +698,60 @@ router.post('/paynow', (req,res)=> {
 // Admin Side
 
 router.get('/createCoupon', (req,res) => {
-    res.render('createCoupon')
+    let currentDate = moment(req.body.currentDate, "DD/MM/YYYY");
+    // Get current time of server
+    let currentTime = moment().format('h:mm a');
+
+    res.render('checkout/createCoupon', {
+        currentTime
+    })
+})
+
+router.post('/createCoupon', (req,res)=> {
+    let coupon_code = req.body.coupon_code;
+    let coupon_type = req.body.coupon_type;
+    let coupon_discount = req.body.coupon_discount;
+    let coupon_limit = req.body.coupon_limit;
+    let coupon_public = req.body.coupon_public;
+    let coupon_msg = req.body.coupon_msg;
+    let coupon_expire_date = req.body.coupon_expire_date;
+    let coupon_expire_time = req.body.coupon_expire_time;
+    let full_time = req.body.coupon_expire_date + " " + req.body.coupon_expire_time;
+    // Note that the date/time stored in mySQL will be GMT althought date/time is based on our server(SGT)
+    // E.g Coupon expiry date and time is SGT (GMT+8) 09/08/2020, 06:00 -> GMT 08/08/2020, 22:00
+    let expiry_date_time = moment(full_time, 'DD/MM/YYYY, hh:mm:ss a');
+    // let mo_time2 = moment(coupon_expire_time, 'hh:mm a')
+    // console.log(expiry_date_time)
+    // console.log(mo_time2)
+    // console.log(coupon_expire_date);
+    // console.log(coupon_expire_time);
+    // console.log(full_time);
+
+    // Set BOOLEAN value of 'public' column
+    if (coupon_public == "YES") {
+        coupon_public = 1
+        req.session.public_coupon = coupon_code
+    }
+
+    else {
+        coupon_public = 0
+    }
+
+    Coupon.create({
+        code:coupon_code,
+        type:coupon_type,
+        discount:coupon_discount,
+        limit:coupon_limit,
+        public:coupon_public,
+        message:coupon_msg,
+        expiry:expiry_date_time
+    })
+    .then(()=>{
+        res.redirect('/product/createCoupon')
+    })
+    .catch(()=> {
+        console.log("Something went wrong with creating the coupon")
+    })
 })
 
 
