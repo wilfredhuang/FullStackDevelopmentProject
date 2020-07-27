@@ -4,14 +4,18 @@ const Order = require("../models/Order");
 const alertMessage = require("../helpers/messenger");
 const cartItem = require("../models/CartItem");
 const EasyPost = require("@easypost/api");
-const { request } = require("express");
-//const e = require("express");
-const apiKey = "EZTK29b55ab4ee7a437890e19551520f5dd0uaJjPiW9XsVqXYFNVI0kog"; //EasyPost API
+
+//Request Function
+const request = require('request');
+
+//EasyPost API
+const apiKey = "EZTK29b55ab4ee7a437890e19551520f5dd0uaJjPiW9XsVqXYFNVI0kog";
 const api = new EasyPost(apiKey);
 
+//Twilio API
 const accountSid = "AC7994551ea296710e5de3b74d7a93056c";
 const authToken = "f5ac6a9439b75395ce54e9783d0f8877";
-const client = require("twilio")(accountSid, authToken); //Twilio API
+const client = require("twilio")(accountSid, authToken);
 
 //Google Recaptcha Secret Key
 const secretKey = "6Le367IZAAAAAJ042sFATGXzwqHsO6N3f38W4G81";
@@ -70,6 +74,7 @@ router.get("/removeItem/:id", (req, res) => {
     .catch((err) => console.log(err)); // To catch no cartItem ID
 });
 
+//Post user's address info to EasyPost API
 router.post("/processCheckout", (req, res) => {
   let fullName = req.body.fullName.toString();
   let email = req.body.email.toString();
@@ -106,7 +111,6 @@ router.post("/processCheckout", (req, res) => {
 
   const toAddress = new api.Address({
     verify: ["delivery"],
-
     /*name: fullName,
     company: "-",
     street1: address,
@@ -128,9 +132,7 @@ router.post("/processCheckout", (req, res) => {
     .save()
     .then((addr) => {
       //console.log(addr);
-      //console.log(addr.street1);
       //console.log(addr.verifications)
-      //console.log(addr.id)
       let checkAddress = addr.verifications.delivery.success;
       //console.log(addr.verifications.delivery.errors[0])
       if (checkAddress == true) {
@@ -139,7 +141,6 @@ router.post("/processCheckout", (req, res) => {
           from_address: fromAddress,
           parcel: parcel,
         });
-
         //shipment.save()//.then(console.log);
         shipment.save().then((s) => {
           s.buy(shipment.lowestRate(["USPS"], ["First"])).then((t) => {
@@ -152,8 +153,6 @@ router.post("/processCheckout", (req, res) => {
             let dateStart = t.created_at;
             let dateEnd = t.tracker.est_delivery_date;
             let deliveryStatus = t.tracker.status;
-            //console.log(shippingId)
-            //console.log(addressId)
             Order.create({
               fullName,
               phoneNumber,
@@ -206,7 +205,6 @@ router.post("/processCheckout", (req, res) => {
         );
         res.redirect("/delivery/checkout");
       }
-
       //console.log(addr.verifications.errors);
     })
     .catch((e) => {
@@ -214,6 +212,7 @@ router.post("/processCheckout", (req, res) => {
     });
 });
 
+//SMS Notification - in progress
 router.post("/deliveryUpdates", (req, res) => {});
 
 // Dont touch, stripe code -W
@@ -360,38 +359,36 @@ router.get("/checkDelivery", (req, res) => {
 router.post("/checkingDelivery", (req, res) => {
   const title = "Shipping Tracking";
   let trackingId = req.body.trackingIdInput;
-  //console.log(shippingId)
   //trk_f10a3961f7c4419184aca1dabc09e4f8
   //console.log(trackingId);
-  // console.log(req.body.captcha);
-  // if (
-  //   req.body.captcha === undefined ||
-  //   req.body.captcha === "" ||
-  //   req.body.captcha === null
-  // ) {
-  //   return res.json({ success: false, msg: "Please select captcha" });
-  // }
-  // const verifyURL =
-  //   "https://www.google.com/recaptcha/api/siteverify?secret=" +
-  //   secretKey +
-  //   "&response=" +
-  //   req.body.captcha +
-  //   "&remoteip=" +
-  //   req.connection.remoteAddress;
-  // console.log(verifyURL);
+  let siteUrl = 'https://www.google.com/recaptcha/api/siteverify?secret=your_secret&response=response_string&remoteip=user_ip_address'
+  //let captcha = document.querySelector("#g-recaptcha-response").value
+  let captcha = req.body['g-recaptcha-response'] //get user token value
 
-  // request(verifyURL, (err, response, body) => {
-  //   body = JSON.parse(body);
-  //   console.log(body)
+  //checks if captcha response is valid
+  if (
+    captcha === undefined ||
+    captcha === "" ||
+    captcha === null
+  ) {
+    return res.json({ success: false, msg: "Please select captcha" });
+  }
 
-  //   if (body.success !== undefined && !body.success) {
-  //     return res.json({ "success": false, "msg": "Failed captcha" });
-  //   } else {
-  //     return res.json({ "success": true, "msg": "Successful captcha" });
-  //   }
-  // });
+  const verifyURL =
+    "https://www.google.com/recaptcha/api/siteverify?secret=" +
+    secretKey +
+    "&response=" +
+    captcha;
+  console.log(verifyURL); //this is a url that needs to be verified
 
-  api.Tracker.retrieve(trackingId)
+  request(verifyURL, (err, response, body) => {
+    body = JSON.parse(body);
+    console.log(body)  //retrieves response from google and return its json info
+
+    if (body.success !== undefined && !body.success) {
+      return res.json({ "success": false, "msg": "Failed captcha" });
+    } else {
+      api.Tracker.retrieve(trackingId)
     .then((s) => {
       console.log(s);
       let deliveryStatus = s.status;
@@ -407,7 +404,6 @@ router.post("/checkingDelivery", (req, res) => {
         let progressColourText = "text-info";
         QRCode.toDataURL(URL, function (err, url) {
           let showQRCODE = url;
-          //console.log(url)
           res.render("delivery/deliveryStatusPage", {
             title,
             deliveryStatus,
@@ -430,7 +426,6 @@ router.post("/checkingDelivery", (req, res) => {
         let progressColourText = "text-info";
         QRCode.toDataURL(URL, function (err, url) {
           let showQRCODE = url;
-          //console.log(url)
           res.render("delivery/deliveryStatusPage", {
             title,
             deliveryStatus,
@@ -453,7 +448,6 @@ router.post("/checkingDelivery", (req, res) => {
         let progressColourText = "text-info";
         QRCode.toDataURL(URL, function (err, url) {
           let showQRCODE = url;
-          //console.log(url)
           res.render("delivery/deliveryStatusPage", {
             title,
             deliveryStatus,
@@ -476,7 +470,6 @@ router.post("/checkingDelivery", (req, res) => {
         let progressColourText = "text-success";
         QRCode.toDataURL(URL, function (err, url) {
           let showQRCODE = url;
-          //console.log(url)
           res.render("delivery/deliveryStatusPage", {
             title,
             deliveryStatus,
@@ -499,7 +492,6 @@ router.post("/checkingDelivery", (req, res) => {
         let progressColourText = "text-info";
         QRCode.toDataURL(URL, function (err, url) {
           let showQRCODE = url;
-          //console.log(url)
           res.render("delivery/deliveryStatusPage", {
             title,
             deliveryStatus,
@@ -522,7 +514,6 @@ router.post("/checkingDelivery", (req, res) => {
         let progressColourText = "text-danger";
         QRCode.toDataURL(URL, function (err, url) {
           let showQRCODE = url;
-          //console.log(url)
           res.render("delivery/deliveryStatusPage", {
             title,
             deliveryStatus,
@@ -545,7 +536,6 @@ router.post("/checkingDelivery", (req, res) => {
         let progressColourText = "text-dark";
         QRCode.toDataURL(URL, function (err, url) {
           let showQRCODE = url;
-          //console.log(url)
           res.render("delivery/deliveryStatusPage", {
             title,
             deliveryStatus,
@@ -564,9 +554,9 @@ router.post("/checkingDelivery", (req, res) => {
       }
       console.log("correct btw");
       
-    }) //.then(console.log)
+    })
+    // catch any errors
     .catch((e) => {
-      //console.log(e)
       //console.log(e.error.error.code)
       console.log(e);
       let errorCode = e.error.error.code;
@@ -583,6 +573,9 @@ router.post("/checkingDelivery", (req, res) => {
         res.redirect("checkDelivery");
       }
     });
+      //return res.json({ "success": true, "msg": "Successful captcha" });
+    }
+  });
 });
 
 module.exports = router;
