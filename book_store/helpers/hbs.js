@@ -88,6 +88,25 @@ module.exports = {
         else {
             return true;
         }
+    },
+
+    convertDiscount: function(discount) {
+        let converted_discount = discount * 100
+        return converted_discount
+    },
+
+    displayCouponType: function(coupon_type) {
+        if (coupon_type == "OVERALL") {
+            return "total order"
+        }
+
+        else if (coupon_type == "SHIP") {
+            return "shipping fee"
+        }
+
+        else if (coupon_type == "SUB") {
+            return "subtotal (excluding shipping charge)"
+        }
     }
 
 

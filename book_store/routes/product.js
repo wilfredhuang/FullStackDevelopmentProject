@@ -6,14 +6,14 @@ const productadmin = require('../models/ProductAdmin');
 const cartItem = require('../models/CartItem');
 const order = require('../models/Order');
 
-const alertMessage=require('../helpers/messenger');
+const alertMessage = require('../helpers/messenger');
 const Coupon = require('../models/coupon');
 
 
 // Stripe Payment - secret key
 const stripe = require('stripe')('sk_test_ns9DyHTray5Wihniw93C2ANH00IMJTVjKw', {
     apiVersion: '2020-03-02',
-  });
+});
 
 const paynow = require('paynow-generator').paynowGenerator
 const QRCode = require('qrcode');
@@ -27,8 +27,7 @@ router.get('/listProduct', (req, res) => {
     productadmin.findAll({
         order: [
             ['product_name', 'ASC']
-        ],
-        raw: true
+        ]
     })
         .then((productadmin) => {
             res.render('products/listProduct', {
@@ -102,7 +101,7 @@ router.post('/addProductAdmin', (req, res) => {
     let weight = req.body.weight;
     let product_image = req.body.product_image;
     productadmin.create({
-        product_name, author, publisher, genre, price, stock, details, weight,product_image,
+        product_name, author, publisher, genre, price, stock, details, weight, product_image,
     }).then((product) => {
         res.redirect('/product/listProductAdmin')
     })
@@ -176,7 +175,7 @@ router.put('/updateProductAdmin/:id', (req, res) => {
     let weight = req.body.weight;
     let product_image = req.body.product_image;
     productadmin.update({
-        product_name, author, publisher, genre, price, stock, details, weight,product_image,
+        product_name, author, publisher, genre, price, stock, details, weight, product_image,
     }, {
         where: {
             id: req.params.id
@@ -202,53 +201,57 @@ router.get('/listproduct/:id', (req, res, next) => {
         }
     })
 
-    .then((product) => {
-        var id = product.id;
-        let name = product.product_name;
-        let author = product.author;
-        let publisher = product.publisher;
-        let genre = product.genre;
-        let price =product.price;
-        let stock = product.stock;
-        let details = product.details;
-        let weight = product.weight;
-        let image = product.product_image;
+        .then((product) => {
+            var id = product.id;
+            let name = product.product_name;
+            let author = product.author;
+            let publisher = product.publisher;
+            let genre = product.genre;
+            let price = product.price;
+            let stock = product.stock;
+            let details = product.details;
+            let weight = product.weight;
+            let image = product.product_image;
 
-        console.log('ID IS ' + id)
-        // if statement probably not working already due to length only available for array and not objects
-        // however leave it as it works fine due to the else statement
-        if (req.session.userCart.length < 1) {
-            let qty = 1 
-            // Image field not decided yet, the rest is done.
-            // Double square bracket to store variable 'keys'
-            req.session.userCart[[id]] = {"ID":id, "Name":name, "Author":author, "Publisher":publisher, "Genre":genre, "Price":price, "Stock":stock,
-            "Weight":weight, "Image":image, "Quantity":qty, "SubtotalPrice":price, "SubtotalWeight":weight}
-            console.log(req.session.userCart)
-        }
-    
-        else {
-            var check = false;
-            for (z in req.session.userCart) {
-                if (z == id) {
-                    console.log("FOUND EXISTING PRODUCT IN CART")
-                    req.session.userCart[z].Quantity += 1
-                    req.session.userCart[z].SubtotalPrice = (parseFloat(req.session.userCart[z].SubtotalPrice) + parseFloat(product.price)).toFixed(2)
-                    req.session.userCart[z].SubtotalWeight = (parseFloat(req.session.userCart[z].SubtotalWeight) + parseFloat(product.weight)).toFixed(2)
-                    check = true;
+            console.log('ID IS ' + id)
+            // if statement probably not working already due to length only available for array and not objects
+            // however leave it as it works fine due to the else statement
+            if (req.session.userCart.length < 1) {
+                let qty = 1
+                // Image field not decided yet, the rest is done.
+                // Double square bracket to store variable 'keys'
+                req.session.userCart[[id]] = {
+                    "ID": id, "Name": name, "Author": author, "Publisher": publisher, "Genre": genre, "Price": price, "Stock": stock,
+                    "Weight": weight, "Image": image, "Quantity": qty, "SubtotalPrice": price, "SubtotalWeight": weight
+                }
+                console.log(req.session.userCart)
+            }
+
+            else {
+                var check = false;
+                for (z in req.session.userCart) {
+                    if (z == id) {
+                        console.log("FOUND EXISTING PRODUCT IN CART")
+                        req.session.userCart[z].Quantity += 1
+                        req.session.userCart[z].SubtotalPrice = (parseFloat(req.session.userCart[z].SubtotalPrice) + parseFloat(product.price)).toFixed(2)
+                        req.session.userCart[z].SubtotalWeight = (parseFloat(req.session.userCart[z].SubtotalWeight) + parseFloat(product.weight)).toFixed(2)
+                        check = true;
+                        console.log(req.session.userCart)
+                    }
+                }
+                if (check == false) {
+                    let qty = 1
+                    // Again, the Image field not decided yet, the rest is done.
+                    // req.session.userCart[[id]] = {"ID":id, "Name":name, "Image":image, "Quantity":qty, "SubtotalPrice":product.price}
+                    req.session.userCart[[id]] = {
+                        "ID": id, "Name": name, "Author": author, "Publisher": publisher, "Genre": genre, "Price": price, "Stock": stock,
+                        "Weight": weight, "Image": image, "Quantity": qty, "SubtotalPrice": price, "SubtotalWeight": weight
+                    }
                     console.log(req.session.userCart)
                 }
             }
-            if (check == false) {
-                let qty = 1 
-                // Again, the Image field not decided yet, the rest is done.
-                // req.session.userCart[[id]] = {"ID":id, "Name":name, "Image":image, "Quantity":qty, "SubtotalPrice":product.price}
-                req.session.userCart[[id]] = {"ID":id, "Name":name, "Author":author, "Publisher":publisher, "Genre":genre, "Price":price, "Stock":stock,
-                "Weight":weight, "Image":image, "Quantity":qty, "SubtotalPrice":price, "SubtotalWeight":weight}
-                console.log(req.session.userCart)
-            }
-        }
-        req.session.save();
-    })
+            req.session.save();
+        })
 
     res.redirect('/product/listproduct')
     console.log("Added to cart");
@@ -268,50 +271,54 @@ router.post('/individualProduct/:id', (req, res, next) => {
         }
     })
 
-    .then((product) => {
-        var id = product.id;
-        let name = product.product_name;
-        let author = product.author;
-        let publisher = product.publisher;
-        let genre = product.genre;
-        let price =product.price;
-        let stock = product.stock;
-        let details = product.details;
-        let weight = product.weight;
-        let image = product.product_image;
+        .then((product) => {
+            var id = product.id;
+            let name = product.product_name;
+            let author = product.author;
+            let publisher = product.publisher;
+            let genre = product.genre;
+            let price = product.price;
+            let stock = product.stock;
+            let details = product.details;
+            let weight = product.weight;
+            let image = product.product_image;
 
-        console.log('ID IS ' + id)
-        if (req.session.userCart.length < 1) {
-            let qty = 1 
-            // Image field not decided yet, the rest is done.
-            req.session.userCart[[id]] = {"ID":id, "Name":name, "Author":author, "Publisher":publisher, "Genre":genre, "Price":price, "Stock":stock,
-            "Weight":weight, "Image":image, "Quantity":qty, "SubtotalPrice":price, "SubtotalWeight":weight}
-            console.log(req.session.userCart)
-        }
-    
-        else {
-            var check = false;
-            for (z in req.session.userCart) {
-                if (z == id) {
-                    console.log("FOUND EXISTING PRODUCT IN CART")
-                    req.session.userCart[z].Quantity += 1
-                    req.session.userCart[z].SubtotalPrice = (parseFloat(req.session.userCart[z].SubtotalPrice) + parseFloat(product.price)).toFixed(2)
-                    req.session.userCart[z].SubtotalWeight = (parseFloat(req.session.userCart[z].SubtotalWeight) + parseFloat(product.weight)).toFixed(2)
-                    check = true;
+            console.log('ID IS ' + id)
+            if (req.session.userCart.length < 1) {
+                let qty = 1
+                // Image field not decided yet, the rest is done.
+                req.session.userCart[[id]] = {
+                    "ID": id, "Name": name, "Author": author, "Publisher": publisher, "Genre": genre, "Price": price, "Stock": stock,
+                    "Weight": weight, "Image": image, "Quantity": qty, "SubtotalPrice": price, "SubtotalWeight": weight
+                }
+                console.log(req.session.userCart)
+            }
+
+            else {
+                var check = false;
+                for (z in req.session.userCart) {
+                    if (z == id) {
+                        console.log("FOUND EXISTING PRODUCT IN CART")
+                        req.session.userCart[z].Quantity += 1
+                        req.session.userCart[z].SubtotalPrice = (parseFloat(req.session.userCart[z].SubtotalPrice) + parseFloat(product.price)).toFixed(2)
+                        req.session.userCart[z].SubtotalWeight = (parseFloat(req.session.userCart[z].SubtotalWeight) + parseFloat(product.weight)).toFixed(2)
+                        check = true;
+                        console.log(req.session.userCart)
+                    }
+                }
+                if (check == false) {
+                    let qty = 1
+                    // Again, the Image field not decided yet, the rest is done.
+                    // req.session.userCart[[id]] = {"ID":id, "Name":name, "Image":image, "Quantity":qty, "SubtotalPrice":product.price}
+                    req.session.userCart[[id]] = {
+                        "ID": id, "Name": name, "Author": author, "Publisher": publisher, "Genre": genre, "Price": price, "Stock": stock,
+                        "Weight": weight, "Image": image, "Quantity": qty, "SubtotalPrice": price, "SubtotalWeight": weight
+                    }
                     console.log(req.session.userCart)
                 }
             }
-            if (check == false) {
-                let qty = 1 
-                // Again, the Image field not decided yet, the rest is done.
-                // req.session.userCart[[id]] = {"ID":id, "Name":name, "Image":image, "Quantity":qty, "SubtotalPrice":product.price}
-                req.session.userCart[[id]] = {"ID":id, "Name":name, "Author":author, "Publisher":publisher, "Genre":genre, "Price":price, "Stock":stock,
-                "Weight":weight, "Image":image, "Quantity":qty, "SubtotalPrice":price, "SubtotalWeight":weight}
-                console.log(req.session.userCart)
-            }
-        }
-        req.session.save();
-    })
+            req.session.save();
+        })
 
     res.redirect(`/product/individualProduct/${req.params.id}`)
     console.log("Added to cart");
@@ -322,7 +329,7 @@ router.post('/individualProduct/:id', (req, res, next) => {
 // Why? Because when a session update the cart, session variable is updated, but the
 // contents displayed on the page won't show unless we refresh once more (Reason: Unknown)
 // Using this POST request to handle and update the information instead of router.get will solve that problem
-router.post('/goToCart', (req,res)=> {    
+router.post('/goToCart', (req, res) => {
     req.session.full_subtotal_price = 0;
     req.session.shipping_fee = (10).toFixed(2);
     let total_weight = 0;
@@ -338,13 +345,13 @@ router.post('/goToCart', (req,res)=> {
         if (parseFloat(req.session.discounted_price) > parseFloat(req.session.discount_limit)) {
             req.session.discounted_price = req.session.discount_limit
             req.session.full_total_price = ((parseFloat(req.session.full_subtotal_price) + parseFloat(req.session.shipping_fee)) - parseFloat(req.session.discount_limit)).toFixed(2)
-    }
+        }
         else {
             // req.session. = (parseFloat(full_subtotal_price) + parseFloat(req.session.shipping_fee)).toFixed(2) * (1- parseFloat(discount)).toFixed(2)
             req.session.full_total_price = ((parseFloat(req.session.full_subtotal_price) + parseFloat(req.session.shipping_fee)) * (1.00 - parseFloat(req.session.discount))).toFixed(2)
         }
     }
-    
+
     else if (req.session.coupon_type == "SHIP") {
         console.log("Coupon TYPE IS SHIP")
         for (z in req.session.userCart) {
@@ -357,14 +364,14 @@ router.post('/goToCart', (req,res)=> {
             req.session.shipping_fee = (parseFloat(req.session.shipping_fee) - parseFloat(req.session.discount_limit)).toFixed(2)
             req.session.full_total_price = (parseFloat(req.session.full_subtotal_price) + parseFloat(req.session.shipping_fee)).toFixed(2)
         }
-    
+
         else {
             req.session.discounted_price = ((parseFloat(req.session.shipping_fee)) * (parseFloat(req.shipping_discount))).toFixed(2)
-            req.session.shipping_fee = ((parseFloat(req.session.shipping_fee)) * (1-parseFloat(req.shipping_discount))).toFixed(2)
+            req.session.shipping_fee = ((parseFloat(req.session.shipping_fee)) * (1 - parseFloat(req.shipping_discount))).toFixed(2)
             req.session.full_total_price = (parseFloat(req.session.full_subtotal_price) + parseFloat(req.session.shipping_fee)).toFixed(2)
         }
     }
-    
+
     else if (req.session.coupon_type == "SUB") {
         console.log("Coupon TYPE IS SUB")
         for (z in req.session.userCart) {
@@ -379,15 +386,15 @@ router.post('/goToCart', (req,res)=> {
             console.log(req.session.full_subtotal_price)
             req.session.full_total_price = (parseFloat(req.session.full_subtotal_price) + parseFloat(req.session.shipping_fee)).toFixed(2)
         }
-    
+
         else {
             req.session.discounted_price = (parseFloat(req.session.full_subtotal_price) * parseFloat(req.session.sub_discount)).toFixed(2)
             req.session.full_subtotal_price = (parseFloat(req.session.full_subtotal_price) * parseFloat(1 - req.session.sub_discount)).toFixed(2)
             req.session.full_total_price = (parseFloat(req.session.full_subtotal_price) + parseFloat(req.session.shipping_fee)).toFixed(2)
         }
-    
+
     }
-    
+
     else {
         req.session.discounted_price = 0.00
         for (z in req.session.userCart) {
@@ -396,14 +403,14 @@ router.post('/goToCart', (req,res)=> {
         }
         req.session.full_total_price = (parseFloat(req.session.full_subtotal_price) + parseFloat(req.session.shipping_fee)).toFixed(2)
     }
-    
+
     res.redirect('cart')
 })
 
 // Retrieve Cart
 // Make sure to use POST request to handle updated cart info or you need to double refresh
 
-router.get('/cart', (req, res) => { 
+router.get('/cart', (req, res) => {
     // let time = moment("2020-05-10", "YYYY/MM/DD");
     // let time2 = time.toString();
     // console.log(time2)
@@ -413,75 +420,75 @@ router.get('/cart', (req, res) => {
     for (z in req.session.userCart) {
         req.session.userCart[z].SubtotalPrice = (req.session.userCart[z].Quantity * req.session.userCart[z].Price).toFixed(2);
     }
-    
+
     for (z in req.session.userCart) {
         req.session.userCart[z].SubtotalWeight = (req.session.userCart[z].Quantity * req.session.userCart[z].Weight)
     }
-    
+
     // Get the full subtotal price of all items
     // req.session.full_subtotal_price = 0;
-    
+
     // Get full total price (Subtotal of all items + shipping after discounts(if any))
     // let req.session. = 0;
     req.session.shipping_fee = (10).toFixed(2);
     let total_weight = 0;
     let total_weight_oz = 0;
-    
+
     for (z in req.session.userCart) {
         total_weight = total_weight + req.session.userCart[z].SubtotalWeight
     }
 
-    
-    
+
+
     // Round up to next number regardless of decimal value with ceil function
     total_weight_oz = Math.ceil((total_weight * 0.035274))
 
     res.render('checkout/cart', {
         total_weight,
         total_weight_oz
-        })
-    });
+    })
+});
 
 
 // Cart Coupon
-router.post('/applyCoupon', (req,res) => {
+router.post('/applyCoupon', (req, res) => {
     Coupon.findOne({
-        where: {code: req.body.coupon}
+        where: { code: req.body.coupon }
     })
 
-    .then((coupon) => {
-        console.log(coupon.code)
-        req.session.coupon_type = coupon.type
-        alertMessage(res, 'success', 'code ' + req.body.coupon + ' applied', 'fas fa-exclamation-circle', true)
-        if (req.session.coupon_type == "OVERALL") {
-            req.session.discount = coupon.discount;
-            req.session.discount_limit = coupon.limit;
-            alertMessage(res, 'success', `${(coupon.discount * 100)}% off your total order (save up to $${coupon.limit})`, 'fas fa-exclamation-circle', true)
-        }
-        else if (req.session.coupon_type == "SHIP" ) {
-            req.shipping_discount = coupon.discount
-            req.session.req.shipping_discount_limit = coupon.limit
-            alertMessage(res, 'success', `${(coupon.discount * 100)}% off your total shipping fee (save up to $${coupon.limit})`, 'fas fa-exclamation-circle', true)
-        }
+        .then((coupon) => {
+            console.log(coupon.code)
+            req.session.coupon_type = coupon.type
+            alertMessage(res, 'success', 'code ' + req.body.coupon + ' applied', 'fas fa-exclamation-circle', true)
+            if (req.session.coupon_type == "OVERALL") {
+                req.session.discount = coupon.discount;
+                req.session.discount_limit = coupon.limit;
+                alertMessage(res, 'success', `${(coupon.discount * 100)}% off your total order (save up to $${coupon.limit})`, 'fas fa-exclamation-circle', true)
+            }
+            else if (req.session.coupon_type == "SHIP") {
+                req.shipping_discount = coupon.discount
+                req.session.req.shipping_discount_limit = coupon.limit
+                alertMessage(res, 'success', `${(coupon.discount * 100)}% off your total shipping fee (save up to $${coupon.limit})`, 'fas fa-exclamation-circle', true)
+            }
 
-        else if (req.session.coupon_type == "SUB") {
-            req.session.sub_discount = coupon.discount
-            req.session.discount_limit = coupon.limit
-            alertMessage(res, 'success', `${(coupon.discount * 100)}% off your subtotal (excluding shipping) (save up to $${coupon.limit})`, 'fas fa-exclamation-circle', true)
-        }
+            else if (req.session.coupon_type == "SUB") {
+                req.session.sub_discount = coupon.discount
+                req.session.discount_limit = coupon.limit
+                alertMessage(res, 'success', `${(coupon.discount * 100)}% off your subtotal (excluding shipping) (save up to $${coupon.limit})`, 'fas fa-exclamation-circle', true)
+            }
 
-        // discount = coupon.discount;
-        // discount_limit = coupon.limit;
-        // line below allows us to redirect to another POST request to handle cart update
-        res.redirect(307, 'goToCart')
-        // res.redirect("cart")
-    })
+            // discount = coupon.discount;
+            // discount_limit = coupon.limit;
+            // line below allows us to redirect to another POST request to handle cart update
+            res.redirect(307, 'goToCart')
+            // res.redirect("cart")
+        })
 
-    // line below notify user if code entered not in db
-    .catch(()=> {
-        alertMessage(res, 'danger', 'code ' + req.body.coupon + ' is invalid', 'fas fa-exclamation-circle', true)
-        res.redirect("cart")
-    })
+        // line below notify user if code entered not in db
+        .catch(() => {
+            alertMessage(res, 'danger', 'code ' + req.body.coupon + ' is invalid', 'fas fa-exclamation-circle', true)
+            res.redirect("cart")
+        })
 })
 
 
@@ -489,10 +496,10 @@ router.post('/applyCoupon', (req,res) => {
 // When a user want to change the product qty in cart page
 
 router.post('/cart', (req, res) => {
-    if (req.body.checkoutButton == "Update") { 
+    if (req.body.checkoutButton == "Update") {
         for (ID in req.session.userCart) {
             // Make sure to parseInt the updated qty or it will become a string!!
-            let query = parseInt(req.body["Q"+ID])
+            let query = parseInt(req.body["Q" + ID])
             console.log("Queried Quantity is " + query)
             req.session.userCart[ID].Quantity = query
             // newSubTotal = query * req.session.userCart[ID].SubtotalPrice
@@ -502,7 +509,7 @@ router.post('/cart', (req, res) => {
             for (z in req.session.userCart) {
                 req.session.userCart[z].SubtotalPrice = (req.session.userCart[z].Quantity * req.session.userCart[z].Price).toFixed(2);
             }
-            
+
             for (z in req.session.userCart) {
                 req.session.userCart[z].SubtotalWeight = (req.session.userCart[z].Quantity * req.session.userCart[z].Weight)
             }
@@ -540,13 +547,13 @@ router.get('/deleteCartItem/:id', (req, res) => {
         if (parseFloat(req.session.discounted_price) > parseFloat(req.session.discount_limit)) {
             req.session.discounted_price = req.session.discount_limit
             req.session.full_total_price = ((parseFloat(req.session.full_subtotal_price) + parseFloat(req.session.shipping_fee)) - parseFloat(req.session.discount_limit)).toFixed(2)
-    }
+        }
         else {
             // req.session. = (parseFloat(full_subtotal_price) + parseFloat(req.session.shipping_fee)).toFixed(2) * (1- parseFloat(discount)).toFixed(2)
             req.session.full_total_price = ((parseFloat(req.session.full_subtotal_price) + parseFloat(req.session.shipping_fee)) * (1.00 - parseFloat(req.session.discount))).toFixed(2)
         }
     }
-    
+
     else if (req.session.coupon_type == "SHIP") {
         console.log("Coupon TYPE IS SHIP")
         for (z in req.session.userCart) {
@@ -559,14 +566,14 @@ router.get('/deleteCartItem/:id', (req, res) => {
             req.session.shipping_fee = (parseFloat(req.session.shipping_fee) - parseFloat(req.session.discount_limit)).toFixed(2)
             req.session.full_total_price = (parseFloat(req.session.full_subtotal_price) + parseFloat(req.session.shipping_fee)).toFixed(2)
         }
-    
+
         else {
             req.session.discounted_price = ((parseFloat(req.session.shipping_fee)) * (parseFloat(req.shipping_discount))).toFixed(2)
-            req.session.shipping_fee = ((parseFloat(req.session.shipping_fee)) * (1-parseFloat(req.shipping_discount))).toFixed(2)
+            req.session.shipping_fee = ((parseFloat(req.session.shipping_fee)) * (1 - parseFloat(req.shipping_discount))).toFixed(2)
             req.session.full_total_price = (parseFloat(req.session.full_subtotal_price) + parseFloat(req.session.shipping_fee)).toFixed(2)
         }
     }
-    
+
     else if (req.session.coupon_type == "SUB") {
         console.log("Coupon TYPE IS SUB")
         for (z in req.session.userCart) {
@@ -581,15 +588,15 @@ router.get('/deleteCartItem/:id', (req, res) => {
             console.log(req.session.full_subtotal_price)
             req.session.full_total_price = (parseFloat(req.session.full_subtotal_price) + parseFloat(req.session.shipping_fee)).toFixed(2)
         }
-    
+
         else {
             req.session.discounted_price = (parseFloat(req.session.full_subtotal_price) * parseFloat(req.session.sub_discount)).toFixed(2)
             req.session.full_subtotal_price = (parseFloat(req.session.full_subtotal_price) * parseFloat(1 - req.session.sub_discount)).toFixed(2)
             req.session.full_total_price = (parseFloat(req.session.full_subtotal_price) + parseFloat(req.session.shipping_fee)).toFixed(2)
         }
-    
+
     }
-    
+
     else {
         req.session.discounted_price = 0.00
         for (z in req.session.userCart) {
@@ -632,18 +639,18 @@ router.post('/checkout', (req, res) => {
 });
 
 // After checkout form filled, select payment page
-router.get('/selectPayment', (req,res)=> {
+router.get('/selectPayment', (req, res) => {
     const title = "Select Payment"
     res.render('checkout/selectPayment', {
         title
     })
 })
 
-router.post('/goToStripe', (req,res) => {
+router.post('/goToStripe', (req, res) => {
     res.redirect('stripepayment')
 })
 
-router.post('/goToPayNow', (req,res) => {
+router.post('/goToPayNow', (req, res) => {
     res.redirect('paynow')
 })
 
@@ -663,7 +670,7 @@ router.get('/stripepayment', (req, res) => {
         })
 })
 
-router.post('/stripepayment', (req,res) => {
+router.post('/stripepayment', (req, res) => {
     // create order
     // order.create({
     //     fullName, phoneNumber, address, address1, city, country, postalCode
@@ -672,32 +679,32 @@ router.post('/stripepayment', (req,res) => {
     res.redirect('/')
 })
 
-router.get('/paynow', (req,res) => {
+router.get('/paynow', (req, res) => {
     // let payNowString = paynow('proxyType','proxyValue','edit',price,'merchantName','additionalComments')
-    let payNowString = paynow('mobile','87558054','no',req.session.full_total_price,'Test Merchant Name','Testing paynow')
+    let payNowString = paynow('mobile', '87558054', 'no', req.session.full_total_price, 'Test Merchant Name', 'Testing paynow')
     let qr = QRCode.toDataURL(payNowString)
-    .then(url => {
-    //   console.log(url)
-      res.render('checkout/paynow', {
-        payNowString,
-        qr,
-        url
-    })
+        .then(url => {
+            //   console.log(url)
+            res.render('checkout/paynow', {
+                payNowString,
+                qr,
+                url
+            })
 
-    })
-    .catch(err => {
-      console.error(err)
-    });
+        })
+        .catch(err => {
+            console.error(err)
+        });
 });
 
-router.post('/paynow', (req,res)=> {
+router.post('/paynow', (req, res) => {
     alertMessage(res, 'success', 'Order placed, the administrator will shortly confirm your payment', 'fas fa-exclamation-circle', true)
     res.redirect('/')
 })
 
 // Admin Side
 
-router.get('/createCoupon', (req,res) => {
+router.get('/createCoupon', (req, res) => {
     // if (!req.session.public_coupon) {
     //     req.session.public_coupon = "NULL";
     // }
@@ -705,12 +712,15 @@ router.get('/createCoupon', (req,res) => {
     // Get current time of server
     let currentTime = moment().format('h:mm a');
 
+    let errors;
+
     res.render('checkout/createCoupon', {
-        currentTime
+        currentTime,
+        errors
     })
 })
 
-router.post('/createCoupon', (req,res)=> {
+router.post('/createCoupon', (req, res) => {
     let coupon_code = req.body.coupon_code;
     let coupon_type = req.body.coupon_type;
     let coupon_discount = req.body.coupon_discount;
@@ -720,9 +730,24 @@ router.post('/createCoupon', (req,res)=> {
     let coupon_expire_date = req.body.coupon_expire_date;
     let coupon_expire_time = req.body.coupon_expire_time;
     let full_time = req.body.coupon_expire_date + " " + req.body.coupon_expire_time;
+
+
     // Note that the date/time stored in mySQL will be GMT althought date/time is based on our server(SGT)
     // E.g Coupon expiry date and time is SGT (GMT+8) 09/08/2020, 06:00 -> GMT 08/08/2020, 22:00
     let expiry_date_time = moment(full_time, 'DD/MM/YYYY, hh:mm:ss a');
+
+    // Error handling
+
+    // let errors = [];
+
+    let current_time = moment();
+    let et = moment(expiry_date_time);
+
+    if (et.isBefore(current_time)) {
+        // errors.push({ text: 'Date or Time entered invalid!' })
+        alertMessage(res, 'danger', `Date or Time entered invalid!`, 'fas fa-exclamation-circle', true)
+        res.redirect('createCoupon')
+    }
     // let mo_time2 = moment(coupon_expire_time, 'hh:mm a')
     // console.log(expiry_date_time)
     // console.log(mo_time2)
@@ -740,31 +765,31 @@ router.post('/createCoupon', (req,res)=> {
     }
 
     Coupon.create({
-        code:coupon_code,
-        type:coupon_type,
-        discount:coupon_discount,
-        limit:coupon_limit,
-        public:coupon_public,
-        message:coupon_msg,
-        expiry:expiry_date_time
+        code: coupon_code,
+        type: coupon_type,
+        discount: coupon_discount,
+        limit: coupon_limit,
+        public: coupon_public,
+        message: coupon_msg,
+        expiry: expiry_date_time
     })
-    .then((coupon_object)=>{
-        if (coupon_object.public == 1 && req.session.public_coupon != null) {
-            let oc = req.session.public_coupon;
-            console.log(oc.code);
-            req.session.public_coupon = coupon_object;
-            Coupon.destroy({
-                where: {id:oc.id}
-            })
-            // oc.destroy(); -> doesnt work 'oc doesnt have function 'destroy'
-        }
+        .then((coupon_object) => {
+            if (coupon_object.public == 1 && req.session.public_coupon != null) {
+                let oc = req.session.public_coupon;
+                console.log(oc.code);
+                req.session.public_coupon = coupon_object;
+                Coupon.destroy({
+                    where: { id: oc.id }
+                })
+                // oc.destroy(); -> doesnt work 'oc doesnt have function 'destroy'
+            }
 
-        req.session.save();
-        res.redirect('/product/createCoupon')
-    })
-    // .catch(()=> {
-    //     console.log("Something went wrong with creating the coupon")
-    // })
+            req.session.save();
+            res.redirect('/product/createCoupon')
+        })
+        .catch(() => {
+            console.log("Something went wrong with creating the coupon")
+        })
 })
 
 

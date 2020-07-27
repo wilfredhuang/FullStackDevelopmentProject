@@ -20,11 +20,13 @@
         </div>
         <div class="form-group">
             <label for="coupon_discount">Coupon Discount Rate:</label>
-            <input type="text" name="coupon_discount" class="form-control" id="coupon_discount" required>
+            {{!-- <input type="text" name="coupon_discount" class="form-control" id="coupon_discount" required> --}}
+        <input type="number" step="0.01" max="0.99" min="0.01" value="0.10" class="qty" size="4" name="coupon_discount" id="coupon_discount" class="form-control" required>
         </div>
         <div class="form-group">
-            <label for="coupon_limit">Coupon Limit:</label>
-            <input type="text" name="coupon_limit" class="form-control" id="coupon_limit" required>
+            <label for="coupon_limit">Coupon Limit ($) :</label>
+            {{!-- <input type="text" name="coupon_limit" class="form-control" id="coupon_limit" required> --}}
+            <input type="number" step="1" max="100" min="1" value="1" class="qty" size="4" name="coupon_limit" id="coupon_limit" class="form-control" required>
         </div>
         <div class="form-group">
             <label for="coupon_public">Make Coupon Public?:</label>

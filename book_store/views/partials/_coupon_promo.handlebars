@@ -1,18 +1,11 @@
-			{{!-- <div class="header-top">
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-3"><a href="#" class="web-url">www.bookstore.com</a></div>
-                    <div class="col-md-6">
-                        <h5>Free Shipping Over $99 + 3 Free Samples With Every Order</h5></div>
-                    <div class="col-md-3">
-                        <span class="ph-number">Call : 800 1234 5678</span>
-                    </div>
-                </div>
-            </div>
-        </div> --}}
-{{!-- <div class="promo-header"> --}}
-    <div class="container">
-        <p class="bg-dark text-white"> Promo code {{public_coupon.code}} <i class="fa fa-commenting" aria-hidden="true"></i> 
-        <span class="bg-dark text-white"> {{public_coupon.message}}</span> </p>
+<div class="container">
+    <div class="d-flex justify-content-center bg-dark">
+        <div class="align-content-center">
+            <div class="d-flex justify-content-center bg-dark"><span class="text-white" style="display:block" ;>
+                    {{public_coupon.message}} </span></div>
+            <span class="bg-dark text-white"> <i class="fas fa-bullhorn" aria-hidden="true"></i> USE CODE
+                '{{public_coupon.code}}' to get {{convertDiscount public_coupon.discount}}% discount off {{displayCouponType public_coupon.type}} (Capped at
+                ${{public_coupon.limit}})</span>
+        </div>
     </div>
-{{!-- </div> --}}
+</div>
