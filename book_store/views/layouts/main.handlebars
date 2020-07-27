@@ -56,8 +56,11 @@
 </head>
 
 <body>
-	{{>_coupon_promo}}
 	{{>_navbar}}
+	{{#if (checkPromo public_coupon)}}
+		{{>_coupon_promo}}
+	{{else}}
+	{{/if}}
 	<div class="container">
 		{{>_msg}}
 		{{>_errors}}

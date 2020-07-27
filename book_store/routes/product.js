@@ -698,6 +698,9 @@ router.post('/paynow', (req,res)=> {
 // Admin Side
 
 router.get('/createCoupon', (req,res) => {
+    // if (!req.session.public_coupon) {
+    //     req.session.public_coupon = "NULL";
+    // }
     let currentDate = moment(req.body.currentDate, "DD/MM/YYYY");
     // Get current time of server
     let currentTime = moment().format('h:mm a');
@@ -730,7 +733,6 @@ router.post('/createCoupon', (req,res)=> {
     // Set BOOLEAN value of 'public' column
     if (coupon_public == "YES") {
         coupon_public = 1
-        req.session.public_coupon = coupon_code
     }
 
     else {
@@ -746,12 +748,23 @@ router.post('/createCoupon', (req,res)=> {
         message:coupon_msg,
         expiry:expiry_date_time
     })
-    .then(()=>{
+    .then((coupon_object)=>{
+        if (coupon_object.public == 1 && req.session.public_coupon != null) {
+            let oc = req.session.public_coupon;
+            console.log(oc.code);
+            req.session.public_coupon = coupon_object;
+            Coupon.destroy({
+                where: {id:oc.id}
+            })
+            // oc.destroy(); -> doesnt work 'oc doesnt have function 'destroy'
+        }
+
+        req.session.save();
         res.redirect('/product/createCoupon')
     })
-    .catch(()=> {
-        console.log("Something went wrong with creating the coupon")
-    })
+    // .catch(()=> {
+    //     console.log("Something went wrong with creating the coupon")
+    // })
 })
 
 

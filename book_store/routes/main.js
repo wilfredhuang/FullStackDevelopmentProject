@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const cartItem = require("../models/CartItem");
 const alertMessage = require("../helpers/messenger");
+const Coupon = require('../models/coupon');
 
 router.get("/", (req, res) => {
   const title = "Bookstore Home Page";
@@ -20,6 +21,17 @@ router.get("/", (req, res) => {
     req.session.sub_discounted_price = 0;
     req.session.full_total_price = 0;
     // ssn = req.session.userCart;
+  }
+
+  if (req.session.public_coupon == null) {
+    Coupon.findOne({
+      where:{public:1}
+    })
+
+    .then((c)=>{
+      req.session.public_coupon = c
+      req.session.save();
+    })
   }
 
   console.log(req.session)

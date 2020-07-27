@@ -78,6 +78,16 @@ module.exports = {
         else {
             return false;
         }
+    },
+
+    checkPromo: function(public_coupon_session_obj){
+        if (public_coupon_session_obj == null) {
+            return false;
+        } 
+
+        else {
+            return true;
+        }
     }
 
 
