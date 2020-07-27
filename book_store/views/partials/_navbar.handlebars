@@ -22,20 +22,23 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav ml-auto">
-                        <li class="navbar-item active">
+                        <li class="navbar-item {{navStatusHome}}">
                             <a href="/index" class="nav-link">Home</a>
                         </li>
-                        <li class="navbar-item">
+                        <li class="navbar-item {{navStatusProduct}}">
                             <a href="/product/listProduct" class="nav-link">Shop</a>
                         </li>
-                        <li class="navbar-item">
+                        <li class="navbar-item {{navStatusAbout}}">
                             <a href="/about" class="nav-link">About</a>
                         </li>
-                        <li class="navbar-item">
+                        <li class="navbar-item {{navStatusFAQ}}">
                             <a href="/faq" class="nav-link">FAQ</a>
                         </li>
-                        <li class="navbar-item">
+                        <li class="navbar-item {{navStatusLogin}}">
                             <a href="/login" class="nav-link">Login</a>
+                        </li>
+                        <li class="navbar-item {{navStatusRegister}}">
+                            <a href="/register" class="nav-link">Register</a>
                         </li>
                     </ul>
                     <div class="cart my-2 my-lg-0">

@@ -13,23 +13,29 @@ router.get("/", (req, res) => {
 
 router.get("/index", (req, res) => {
   const title = "Bookstore Home Page";
+  const navStatusHome = "active";
   res.render("index", {
     // renders views/index.handlebars
     title,
+    navStatusHome
   });
 });
 
 router.get("/about", (req, res) => {
   const title = "About Us";
+  const navStatusAbout = "active";
   res.render("about", {
     title,
+    navStatusAbout
   });
 });
 
 router.get("/faq", (req, res) => {
   const title = "FAQs";
+  const navStatusFAQ = "active";
   res.render("faq", {
     title,
+    navStatusFAQ
   });
 });
 
@@ -80,16 +86,20 @@ router.get('/product-single.html', (req, res) => {
 // Login Page
 router.get("/login", (req, res) => {
   const title = "Login Page";
+  const navStatusLogin = "active";
   res.render("user/login", {
     title,
+    navStatusLogin
   });
 });
 
 // Register Page
 router.get("/register", (req, res) => {
   const title = "Registration Page";
+  const navStatusRegister = "active";
   res.render("user/register", {
     title,
+    navStatusRegister
   });
 });
 

@@ -34,6 +34,7 @@ let sub_discounted_price = 0;
 let full_total_price = 0;
 
 router.get('/listProduct', (req, res) => {
+    const navStatusProduct = "active";
     productadmin.findAll({
         order: [
             ['product_name', 'ASC']
@@ -43,7 +44,8 @@ router.get('/listProduct', (req, res) => {
         .then((productadmin) => {
             res.render('products/listProduct', {
                 productadmin: productadmin,
-                userCart
+                userCart,
+                navStatusProduct
             });
         })
 });
