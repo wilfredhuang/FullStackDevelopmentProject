@@ -333,7 +333,7 @@ router.post('/individualProduct/:id', (req, res, next) => {
 // Using this POST request to handle and update the information instead of router.get will solve that problem
 router.post('/goToCart', (req, res) => {
     req.session.full_subtotal_price = 0;
-    req.session.shipping_fee = (10).toFixed(2);
+    req.session.shipping_fee = (0).toFixed(2);
     let total_weight = 0;
     let total_weight_oz = 0;
     req.session.full_total_price = 0;
@@ -398,7 +398,7 @@ router.post('/goToCart', (req, res) => {
     }
 
     else {
-        req.session.discounted_price = 0.00
+        req.session.discounted_price = (0).toFixed(2);
         for (z in req.session.userCart) {
             req.session.full_subtotal_price = (parseFloat(req.session.full_subtotal_price) + parseFloat(req.session.userCart[z].SubtotalPrice)).toFixed(2)
             console.log(req.session.full_subtotal_price)
@@ -432,7 +432,7 @@ router.get('/cart', (req, res) => {
 
     // Get full total price (Subtotal of all items + shipping after discounts(if any))
     // let req.session. = 0;
-    req.session.shipping_fee = (10).toFixed(2);
+    req.session.shipping_fee = (0).toFixed(2);
     let total_weight = 0;
     let total_weight_oz = 0;
 
