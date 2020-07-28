@@ -10,6 +10,7 @@ router.get("/", (req, res) => {
   const title = "Bookstore Home Page";
   if (req.user) {
     console.log("LOGGED IN");
+    console.log(req.user.email)
   }
   else if (!req.user) {
     console.log("NOT LOGGED IN");

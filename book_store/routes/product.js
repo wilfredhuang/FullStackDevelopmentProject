@@ -5,6 +5,7 @@ const product = require('../models/Product');
 const productadmin = require('../models/ProductAdmin');
 const cartItem = require('../models/CartItem');
 const order = require('../models/Order');
+const User = require('../models/User');
 
 const alertMessage = require('../helpers/messenger');
 const Coupon = require('../models/coupon');
@@ -615,11 +616,22 @@ router.get('/deleteCartItem/:id', (req, res) => {
 
 // Checkout Form
 router.get('/checkout', (req, res) => {
-    if (req.user) {
-        let user_name = req.user.name
-        console.log(user_name)
-    }
-    res.render('checkout/checkout');
+    let user_name = req.user.name;
+    let user_phone = req.user.PhoneNo;
+    let user_address = req.user.address;
+    let user_address1 = req.user.address1;
+    let user_city = req.user.city;
+    let user_country = req.user.country;
+    let user_postalCode = req.user.postalCode;
+    res.render('checkout/checkout', {
+        user_name,
+        user_phone,
+        user_address,
+        user_address1,
+        user_city,
+        user_country,
+        user_postalCode
+    });
 });
 
 
