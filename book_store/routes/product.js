@@ -519,11 +519,11 @@ router.post('/cart', (req, res) => {
         console.log(req.session.userCart)
         console.log(req.session.full_subtotal_price)
         res.redirect(307, 'goToCart')
-        // res.redirect('cart');
     }
 
     else {
         res.redirect('checkout')
+        alertMessage(res, 'danger', 'You are not logged in', 'fas fa-exclamation-circle', true)
     }
 })
 
@@ -616,22 +616,30 @@ router.get('/deleteCartItem/:id', (req, res) => {
 
 // Checkout Form
 router.get('/checkout', (req, res) => {
-    let user_name = req.user.name;
-    let user_phone = req.user.PhoneNo;
-    let user_address = req.user.address;
-    let user_address1 = req.user.address1;
-    let user_city = req.user.city;
-    let user_country = req.user.country;
-    let user_postalCode = req.user.postalCode;
-    res.render('checkout/checkout', {
-        user_name,
-        user_phone,
-        user_address,
-        user_address1,
-        user_city,
-        user_country,
-        user_postalCode
-    });
+    if (req.user) {
+        let user_name = req.user.name;
+        let user_phone = req.user.PhoneNo;
+        let user_address = req.user.address;
+        let user_address1 = req.user.address1;
+        let user_city = req.user.city;
+        let user_country = req.user.country;
+        let user_postalCode = req.user.postalCode;
+
+        res.render('checkout/checkout', {
+            user_name,
+            user_phone,
+            user_address,
+            user_address1,
+            user_city,
+            user_country,
+            user_postalCode
+        });
+    }
+
+    else {
+        
+        res.redirect("/")
+    }
 });
 
 
@@ -727,7 +735,8 @@ router.get('/createCoupon', (req, res) => {
     // }
     let currentDate = moment(req.body.currentDate, "DD/MM/YYYY");
     // Get current time of server
-    let currentTime = moment().format('h:mm a');
+    // hh or HH = 24 hr format, h / H = 12 hr format, a = PM/AM
+    let currentTime = moment().format("HH:mm");
 
     let errors;
 
@@ -802,6 +811,7 @@ router.post('/createCoupon', (req, res) => {
             }
 
             req.session.save();
+            alertMessage(res, 'success', `Coupon Code ${coupon_object.code} Created, it expires on ${coupon_object.expiry}`, 'fas fa-exclamation-circle', true)
             res.redirect('/product/createCoupon')
         })
         .catch(() => {

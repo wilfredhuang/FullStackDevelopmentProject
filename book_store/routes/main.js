@@ -43,6 +43,10 @@ router.get("/", (req, res) => {
     })
   }
 
+
+  if (req.session.public_coupon != null) {
+    
+  }
   Coupon.findAll({
     // order: [['id', 'ASC']],
   })
@@ -55,14 +59,14 @@ router.get("/", (req, res) => {
       if (current_time.isAfter(expiry_time) && req.session.public_coupon.code == coupons[c].expiry.code) {
         coupons[c].destroy();
         console.log("Destroying session variable")
-        req.session.public_coupon.destroy();
+        req.session.public_coupon = null;
         req.session.save();
       }
 
       else if (current_time.isAfter(expiry_time)) {
         if (coupons[c].code == req.session.public_coupon.code) {
           console.log("Destroying the ssn var")
-          req.session.public_coupon.destroy()
+          req.session.public_coupon = null;
         }
         console.log("Destroying Coupon Code " + coupons[c].code)
         coupons[c].destroy();
