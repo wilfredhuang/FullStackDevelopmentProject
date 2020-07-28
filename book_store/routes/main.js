@@ -2,15 +2,18 @@ const express = require("express");
 const router = express.Router();
 const cartItem = require("../models/CartItem");
 const alertMessage = require("../helpers/messenger");
+const Coupon = require('../models/coupon');
+const moment = require('moment');
+const userAuth = require('../helpers/auth');
 
 router.get("/", (req, res) => {
   const title = "Bookstore Home Page";
   if (req.user) {
-    console.log("LOGGED IN")
+    console.log("LOGGED IN");
+    console.log(req.user.email)
   }
-  else {
-    console.log("NOT LOGGED IN ")
-    console.log(req.user)
+  else if (!req.user) {
+    console.log("NOT LOGGED IN");
   }
   if (!req.session.userCart) {
     // Initialise session variables on the server start-up
@@ -28,6 +31,57 @@ router.get("/", (req, res) => {
     req.session.full_total_price = 0;
     // ssn = req.session.userCart;
   }
+
+  if (req.session.public_coupon == null) {
+    Coupon.findOne({
+      where:{public:1}
+    })
+
+    .then((c)=>{
+      req.session.public_coupon = c
+      req.session.save();
+    })
+  }
+
+
+  if (req.session.public_coupon != null) {
+    
+  }
+  Coupon.findAll({
+    // order: [['id', 'ASC']],
+  })
+  .then((coupons)=>{
+    for (c in coupons) {
+      // Mistake: used 'c.destroy()' instead of 'coupons[c].destroy()'
+      // let current_time = moment('DD/MM/YYYY, hh:mm:ss a')
+      let current_time = moment()
+      let expiry_time = moment(coupons[c].expiry)
+      if (current_time.isAfter(expiry_time) && req.session.public_coupon.code == coupons[c].expiry.code) {
+        coupons[c].destroy();
+        console.log("Destroying session variable")
+        req.session.public_coupon = null;
+        req.session.save();
+      }
+
+      else if (current_time.isAfter(expiry_time)) {
+        if (coupons[c].code == req.session.public_coupon.code) {
+          console.log("Destroying the ssn var")
+          req.session.public_coupon = null;
+        }
+        console.log("Destroying Coupon Code " + coupons[c].code)
+        coupons[c].destroy();
+        req.session.save();
+      }
+      else {
+        console.log(current_time.format('DD/MM/YYYY, hh:mm:ss a'))
+        console.log(expiry_time.format('DD/MM/YYYY, hh:mm:ss a'))
+        console.log("Current Time is " + current_time)
+        console.log("Expiry Time is " + coupons[c].expiry)
+        console.log("Expiry Time is  " + expiry_time)
+      }
+    }
+
+  })
 
   console.log(req.session)
   res.render("index", {

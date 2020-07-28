@@ -43,6 +43,7 @@ const stripe = require('stripe')('sk_test_ns9DyHTray5Wihniw93C2ANH00IMJTVjKw', {
 const bcrypt = require('bcryptjs');  // added here for debugging, but it's import only used in user.js
 // Passport - Setting Authentication - P4A2
 const passport = require('passport');
+// const FacebookStrategy = require('passport-facebook').Strategy;
 
 // Load routes
 const mainRoute = require('./routes/main');
@@ -71,7 +72,7 @@ authenticate.localStrategy(passport);
 
 // global.userCart = {};
 // Bring in Handlebars Helpers here
-const {convertUpper, adminCheck, emptyCart, cartQty, formatDate, capitaliseFirstLetter, isSg} = require('./helpers/hbs');
+const {convertUpper, adminCheck, emptyCart, cartQty, formatDate, capitaliseFirstLetter, isSg, checkPromo, convertDiscount, displayCouponType} = require('./helpers/hbs');
 
 // creates an express server
 const app = express();
@@ -86,7 +87,10 @@ app.engine('handlebars', exphbs({
 		cartQty: cartQty,
 		formatDate: formatDate,
 		capitaliseFirstLetter:capitaliseFirstLetter,
-		isSg: isSg
+		isSg: isSg,
+		checkPromo: checkPromo,
+		convertDiscount:convertDiscount,
+		displayCouponType:displayCouponType
 	},					
 	handlebars: allowInsecurePrototypeAccess(Handlebars),
 }));
@@ -158,6 +162,7 @@ app.use(function (req, res, next) {
 	res.locals.full_subtotal_price = req.session.full_subtotal_price;
 	res.locals.full_total_price = req.session.full_total_price;
 	res.locals.shipping_fee = req.session.shipping_fee;
+	res.locals.public_coupon = req.session.public_coupon; 
 	next();
 });
 

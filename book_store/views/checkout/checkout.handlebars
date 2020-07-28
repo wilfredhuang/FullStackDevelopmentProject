@@ -4,29 +4,30 @@
       {{!-- method="POST" action="/product/checkout" --}}
       <br>
       <div class="form-group">
-        <label for="product_name">Full Name:</label>
-        {{!-- <a href="#" onclick="getBook()" tabindex="-1" class="card-link">
+        <label for="fullName">Full Name:</label>
+        <a href="#" onclick="autofill('{{user_name}}', '{{user_phone}}', '{{user_address}}', '{{user_address1}}', '{{user_country}}', '{{user_city}}', '{{user_postalCode}}')" 
+        tabindex="-1" class="card-link">
 						<i class="fas fa-film"></i>
-						Get Book
-					</a> --}}
-        <input type="text" name="fullName" class="form-control" id="product_name" required>
+						Fill in my details
+					</a>
+        <input type="text" name="fullName" class="form-control" id="fullName" required>
       </div>
       <div class="form-group">
-        <label for="product_image">Phone Number:</label>
-        <input type="text" name="phoneNumber" class="form-control" id="product_image" required>
+        <label for="phoneNumber">Phone Number:</label>
+        <input type="text" name="phoneNumber" class="form-control" id="phoneNumber" required>
       </div>
 
       <div class="form-group">
-        <label for="author">Address:</label>
-        <input type="text" name="address" class="form-control" id="author" required>
+        <label for="address">Address:</label>
+        <input type="text" name="address" class="form-control" id="address" required>
       </div>
       <div class="form-group">
-        <label for="publisher">Address #2:</label>
-        <input type="text" name="address1" class="form-control" id="publisher" required>
+        <label for="address1">Address #2:</label>
+        <input type="text" name="address1" class="form-control" id="address1" required>
       </div>
       <div class="form-group">
-        <label for="genre">Country:</label>
-        <select id="country" name="country" class="form-control">
+        <label for="country">Country:</label>
+        <select id="country" name="country" id="country" class="form-control">
               <option value="Afganistan">Afghanistan</option>
               <option value="Albania">Albania</option>
               <option value="Algeria">Algeria</option>
@@ -276,12 +277,12 @@
     </select>
       </div>
       <div class="form-group">
-        <label for="price">City:</label>
-        <input type="text" name="city" class="form-control" id="price" required>
+        <label for="city">City:</label>
+        <input type="text" name="city" class="form-control" id="city" required>
       </div>
       <div class="form-group">
-        <label for="stock">Postal Code:</label>
-        <input type="text" name="postalCode" class="form-control" id="stock" required>
+        <label for="postalCode">Postal Code:</label>
+        <input type="text" name="postalCode" class="form-control" id="postalCode" required>
       </div>
       <button id="submit" class="btn btn-danger"> Proceed </button>
       {{!-- <h2> Payment </h2>
