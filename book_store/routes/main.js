@@ -5,6 +5,13 @@ const alertMessage = require("../helpers/messenger");
 
 router.get("/", (req, res) => {
   const title = "Bookstore Home Page";
+  if (req.user) {
+    console.log("LOGGED IN")
+  }
+  else {
+    console.log("NOT LOGGED IN ")
+    console.log(req.user)
+  }
   if (!req.session.userCart) {
     // Initialise session variables on the server start-up
     req.session.userCart = {};
