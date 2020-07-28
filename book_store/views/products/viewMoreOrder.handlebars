@@ -11,9 +11,16 @@
         <!--- {% for order in orderList %}   add in conditions here--->
         <div class="row">
             <div class="col-md-8">
-                <div>
-                    <!---<p>remember to put progress step bar here</p>--->
+                <h3>Delivery Status - <span
+                        class="{{progressColourText}}">{{capitaliseFirstLetter deliveryStatus}}</span></h3>
+                <br>
+                <div class="progress">
+                    <div class="progress-bar {{progressColour}}" style="width: {{progressPercentage}}%"
+                        role="progressbar" aria-valuenow="{{progressPercentage}}" aria-valuemin="0" aria-valuemax="100"></div>
                 </div>
+                <br>
+                <p>Check <a href="{{trackingURL}}">here</a> for more delivery information.</p>
+                <br>
                 {{#if cartItem}}
                 {{#each cartItem}}
                 <div class="row">
@@ -44,22 +51,25 @@
                     <hr>
                     <div class="row">
                         <div class="col">
-                            <p>Name: {{order.fullName}}</p>
                             <p>Order ID: {{order.id}}</p>
+                            <p>Name: {{order.fullName}}</p>
                             <p>{{order.address}}</p>
                             <p>{{order.address1}}</p>
                             <p>City: {{order.city}}</p>
                             <p>Country: {{order.country}}</p>
-                            <p>Delivery Status: <a href="{{trackingURL}}">{{capitaliseFirstLetter deliveryStatus}}</a></p>
                         </div>
                     </div>
                 </div>
-                <div class ="right-sidebar">
+                <div class="right-sidebar">
                     <h3>Shipping Information</h3>
                     <hr>
                     <div>
-                        <p>Tracking Code: </p>
+                        <p>Order Date: {{formatDate order.dateStart 'DD MMM YYYY'}}</p>
+                        <p>USPS Tracking Code: </p>
                         <p>{{order.trackingCode}}</p>
+                        <p>EasyPost Tracking Code: </p>
+                        <p>{{order.trackingId}}</p>
+                        
                     </div>
                 </div>
                 <div class="right-sidebar">

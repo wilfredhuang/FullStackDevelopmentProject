@@ -24,6 +24,7 @@ const { CheckboxRadioContainer } = require('admin-bro');
 // const req.session.userCart = {}
 
 router.get('/listProduct', (req, res) => {
+    const navStatusProduct = "active";
     productadmin.findAll({
         order: [
             ['product_name', 'ASC']
@@ -32,7 +33,8 @@ router.get('/listProduct', (req, res) => {
     })
         .then((productadmin) => {
             res.render('products/listProduct', {
-                productadmin: productadmin
+                productadmin: productadmin,
+                navStatusProduct
             });
         })
 });

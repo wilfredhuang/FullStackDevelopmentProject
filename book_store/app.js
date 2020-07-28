@@ -169,6 +169,7 @@ app.use('/delivery', deliveryRoute);
 app.use('/checkout', checkoutRoute);
 app.use('/admin',adminRoute);
 
+//Renders 404 Page if user types in invalid URL
 app.use(function(req, res, next) {
 	res.status(404).render('404');
 
