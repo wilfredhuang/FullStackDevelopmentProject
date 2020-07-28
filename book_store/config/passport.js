@@ -7,8 +7,6 @@ const { v1: uuidv1 } = require('uuid');
 // Load user model
 const User = require('../models/User');
 const facebookUser = require('../models/User');
-const sequelize = require('./DBConfig');
-const { deserializeUser } = require('passport');
 
 function localStrategy(passport) {
     passport.use(new LocalStrategy({ usernameField: 'email' }, (email, password,
@@ -33,21 +31,20 @@ function localStrategy(passport) {
     // authentication
     passport.serializeUser((user, done) => {
         done(null, user.id); // user.id is used to identify authenticated user
-        
     });
     // User object is retrieved by userId from session and
     // put into req.user
     passport.deserializeUser((userId, done) => {
         User.findByPk(userId)
             .then((user) => {
-                console.log('deserializeUser')
-                done(null, userId); // user object saved in req.session
+                done(null, user); // user object saved in req.session
             })
             .catch((done) => { // No user found, not stored in req.session
                 console.log(done);
             });
     });
 }
+//still not saving info to database
 passport.use(new FacebookStrategy({
     clientID: "239865340604409" ,
     clientSecret: "61403ba37105bae272df33dda173ec85" ,
