@@ -7,7 +7,10 @@ function update(id, qty) {
     // $("checkoutButton").attr(id, quantity);
 }
 
-
+function autofill() {
+    document.getElementById('product_name').value = "ads";
+    document.getElementById('product_image').value = "foobar";
+}
 // Determine if checkout Button needed to update or checkout.
 // No more need, replacement function in route js
 

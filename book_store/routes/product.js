@@ -225,6 +225,7 @@ router.get('/listproduct/:id', (req, res, next) => {
                     "Weight": weight, "Image": image, "Quantity": qty, "SubtotalPrice": price, "SubtotalWeight": weight
                 }
                 console.log(req.session.userCart)
+                req.session.save();
             }
 
             else {
@@ -614,6 +615,10 @@ router.get('/deleteCartItem/:id', (req, res) => {
 
 // Checkout Form
 router.get('/checkout', (req, res) => {
+    if (req.user) {
+        let user_name = req.user.name
+        console.log(user_name)
+    }
     res.render('checkout/checkout');
 });
 

@@ -42,7 +42,9 @@ const stripe = require('stripe')('sk_test_ns9DyHTray5Wihniw93C2ANH00IMJTVjKw', {
 // Bcrypt - Encrypt password - P4A1
 const bcrypt = require('bcryptjs');  // added here for debugging, but it's import only used in user.js
 // Passport - Setting Authentication - P4A2
-const passport = require('passport');
+// const passport = require('passport');
+// const FacebookStrategy = require('passport-facebook').Strategy;
+const foobar = require('foobar');
 
 // Load routes
 const mainRoute = require('./routes/main');
@@ -66,8 +68,8 @@ const vidjotDB = require('./config/DBConnection');
 vidjotDB.setUpDB(false); // To set up database with new tables set (true)
 
 // Passport Config - P4A2
-// const authenticate = require('./config/passport'); 
-// authenticate.localStrategy(passport); 
+const authenticate = require('./config/passport'); 
+authenticate.localStrategy(passport); 
 
 // global.userCart = {};
 // Bring in Handlebars Helpers here
@@ -112,25 +114,25 @@ app.use(cookieParser());
 app.use(session({
  	key: 'vidjot_session',
  	secret: 'tojiv',
-// 	store: new MySQLStore({
-// 		host: db.host,
-// 		port: 3306,
-// 		user: db.username,
-// 		password: db.password,
-// 		database: db.database,
-// 		clearExpired: true,
-// 		// How frequently expired sessions will be cleared; milliseconds:
-// 		checkExpirationInterval: 900000,
-// 		// The maximum age of a valid session; milliseconds: 
-// 		expiration: 900000,
-// 	}),
+	store: new MySQLStore({
+		host: db.host,
+		port: 3306,
+		user: db.username,
+		password: db.password,
+		database: db.database,
+		clearExpired: true,
+		// How frequently expired sessions will be cleared; milliseconds:
+		checkExpirationInterval: 900000,
+		// The maximum age of a valid session; milliseconds: 
+		expiration: 900000,
+	}),
  	resave: false,
  	saveUninitialized: false,
 }));
 
 // Initilize Passport middleware - P4A2
-// app.use(passport.initialize());
-// app.use(passport.session());
+app.use(passport.initialize());
+app.use(passport.session());
 
 // Two flash messenging libraries - Flash (connect-flash) and Flash Messenger
 app.use(flash());

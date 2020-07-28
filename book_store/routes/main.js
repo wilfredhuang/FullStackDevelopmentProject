@@ -4,9 +4,16 @@ const cartItem = require("../models/CartItem");
 const alertMessage = require("../helpers/messenger");
 const Coupon = require('../models/coupon');
 const moment = require('moment');
+const userAuth = require('../helpers/auth');
 
 router.get("/", (req, res) => {
   const title = "Bookstore Home Page";
+  if (req.user) {
+    console.log("LOGGED IN");
+  }
+  else if (!req.user) {
+    console.log("NOT LOGGED IN");
+  }
   if (!req.session.userCart) {
     // Initialise session variables on the server start-up
     req.session.userCart = {};
