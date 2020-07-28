@@ -73,25 +73,23 @@ module.exports = {
     return string.replace(/ /g, "_");
   },
 
-    cartQty: function (userCart) {
-        let totalqty = 0;
-        for (z in userCart) {
-            let qty = userCart[z].Quantity 
-            totalqty = parseInt(totalqty) + parseInt(qty)
-        }
-        return totalqty;
-    },
+  cartQty: function (userCart) {
+    let totalqty = 0;
+    for (z in userCart) {
+      let qty = userCart[z].Quantity;
+      totalqty = parseInt(totalqty) + parseInt(qty);
+    }
+    return totalqty;
+  },
 
-    isSg:function (country_var) {
-        console.log(`The user country is ${country_var}`)
-        if (country_var == "Singapore")  {
-            return true;
-        }
-
-        else {
-            return false;
-        }
-    },
+  isSg: function (country_var) {
+    console.log(`The user country is ${country_var}`);
+    if (country_var == "Singapore") {
+      return true;
+    } else {
+      return false;
+    }
+  },
 
   retrieveDeliveryStatus: function (shipmentID) {
     api.Shipment.retrieve(shipmentID).then((s) => {
