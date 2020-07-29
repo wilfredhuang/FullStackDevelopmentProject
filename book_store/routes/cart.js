@@ -26,6 +26,8 @@ var QRCode = require('qrcode')
 //NodeMailer
 const nodemailer = require('nodemailer');
 
+//Email Template
+//const Email = require('email-templates');
 
 router.get("/checkout", (req, res) => {
   const title = "Check Out";
