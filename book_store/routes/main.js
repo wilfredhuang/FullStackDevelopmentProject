@@ -8,13 +8,17 @@ const userAuth = require('../helpers/auth');
 
 router.get("/", (req, res) => {
   const title = "Bookstore Home Page";
+  const navStatusHome = "active";
+  // check if logged in or not
   if (req.user) {
     console.log("LOGGED IN");
     console.log(req.user.email)
   }
-  else if (!req.user) {
+  else {
     console.log("NOT LOGGED IN");
   }
+
+  // If no session cart created yet, create one
   if (!req.session.userCart) {
     // Initialise session variables on the server start-up
     req.session.userCart = {};
@@ -31,7 +35,8 @@ router.get("/", (req, res) => {
     req.session.full_total_price = 0;
     // ssn = req.session.userCart;
   }
-
+  // at website startup, when no ssn var set, find if a public coupon(if exists) 
+  // and assign to ssn var to display promo banner
   if (req.session.public_coupon == null) {
     Coupon.findOne({
       where: { public: 1 }
@@ -43,44 +48,21 @@ router.get("/", (req, res) => {
       })
   }
 
-
-  if (req.session.public_coupon != null) {
-    Coupon.findAll({
-      // order: [['id', 'ASC']],
+  // If ssn var is not null (default), check if the public coupon still exist in db,
+  // If not, reassign ssn var to null again
+  else {
+    Coupon.findOne({
+      where: { public: 1 }
     })
-      .then((coupons) => {
-        for (c in coupons) {
-          // Mistake: used 'c.destroy()' instead of 'coupons[c].destroy()'
-          // let current_time = moment('DD/MM/YYYY, hh:mm:ss a')
-          let current_time = moment()
-          let expiry_time = moment(coupons[c].expiry)
-          if (current_time.isAfter(expiry_time) && req.session.public_coupon.code == coupons[c].expiry.code) {
-            coupons[c].destroy();
-            console.log("Session public coupon is " + req.session.public_coupon)
-            console.log("Destroying session variable")
-            req.session.public_coupon = null;
-            res.locals.public_coupon = null;
-            req.session.save();
-          }
 
-          else if (current_time.isAfter(expiry_time)) {
-            if (coupons[c].code == req.session.public_coupon.code) {
-              console.log("Destroying the ssn var")
-              req.session.public_coupon = null;
-            }
-            console.log("Destroying Coupon Code " + coupons[c].code)
-            coupons[c].destroy();
-            req.session.save();
-          }
-          else {
-            console.log(current_time.format('DD/MM/YYYY, hh:mm:ss a'))
-            console.log(expiry_time.format('DD/MM/YYYY, hh:mm:ss a'))
-            console.log("Current Time is " + current_time)
-            console.log("Expiry Time is " + coupons[c].expiry)
-            console.log("Expiry Time is  " + expiry_time)
-          }
-        }
+      .then((c) => {
+        console.log("Public Coupon " + c.code + " found")
+      })
 
+      .catch(() => {
+        console.log("Seems like public coupon has expired already, deleting it's session variable...")
+        req.session.public_coupon = null;
+        req.session.save();
       })
   }
 
@@ -88,6 +70,7 @@ router.get("/", (req, res) => {
   res.render("index", {
     // renders views/index.handlebars
     title,
+    navStatusHome
   });
 });
 
