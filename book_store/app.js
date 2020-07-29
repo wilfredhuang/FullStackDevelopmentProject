@@ -43,6 +43,7 @@ const stripe = require('stripe')('sk_test_ns9DyHTray5Wihniw93C2ANH00IMJTVjKw', {
 const bcrypt = require('bcryptjs');  // added here for debugging, but it's import only used in user.js
 // Passport - Setting Authentication - P4A2
 const passport = require('passport');
+// const FacebookStrategy = require('passport-facebook').Strategy;
 
 // Load routes
 const mainRoute = require('./routes/main');
@@ -66,12 +67,12 @@ const vidjotDB = require('./config/DBConnection');
 vidjotDB.setUpDB(false); // To set up database with new tables set (true)
 
 // Passport Config - P4A2
-// const authenticate = require('./config/passport'); 
-// authenticate.localStrategy(passport); 
+const authenticate = require('./config/passport'); 
+authenticate.localStrategy(passport); 
 
-global.userCart = {};
+// global.userCart = {};
 // Bring in Handlebars Helpers here
-const {convertUpper, adminCheck, emptyCart, cartQty, formatDate, capitaliseFirstLetter} = require('./helpers/hbs');
+const {convertUpper, adminCheck, emptyCart, cartQty, formatDate, capitaliseFirstLetter, isSg, checkPromo, convertDiscount, displayCouponType} = require('./helpers/hbs');
 
 // creates an express server
 const app = express();
@@ -86,6 +87,10 @@ app.engine('handlebars', exphbs({
 		cartQty: cartQty,
 		formatDate: formatDate,
 		capitaliseFirstLetter:capitaliseFirstLetter,
+		isSg: isSg,
+		checkPromo: checkPromo,
+		convertDiscount:convertDiscount,
+		displayCouponType:displayCouponType
 	},					
 	handlebars: allowInsecurePrototypeAccess(Handlebars),
 }));
@@ -108,25 +113,28 @@ app.use(cookieParser());
 app.use(session({
  	key: 'vidjot_session',
  	secret: 'tojiv',
-// 	store: new MySQLStore({
-// 		host: db.host,
-// 		port: 3306,
-// 		user: db.username,
-// 		password: db.password,
-// 		database: db.database,
-// 		clearExpired: true,
-// 		// How frequently expired sessions will be cleared; milliseconds:
-// 		checkExpirationInterval: 900000,
-// 		// The maximum age of a valid session; milliseconds: 
-// 		expiration: 900000,
-// 	}),
+	store: new MySQLStore({
+		host: db.host,
+		port: 3306,
+		user: db.username,
+		password: db.password,
+		database: db.database,
+		clearExpired: true,
+		// How frequently expired sessions will be cleared; milliseconds:
+		checkExpirationInterval: 900000,
+		// The maximum age of a valid session; milliseconds: 
+		expiration: 900000,
+	}),
  	resave: false,
- 	saveUninitialized: false,
+	saveUninitialized: false,
+	cookie: {
+		secure:true
+	}
 }));
 
 // Initilize Passport middleware - P4A2
-// app.use(passport.initialize());
-// app.use(passport.session());
+app.use(passport.initialize());
+app.use(passport.session());
 
 // Two flash messenging libraries - Flash (connect-flash) and Flash Messenger
 app.use(flash());
@@ -138,6 +146,23 @@ app.use(function (req, res, next) {
 	res.locals.error_msg = req.flash('error_msg');
 	res.locals.error = req.flash('error');
 	res.locals.user = req.user || null;
+	res.locals.UC = req.session.userCart;
+	res.locals.billingAddress = req.session.billingAddress;
+	res.locals.countryShipment = req.session.countryShipment;
+	res.locals.coupon_type = req.session.coupon_type;
+	res.locals.discount = req.session.discount;
+	res.locals.discount_limit = req.session.discount_limit;
+	res.locals.discounted_price = req.session.discounted_price;
+	res.locals.shipping_discount = req.session.shipping_discount;
+	res.locals.shipping_discount_limit = req.session.shipping_discount_limit;
+	res.locals.shipping_discounted_price = req.session.shipping_discounted_price;
+	res.locals.sub_discount = req.session.sub_discount;
+	res.locals.sub_discount_limit = req.session.sub_discount_limit;
+	res.locals.sub_discounted_price = req.session.sub_discounted_price;
+	res.locals.full_subtotal_price = req.session.full_subtotal_price;
+	res.locals.full_total_price = req.session.full_total_price;
+	res.locals.shipping_fee = req.session.shipping_fee;
+	res.locals.public_coupon = req.session.public_coupon; 
 	next();
 });
 
@@ -149,6 +174,7 @@ app.use('/delivery', deliveryRoute);
 app.use('/checkout', checkoutRoute);
 app.use('/admin',adminRoute);
 
+//Renders 404 Page if user types in invalid URL
 app.use(function(req, res, next) {
 	res.status(404).render('404');
 

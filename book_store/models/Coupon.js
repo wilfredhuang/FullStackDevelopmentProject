@@ -24,10 +24,17 @@ const Coupon = db.define('coupon',
             type: Sequelize.DECIMAL(10,2)
         },
 
+        public: {
+            type: Sequelize.BOOLEAN
+        },
+
+        message: {
+            type: Sequelize.STRING
+        },
+
         expiry: {
             type: Sequelize.DATE
         }
-
 
     });
 

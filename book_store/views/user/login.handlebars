@@ -13,7 +13,7 @@
                 <div class="col-3">
                 </div>
                 <div class="col-md-6">
-                    <form method="GET" action="/">
+                    <form method="POST" action="/user/login">
                         <!--- add in forms here--->
                         <div class="form-group">
                             <label for="email">Email</label>
@@ -30,6 +30,13 @@
                             </div>
                             <div>
                                 <button class="btn black" type="submit">Sign in</button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <button class="btn black"style="background-color:#3b5998;border-color:#3b5998;" href="/user/auth/facebook">
+                                    <i class="fab fa-facebook-f"></i> Sign in with facebook
+                                </button>
                             </div>
                         </div>
                     </form>

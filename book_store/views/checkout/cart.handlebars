@@ -2,11 +2,13 @@
         integrity="sha384-tsQFqpEReu7ZLhBV2VZlAu7zcOV+rXbYlF2cqB8txI/8aZajjp4Bqd+V6D5IgvKT" crossorigin="anonymous">
 </script>
 
-{{#unless (emptyCart userCart) }}
+{{#unless (emptyCart UC) }}
 <!-- unless is the inverse of if, block would only render if value is false -->
 <div class="container">
     <!-- First Section -->
-    <div class="card-header d-flex row">
+    {{!-- <div class="card-header d-flex row"> --}}
+    <!-- removed row, 'weird leaking out of container bug'-->
+    <div class="card-header d-flex">
         <div class="d-flex align-items-center col-xs-6">
             <i class="fa fa-shopping-cart pr-2" aria-hidden="true"></i>
             <span>
@@ -21,16 +23,19 @@
     <form method="POST" action="">
         <!-- End of First Section -->
         <!-- Second Section (Display Product Row) -->
-        {{#each userCart}}
+        {{#each UC}}
         <div class="card-body d-flex flex-row row">
             <div class="col-lg-3">
-                <img class="img-responsive" src="{{Image}}" alt="prewiew" width="120" height="80">
-                <span> Weight:{{Weight}}g </span>
+                {{!-- <img class="img-responsive" src="{{Image}}" alt="prewiew" width="120" height="80"> --}}
+                <a href="/product/individualProduct/{{ID}}"><img class="img-responsive" src="{{Image}}" alt="prewiew" width="140" height="100"></a>
+                {{!-- <span> Weight:{{Weight}}g </span> --}}
+                <div class="caption center-block">{{Name}}</div>
+                {{!-- <span >{{Name}}</span> --}}
             </div>
             <div class="col-lg-3">
-                <p> {{Name}} </p>
-                <p> {{Author}} </p>
-                <p> {{Genre}} </p>
+                <p> By: {{Author}} </p>
+                <p> Genre: {{Genre}} </p>
+                <p> Weight: {{Weight}}g </p>
             </div>
             <div class="col-lg-3">
                 <p> ${{SubtotalPrice}} </p>
@@ -81,7 +86,7 @@
                 <p> Subtotal Price </p>
             </div>
             <div class="col-3">
-                <p> ${{full_subtotal_price}} </p>
+                <p>&nbsp;${{full_subtotal_price}} </p>
             </div>
         </div>
         <div class="card-body d-flex flex-row row">
@@ -91,7 +96,7 @@
                 <p> Shipping Fee </p>
             </div>
             <div class="col-3">
-                <p>${{shipping_fee}} </p>
+                <p>&nbsp;${{shipping_fee}} </p>
             </div>
         </div>
         <div class="card-body d-flex flex-row row">
@@ -112,7 +117,7 @@
             </div>
             <div class="col-3">
                 <hr>
-                <p>${{full_total_price}} </p>
+                <p><strong>&nbsp;&nbsp;${{full_total_price}}</strong> </p>
             </div>
         </div>
         <!-- End of third session -->

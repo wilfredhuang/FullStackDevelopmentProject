@@ -1,5 +1,5 @@
 <header>
-        <!---<div class="header-top">
+    <!---<div class="header-top">
             <div class="container">
                 <div class="row">
                     <div class="col-md-3"><a href="#" class="web-url">www.bookstore.com</a></div>
@@ -11,43 +11,52 @@
                 </div>
             </div>
         </div>--->
-        <div class="main-menu">
-            <div class="container">
-                <nav class="navbar navbar-expand-lg navbar-light">
-                    <a class="navbar-brand" href="/index"><img src="/images/logo.png" alt="logo"></a>
-                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                        <ul class="navbar-nav ml-auto">
-                            <li class="navbar-item active">
-                                <a href="/index" class="nav-link">Home</a>
-                            </li>
-                            <li class="navbar-item">
-                                <a href="/product/listProduct" class="nav-link">Shop</a>
-                            </li>
-                            <li class="navbar-item">
-                                <a href="/about" class="nav-link">About</a>
-                            </li>
-                            <li class="navbar-item">
-                                <a href="/faq" class="nav-link">FAQ</a>
-                            </li>
-                            <li class="navbar-item">
-                                <a href="/login" class="nav-link">Login</a>
-                            </li>
-                        </ul>
+    <div class="main-menu">
+        <div class="container">
+            <nav class="navbar navbar-expand-lg navbar-light">
+                <a class="navbar-brand" href="/index"><img src="/images/logo.png" alt="logo"></a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse"
+                    data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                    aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav ml-auto">
+                        <li class="navbar-item {{navStatusHome}}">
+                            <a href="/index" class="nav-link">Home</a>
+                        </li>
+                        <li class="navbar-item {{navStatusProduct}}">
+                            <a href="/product/listProduct" class="nav-link">Shop</a>
+                        </li>
+                        <li class="navbar-item {{navStatusAbout}}">
+                            <a href="/about" class="nav-link">About</a>
+                        </li>
+                        <li class="navbar-item {{navStatusFAQ}}">
+                            <a href="/faq" class="nav-link">FAQ</a>
+                        </li>
+                        <li class="navbar-item {{navStatusLogin}}">
+                            <a href="/login" class="nav-link">Login</a>
+                        </li>
+                        <li class="navbar-item {{navStatusRegister}}">
+                            <a href="/register" class="nav-link">Register</a>
+                        </li>
+                    </ul>
+                    <form id="cart-form" method="POST" action="/product/goToCart"></form>
                         <div class="cart my-2 my-lg-0">
                             <span>
-                                <i class="fa fa-shopping-cart" aria-hidden="true" onclick="window.location.href='/product/cart'"></i></span>
+                                <i class="fa fa-shopping-cart" aria-hidden="true" onclick="document.getElementById('cart-form').submit();"></i></span>
                                 <span class="quntity"></span>
-                            <span class="quntity">{{cartQty userCart}}</span>
+                            <span class="quntity">{{cartQty UC}}</span>
                         </div>
-                        <form class="form-inline my-2 my-lg-0">
-                            <input class="form-control mr-sm-2" type="search" placeholder="Search here..." aria-label="Search">
-                            <span class="fa fa-search"></span>
                         </form>
-                    </div>
-                </nav>
-            </div>
+                    <form class="form-inline my-2 my-lg-0">
+                        <input class="form-control mr-sm-2" type="search" placeholder="Search here..."
+                            aria-label="Search">
+                        <span class="fa fa-search"></span>
+                    </form>
+                </div>
         </div>
-    </header>
+        </nav>
+    </div>
+    </div>
+</header>
