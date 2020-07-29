@@ -332,7 +332,7 @@ router.post("/register", (req, res) => {
   }
 });
 
-router.get("/logout", function (req, res) {
+router.get("/logout",ensureAuthenticated, function (req, res) {
   req.logout();
   res.redirect("/");
 });
@@ -341,10 +341,12 @@ router.get("/userPage", ensureAuthenticated, (req, res) => {
   res.render("user/userPage");
 });
 
-router.post("/userPage/changeinfo", (req, res) => {
+router.post("/userPage/changeinfo",ensureAuthenticated, (req, res) => {
   errors = [];
   let { email, name, password, password2 } = req.body;
   console.log(req.body);
+  User.findOne({id: req.user.id})
+  .then((user) =>{
   bcrypt.genSalt(10, function (err, salt) {
     if (err) return next(err);
     bcrypt.hash(password, salt, function (err, hash) {
@@ -354,50 +356,58 @@ router.post("/userPage/changeinfo", (req, res) => {
         error.push({ text: "Wrong password" });
       } else {
         if (name != null) {
-          User.update({ name: name });
+          user.update({ name: name });
         }
         if (email != null) {
-          User.update({ email: email });
+          user.update({ email: email });
         }
         if (password2 != null) {
           bcrypt.hash(password2, salt, function (err, hash) {
             if (err) return next(err);
             password2 = hash;
-            User.update({ password: password2 });
+            user.update({ password: password2 });
           });
         }
       }
     });
   });
+  res.redirect('/user/userpage')
+})
 });
 
-router.get("/changeinfo", function (req, res) {
+router.get("/userPage/changeinfo",ensureAuthenticated, function (req, res) {
   res.render("user/changeinfo");
 });
 
-router.post("/userPage/changeaddress", (req, res) => {
+router.get("/userPage/changeaddress",ensureAuthenticated, function (req, res) {
+  res.render("user/changeaddress");
+});
+router.post("/userPage/changeaddress",ensureAuthenticated, (req, res) => {
   errors = [];
   let { PhoneNo, address, address1, city, country, postalCode } = req.body;
   console.log(req.body);
+  User.findOne({id: req.user.id})
+  .then((user) =>{
     if (PhoneNo != null) {
-      User.update({PhoneNo: PhoneNo})
-    } else {
+      user.update({PhoneNo: PhoneNo})
+    }
     if (address!= null) {
-      User.update({ address: address });
+      user.update({ address: address });
     }
     if (address1 != null) {
-      User.update({ address1: address1 });
+      user.update({ address1: address1 });
     }
     if (city != null) {
-      User.update({ city: city});
+      user.update({ city: city});
     }
-    if (country!= null) {
-      User.update({ country: country});
+    if (country != null) {
+      user.update({ country: country});
     }
     if (postalCode != null) {
-      User.update({ postalCode: postalCode});
+      user.update({ postalCode: postalCode});
     }
-  }
+    res.redirect('/user/userpage')
+  })
 });
 
 module.exports = router;
