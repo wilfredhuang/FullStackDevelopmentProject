@@ -56,8 +56,10 @@ router.get("/", (req, res) => {
           let expiry_time = moment(coupons[c].expiry)
           if (current_time.isAfter(expiry_time) && req.session.public_coupon.code == coupons[c].expiry.code) {
             coupons[c].destroy();
+            console.log("Session public coupon is " + req.session.public_coupon)
             console.log("Destroying session variable")
             req.session.public_coupon = null;
+            res.locals.public_coupon = null;
             req.session.save();
           }
 
