@@ -253,10 +253,11 @@ router.get("/viewMoreOrder/:id", (req, res) => {
         let progressPercentage =25;
         let progressColour = "bg-info";
         let progressColourText = "text-info";
+        let deliveryStatusResult = "Pre-transit";
         res.render("products/viewMoreOrder", {
           order: order,
           title,
-          deliveryStatus,
+          deliveryStatusResult,
           trackingURL,
           progressPercentage,
           progressColour,
@@ -267,10 +268,11 @@ router.get("/viewMoreOrder/:id", (req, res) => {
         let progressPercentage = 50;
         let progressColour = "bg-info";
         let progressColourText = "text-info";
+        let deliveryStatusResult = "In-transit";
         res.render("products/viewMoreOrder", {
           order: order,
           title,
-          deliveryStatus,
+          deliveryStatusResult,
           trackingURL,
           progressPercentage,
           progressColour,
@@ -281,10 +283,11 @@ router.get("/viewMoreOrder/:id", (req, res) => {
         let progressPercentage = 75;
         let progressColour = "bg-info";
         let progressColourText = "text-info";
+        let deliveryStatusResult = "Out for delivery";
         res.render("products/viewMoreOrder", {
           order: order,
           title,
-          deliveryStatus,
+          deliveryStatusResult,
           trackingURL,
           progressPercentage,
           progressColour,
@@ -295,10 +298,11 @@ router.get("/viewMoreOrder/:id", (req, res) => {
         let progressPercentage = 100;
         let progressColour = "bg-success";
         let progressColourText = "text-success";
+        let deliveryStatusResult = "Delivered";
         res.render("products/viewMoreOrder", {
           order: order,
           title,
-          deliveryStatus,
+          deliveryStatusResult,
           trackingURL,
           progressPercentage,
           progressColour,
@@ -309,10 +313,11 @@ router.get("/viewMoreOrder/:id", (req, res) => {
         let progressPercentage = 0;
         let progressColour = "bg-info";
         let progressColourText = "text-info";
+        let deliveryStatusResult = "Return to sender";
         res.render("products/viewMoreOrder", {
           order: order,
           title,
-          deliveryStatus,
+          deliveryStatusResult,
           trackingURL,
           progressPercentage,
           progressColour,
@@ -323,10 +328,11 @@ router.get("/viewMoreOrder/:id", (req, res) => {
         let progressPercentage = 100;
         let progressColour = "bg-danger";
         let progressColourText = "text-danger";
+        let deliveryStatusResult = "Failure";
         res.render("products/viewMoreOrder", {
           order: order,
           title,
-          deliveryStatus,
+          deliveryStatusResult,
           trackingURL,
           progressPercentage,
           progressColour,
@@ -337,10 +343,11 @@ router.get("/viewMoreOrder/:id", (req, res) => {
         let progressPercentage = 0;
         let progressColour = "bg-dark";
         let progressColourText = "text-dark";
+        let deliveryStatusResult = "Unknown";
         res.render("products/viewMoreOrder", {
           order: order,
           title,
-          deliveryStatus,
+          deliveryStatusResult,
           trackingURL,
           progressPercentage,
           progressColour,
@@ -404,11 +411,12 @@ router.post("/checkingDelivery", (req, res) => {
         let progressPercentage =25;
         let progressColour = "bg-info";
         let progressColourText = "text-info";
+        let deliveryStatusResult = "Pre-transit";
         QRCode.toDataURL(URL, function (err, url) {
           let showQRCODE = url;
           res.render("delivery/deliveryStatusPage", {
             title,
-            deliveryStatus,
+            deliveryStatusResult,
             statusDetail,
             URL,
             carrierType,
@@ -426,11 +434,12 @@ router.post("/checkingDelivery", (req, res) => {
         let progressPercentage = 50;
         let progressColour = "bg-info";
         let progressColourText = "text-info";
+        let deliveryStatusResult = "In-transit";
         QRCode.toDataURL(URL, function (err, url) {
           let showQRCODE = url;
           res.render("delivery/deliveryStatusPage", {
             title,
-            deliveryStatus,
+            deliveryStatusResult,
             statusDetail,
             URL,
             carrierType,
@@ -448,11 +457,12 @@ router.post("/checkingDelivery", (req, res) => {
         let progressPercentage = 75;
         let progressColour = "bg-info";
         let progressColourText = "text-info";
+        let deliveryStatusResult = "Out for delivery";
         QRCode.toDataURL(URL, function (err, url) {
           let showQRCODE = url;
           res.render("delivery/deliveryStatusPage", {
             title,
-            deliveryStatus,
+            deliveryStatusResult,
             statusDetail,
             URL,
             carrierType,
@@ -470,11 +480,12 @@ router.post("/checkingDelivery", (req, res) => {
         let progressPercentage = 100;
         let progressColour = "bg-success";
         let progressColourText = "text-success";
+        let deliveryStatusResult = "Delivered";
         QRCode.toDataURL(URL, function (err, url) {
           let showQRCODE = url;
           res.render("delivery/deliveryStatusPage", {
             title,
-            deliveryStatus,
+            deliveryStatusResult,
             statusDetail,
             URL,
             carrierType,
@@ -492,11 +503,12 @@ router.post("/checkingDelivery", (req, res) => {
         let progressPercentage = 0;
         let progressColour = "bg-info";
         let progressColourText = "text-info";
+        let deliveryStatusResult = "Return to sender";
         QRCode.toDataURL(URL, function (err, url) {
           let showQRCODE = url;
           res.render("delivery/deliveryStatusPage", {
             title,
-            deliveryStatus,
+            deliveryStatusResult,
             statusDetail,
             URL,
             carrierType,
@@ -514,11 +526,12 @@ router.post("/checkingDelivery", (req, res) => {
         let progressPercentage = 100;
         let progressColour = "bg-danger";
         let progressColourText = "text-danger";
+        let deliveryStatusResult = "Failure";
         QRCode.toDataURL(URL, function (err, url) {
           let showQRCODE = url;
           res.render("delivery/deliveryStatusPage", {
             title,
-            deliveryStatus,
+            deliveryStatusResult,
             statusDetail,
             URL,
             carrierType,
@@ -536,11 +549,12 @@ router.post("/checkingDelivery", (req, res) => {
         let progressPercentage = 0;
         let progressColour = "bg-dark";
         let progressColourText = "text-dark";
+        let deliveryStatusResult = "Unknown";
         QRCode.toDataURL(URL, function (err, url) {
           let showQRCODE = url;
           res.render("delivery/deliveryStatusPage", {
             title,
-            deliveryStatus,
+            deliveryStatusResult,
             statusDetail,
             URL,
             carrierType,
