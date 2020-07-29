@@ -14,6 +14,7 @@ const { v1: uuidv1 } = require("uuid");
 const nodemailer = require("nodemailer");
 const jwt = require("jsonwebtoken");
 const SECRET = "fX7UvuRP55";
+const SECRET_2 = "NZqudk2svw";
 
 //Contact Us Form at Footer by Hasan
 //BTW this is a testing ground for email notifications
@@ -56,6 +57,54 @@ let transporter = nodemailer.createTransport({
   },
 });
 
+
+router.post("/changepassword/:token", async (req, res) => {
+  let passsword = req.body.password; 
+  const token = jwt.verify(req.params.token, SECRET_2);
+  User.findOne({ where: { id: token.user } }).then((user) => {
+    bcrypt.hash(password, salt, function (err, hash) {
+      if (err) return next(err);
+      password = hash;
+      User.update({password :password})
+    });
+  });
+});
+
+router.get("/changepassword/:token", async (req, res) => {
+  res.render("/user/changepassword");
+});
+
+router.post("/forgetpassword"),(req,res)=>{
+  let email = req.body.email
+  User.findOne({email: email})
+  .then((user) =>{
+    if(!user){
+      res.redirect('/user/login');
+    }else{
+      user.id = theid;
+      jwt.sign(
+        {
+          user: theid,
+        },
+        SECRET_2,
+        {
+          expiresIn: "1d",
+        },
+        (err, passwordToken) => {
+          const url = `https://localhost:5000/user/changepassword/${passwordToken}`;
+          console.log(url);
+          transporter.sendMail({
+            to: req.body.email,
+            subject: "Password Reset ",
+            html: `Please click this link to change you password: <a href="${url}">${url}</a>`,
+          });
+        }
+      );
+      res.redirect("/user/login");
+    }
+  })
+};
+
 router.get("/confirmation/:token", async (req, res) => {
   const token = jwt.verify(req.params.token, SECRET);
   User.findOne({ where: { id: token.user } }).then((user) => {
@@ -64,6 +113,7 @@ router.get("/confirmation/:token", async (req, res) => {
   });
   res.redirect("https://localhost:5000/user/login");
 });
+
 router.get(
   "/auth/facebook",
   passport.authenticate("facebook", { scope: ["email"] })
@@ -323,6 +373,31 @@ router.post("/userPage/changeinfo", (req, res) => {
 
 router.get("/changeinfo", function (req, res) {
   res.render("user/changeinfo");
+});
+
+router.post("/userPage/changeaddress", (req, res) => {
+  errors = [];
+  let { PhoneNo, address, address1, city, country, postalCode } = req.body;
+  console.log(req.body);
+    if (PhoneNo != null) {
+      User.update({PhoneNo: PhoneNo})
+    } else {
+    if (address!= null) {
+      User.update({ address: address });
+    }
+    if (address1 != null) {
+      User.update({ address1: address1 });
+    }
+    if (city != null) {
+      User.update({ city: city});
+    }
+    if (country!= null) {
+      User.update({ country: country});
+    }
+    if (postalCode != null) {
+      User.update({ postalCode: postalCode});
+    }
+  }
 });
 
 module.exports = router;
