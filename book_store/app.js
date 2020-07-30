@@ -7,9 +7,21 @@ const bodyParser = require('body-parser');
 const exphbs = require('express-handlebars');
 const methodOverride = require('method-override');
 const Handlebars = require('handlebars');
-const nodemailer = require('nodemailer');
 
 const { allowInsecurePrototypeAccess } = require('@handlebars/allow-prototype-access')
+
+//NodeMailer
+const nodemailer = require('nodemailer');
+
+//EasyPost API
+const EasyPost = require("@easypost/api");
+const apiKey = "EZTK29b55ab4ee7a437890e19551520f5dd0uaJjPiW9XsVqXYFNVI0kog";
+const api = new EasyPost(apiKey);
+
+//Twilio API
+const accountSid = "AC7994551ea296710e5de3b74d7a93056c";
+const authToken = "f5ac6a9439b75395ce54e9783d0f8877";
+const client = require("twilio")(accountSid, authToken);
 
 //nodemailer 
 let transporter = nodemailer.createTransport({
@@ -161,6 +173,60 @@ app.use(function (req, res, next) {
 	next();
 });
 
+//SMS Notification - in progress by Hasan
+app.post("/deliveryUpdates", (req, res) => {
+	console.log(req.body)
+	console.log("++++++++++++++++++++++")
+	objectWeb = req.body.object
+	console.log(objectWeb)
+	descriptionWeb = req.body.description
+	console.log(descriptionWeb)
+	shippingIDWeb = req.body.result.shipment_id
+	console.log(shippingIDWeb)
+	if (objectWeb == "Event" && descriptionWeb == "tracker.updated"){
+		deliveryStatus = req.body.result.status_detail;
+		if (deliveryStatus == "delivered"){
+			console.log("this is delivery status")
+			api.Shipment.retrieve(shippingIDWeb).then((s) => {
+				toAddressWeb = s.to_address
+				console.log(toAddressWeb)
+				toNumberWeb = s.to_address.phone;
+				console.log(toNumberWeb)
+				client.messages
+                  .create({
+                    body:
+                      "this is delivery",
+                    from: "+12059461964",
+                    to: toNumberWeb,
+				  })
+				  .then((message) => console.log(message.sid));
+			});
+		}
+		else {
+			console.log("this is not delivery status")
+			api.Shipment.retrieve(shippingIDWeb).then((s) => {
+				toAddressWeb = s.to_address
+				console.log(toAddressWeb)
+				toNumberWeb = s.to_address.phone;
+				console.log(toNumberWeb)
+				client.messages
+                  .create({
+                    body:
+                      "this is not delivery",
+                    from: "+12059461964",
+                    to: toNumberWeb,
+				  })
+				  .then((message) => console.log(message.sid));
+			});
+		}
+	}
+	else{
+		console.log("might put other stuff here but let's just put a sms notification only")
+	}
+	console.log("=================") // Call your action on the request here
+	res.status(200).end() // Responding is important
+  });
+
 // Use Routes
 app.use('/', mainRoute);	// uses main.js routing under ./routes
 app.use('/user', userRoute);
@@ -172,11 +238,9 @@ app.use('/admin',adminRoute);
 //Renders 404 Page if user types in invalid URL
 app.use(function(req, res, next) {
 	res.status(404).render('404');
-
 });
 
 const port = 5000;
-
 
 /* changed to https so this is not needed
 app.listen(port, () => {

@@ -3,12 +3,12 @@ const router = express.Router();
 const Order = require("../models/Order");
 const alertMessage = require("../helpers/messenger");
 const cartItem = require("../models/CartItem");
-const EasyPost = require("@easypost/api");
 
 //Request Function
 const request = require('request');
 
 //EasyPost API
+const EasyPost = require("@easypost/api");
 const apiKey = "EZTK29b55ab4ee7a437890e19551520f5dd0uaJjPiW9XsVqXYFNVI0kog";
 const api = new EasyPost(apiKey);
 
@@ -125,6 +125,7 @@ router.post("/processCheckout", (req, res) => {
     name: "George Costanza",
     company: "Vandelay Industries",
     street1: "1 E 161st St.",
+    phone: "+6590257144",
     city: "Bronx",
     state: "NY",
     //zip: "10451", //Actual zipcode
@@ -214,8 +215,6 @@ router.post("/processCheckout", (req, res) => {
     });
 });
 
-//SMS Notification - in progress
-router.post("/deliveryUpdates", (req, res) => {});
 
 // Dont touch, stripe code -W
 // router.get('/checkout', async (req, res) => {
