@@ -14,6 +14,7 @@ const { v1: uuidv1 } = require("uuid");
 const nodemailer = require("nodemailer");
 const jwt = require("jsonwebtoken");
 const SECRET = "fX7UvuRP55";
+const SECRET_2 = "NZqudk2svw";
 
 //Contact Us Form at Footer by Hasan
 //BTW this is a testing ground for email notifications
@@ -56,6 +57,54 @@ let transporter = nodemailer.createTransport({
   },
 });
 
+
+router.post("/changepassword/:token", async (req, res) => {
+  let passsword = req.body.password; 
+  const token = jwt.verify(req.params.token, SECRET_2);
+  User.findOne({ where: { id: token.user } }).then((user) => {
+    bcrypt.hash(password, salt, function (err, hash) {
+      if (err) return next(err);
+      password = hash;
+      User.update({password :password})
+    });
+  });
+});
+
+router.get("/changepassword/:token", async (req, res) => {
+  res.render("/user/changepassword");
+});
+
+router.post("/forgetpassword"),(req,res)=>{
+  let email = req.body.email
+  User.findOne({email: email})
+  .then((user) =>{
+    if(!user){
+      res.redirect('/user/login');
+    }else{
+      user.id = theid;
+      jwt.sign(
+        {
+          user: theid,
+        },
+        SECRET_2,
+        {
+          expiresIn: "1d",
+        },
+        (err, passwordToken) => {
+          const url = `https://localhost:5000/user/changepassword/${passwordToken}`;
+          console.log(url);
+          transporter.sendMail({
+            to: req.body.email,
+            subject: "Password Reset ",
+            html: `Please click this link to change you password: <a href="${url}">${url}</a>`,
+          });
+        }
+      );
+      res.redirect("/user/login");
+    }
+  })
+};
+
 router.get("/confirmation/:token", async (req, res) => {
   const token = jwt.verify(req.params.token, SECRET);
   User.findOne({ where: { id: token.user } }).then((user) => {
@@ -64,6 +113,7 @@ router.get("/confirmation/:token", async (req, res) => {
   });
   res.redirect("https://localhost:5000/user/login");
 });
+
 router.get(
   "/auth/facebook",
   passport.authenticate("facebook", { scope: ["email"] })
@@ -282,7 +332,7 @@ router.post("/register", (req, res) => {
   }
 });
 
-router.get("/logout", function (req, res) {
+router.get("/logout",ensureAuthenticated, function (req, res) {
   req.logout();
   res.redirect("/");
 });
@@ -291,10 +341,12 @@ router.get("/userPage", ensureAuthenticated, (req, res) => {
   res.render("user/userPage");
 });
 
-router.post("/userPage/changeinfo", (req, res) => {
+router.post("/userPage/changeinfo",ensureAuthenticated, (req, res) => {
   errors = [];
   let { email, name, password, password2 } = req.body;
   console.log(req.body);
+  User.findOne({id: req.user.id})
+  .then((user) =>{
   bcrypt.genSalt(10, function (err, salt) {
     if (err) return next(err);
     bcrypt.hash(password, salt, function (err, hash) {
@@ -304,25 +356,58 @@ router.post("/userPage/changeinfo", (req, res) => {
         error.push({ text: "Wrong password" });
       } else {
         if (name != null) {
-          User.update({ name: name });
+          user.update({ name: name });
         }
         if (email != null) {
-          User.update({ email: email });
+          user.update({ email: email });
         }
         if (password2 != null) {
           bcrypt.hash(password2, salt, function (err, hash) {
             if (err) return next(err);
             password2 = hash;
-            User.update({ password: password2 });
+            user.update({ password: password2 });
           });
         }
       }
     });
   });
+  res.redirect('/user/userpage')
+})
 });
 
-router.get("/changeinfo", function (req, res) {
+router.get("/userPage/changeinfo",ensureAuthenticated, function (req, res) {
   res.render("user/changeinfo");
+});
+
+router.get("/userPage/changeaddress",ensureAuthenticated, function (req, res) {
+  res.render("user/changeaddress");
+});
+router.post("/userPage/changeaddress",ensureAuthenticated, (req, res) => {
+  errors = [];
+  let { PhoneNo, address, address1, city, country, postalCode } = req.body;
+  console.log(req.body);
+  User.findOne({id: req.user.id})
+  .then((user) =>{
+    if (PhoneNo != null) {
+      user.update({PhoneNo: PhoneNo})
+    }
+    if (address!= null) {
+      user.update({ address: address });
+    }
+    if (address1 != null) {
+      user.update({ address1: address1 });
+    }
+    if (city != null) {
+      user.update({ city: city});
+    }
+    if (country != null) {
+      user.update({ country: country});
+    }
+    if (postalCode != null) {
+      user.update({ postalCode: postalCode});
+    }
+    res.redirect('/user/userpage')
+  })
 });
 
 module.exports = router;
