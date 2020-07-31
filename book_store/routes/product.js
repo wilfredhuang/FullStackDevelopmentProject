@@ -419,13 +419,13 @@ router.get('/cart', (req, res) => {
     // Get Subtotal Price of each item
 
 
-    for (z in req.session.userCart) {
-        req.session.userCart[z].SubtotalPrice = (req.session.userCart[z].Quantity * req.session.userCart[z].Price).toFixed(2);
-    }
+    // for (z in req.session.userCart) {
+    //     req.session.userCart[z].SubtotalPrice = (req.session.userCart[z].Quantity * req.session.userCart[z].Price).toFixed(2);
+    // }
 
-    for (z in req.session.userCart) {
-        req.session.userCart[z].SubtotalWeight = (req.session.userCart[z].Quantity * req.session.userCart[z].Weight)
-    }
+    // for (z in req.session.userCart) {
+    //     req.session.userCart[z].SubtotalWeight = (req.session.userCart[z].Quantity * req.session.userCart[z].Weight)
+    // }
 
     // Get the full subtotal price of all items
     // req.session.full_subtotal_price = 0;
