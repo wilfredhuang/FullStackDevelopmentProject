@@ -16,6 +16,10 @@ const Discount = db.define('discount',
 
         stackable: {
             type:Sequelize.BOOLEAN
+        },
+
+        message: {
+            type:Sequelize.STRING
         }
 
         
