@@ -34,12 +34,21 @@
                         <li class="navbar-item {{navStatusFAQ}}">
                             <a href="/faq" class="nav-link">FAQ</a>
                         </li>
+                         {{#if user}}
+                        <li class="navbar-item">
+                            <a href="/user/userpage" class="nav-link">User Page</a>
+                        </li>
+                        <li class="navbar-item">
+                            <a href="/user/logout" class="nav-link">Logout</a>
+                        </li>
+                        {{else}}
                         <li class="navbar-item {{navStatusLogin}}">
-                            <a href="/login" class="nav-link">Login</a>
+                            <a href="/user/login" class="nav-link">Login</a>
                         </li>
                         <li class="navbar-item {{navStatusRegister}}">
-                            <a href="/register" class="nav-link">Register</a>
+                            <a href="/user/register" class="nav-link">Register</a>
                         </li>
+                        {{/if}}
                     </ul>
                     <form id="cart-form" method="POST" action="/product/goToCart"></form>
                         <div class="cart my-2 my-lg-0">
