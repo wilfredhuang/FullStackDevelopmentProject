@@ -266,12 +266,22 @@ router.get('/listproduct/:id', (req, res, next) => {
                                 req.session.save();
                             }
 
-                            else {
-                                console.log("Not eligible for discount")
+                            else if (disc && disc.min_qty < req.session.userCart[z].Quantity) {
+                                console.log("Product has discount but amount not eligible for discount")
                                 let special = 0;
+                                // basically left-hand-side -> Set of Quantity calculated at the special rate +
+                                // right-hand side -> left-over quantity not eligible for discount
                                 req.session.userCart[z].SubtotalPrice = (((special * disc.min_qty * req.session.userCart[z].Price) * (1 - disc.discount_rate)))
                                     + ((req.session.userCart[z].Quantity - (special * disc.min_qty)) * req.session.userCart[z].Price)
 
+                            }
+
+                            else if (!disc) {
+                                console.log("Product does not have a special offer")
+                                let special = 0;
+                                // basically left-hand-side -> Set of Quantity calculated at the special rate +
+                                // right-hand side -> left-over quantity not eligible for discount
+                                req.session.userCart[z].SubtotalPrice = ((req.session.userCart[z].Quantity * req.session.userCart[z].Price)).toFixed(2)
                             }
 
                             req.session.save();
