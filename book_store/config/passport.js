@@ -62,7 +62,7 @@ passport.use(new FacebookStrategy({
                             email:profile.emails[0].value,
                             facebookToken: accessToken,
                             isadmin : false,
-                            confirmed : true
+                            confirmed : true,
                         }).then(user =>{
                             return cb(null,user);
                         })
