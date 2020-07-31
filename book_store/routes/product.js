@@ -217,43 +217,47 @@ router.get('/listproduct/:id', (req, res, next) => {
             let image = product.product_image;
 
             console.log('ID IS ' + id)
+            // Update: This redudant old code below does indeed causes the efficiency of the cart to drop, hence commented out
+            // Leave code intact just in case i might need it again.
             // if statement probably not working already due to length only available for array and not objects
             // however leave it as it works fine due to the else statement
-            if (req.session.userCart.length < 1) {
+            // if (req.session.userCart.length < 1) {
+            //     let qty = 1
+            //     // Image field not decided yet, the rest is done.
+            //     // Double square bracket to store variable 'keys'
+            //     req.session.userCart[[id]] = {
+            //         "ID": id, "Name": name, "Author": author, "Publisher": publisher, "Genre": genre, "Price": price, "Stock": stock,
+            //         "Weight": weight, "Image": image, "Quantity": qty, "SubtotalPrice": price, "SubtotalWeight": weight
+            //     }
+            //     console.log(req.session.userCart)
+            //     req.session.save();
+            // }
+
+            var check = false;
+            // Can't do if and else in for loop below, why?
+            // because if there aren't any items in the cart in the first place, nothing would be added as code won't run
+            // hence use 'check'
+            for (z in req.session.userCart) {
+                if (z == id) {
+                    console.log("FOUND EXISTING PRODUCT IN CART")
+                    req.session.userCart[z].Quantity += 1
+                    req.session.userCart[z].SubtotalPrice = (parseFloat(req.session.userCart[z].SubtotalPrice) + parseFloat(product.price)).toFixed(2)
+                    req.session.userCart[z].SubtotalWeight = (parseFloat(req.session.userCart[z].SubtotalWeight) + parseFloat(product.weight)).toFixed(2)
+                    check = true;
+                    console.log(req.session.userCart)
+                }
+            }
+            if (check == false) {
                 let qty = 1
-                // Image field not decided yet, the rest is done.
-                // Double square bracket to store variable 'keys'
+                // Again, the Image field not decided yet, the rest is done.
+                // req.session.userCart[[id]] = {"ID":id, "Name":name, "Image":image, "Quantity":qty, "SubtotalPrice":product.price}
                 req.session.userCart[[id]] = {
                     "ID": id, "Name": name, "Author": author, "Publisher": publisher, "Genre": genre, "Price": price, "Stock": stock,
                     "Weight": weight, "Image": image, "Quantity": qty, "SubtotalPrice": price, "SubtotalWeight": weight
                 }
                 console.log(req.session.userCart)
-                req.session.save();
             }
 
-            else {
-                var check = false;
-                for (z in req.session.userCart) {
-                    if (z == id) {
-                        console.log("FOUND EXISTING PRODUCT IN CART")
-                        req.session.userCart[z].Quantity += 1
-                        req.session.userCart[z].SubtotalPrice = (parseFloat(req.session.userCart[z].SubtotalPrice) + parseFloat(product.price)).toFixed(2)
-                        req.session.userCart[z].SubtotalWeight = (parseFloat(req.session.userCart[z].SubtotalWeight) + parseFloat(product.weight)).toFixed(2)
-                        check = true;
-                        console.log(req.session.userCart)
-                    }
-                }
-                if (check == false) {
-                    let qty = 1
-                    // Again, the Image field not decided yet, the rest is done.
-                    // req.session.userCart[[id]] = {"ID":id, "Name":name, "Image":image, "Quantity":qty, "SubtotalPrice":product.price}
-                    req.session.userCart[[id]] = {
-                        "ID": id, "Name": name, "Author": author, "Publisher": publisher, "Genre": genre, "Price": price, "Stock": stock,
-                        "Weight": weight, "Image": image, "Quantity": qty, "SubtotalPrice": price, "SubtotalWeight": weight
-                    }
-                    console.log(req.session.userCart)
-                }
-            }
             req.session.save();
         })
 
@@ -288,9 +292,25 @@ router.post('/individualProduct/:id', (req, res, next) => {
             let image = product.product_image;
 
             console.log('ID IS ' + id)
-            if (req.session.userCart.length < 1) {
+
+            var check = false;
+            // Can't do if and else in for loop below, why?
+            // because if there aren't any items in the cart in the first place, nothing would be added as code won't run
+            // hence use 'check'
+            for (z in req.session.userCart) {
+                if (z == id) {
+                    console.log("FOUND EXISTING PRODUCT IN CART")
+                    req.session.userCart[z].Quantity += 1
+                    req.session.userCart[z].SubtotalPrice = (parseFloat(req.session.userCart[z].SubtotalPrice) + parseFloat(product.price)).toFixed(2)
+                    req.session.userCart[z].SubtotalWeight = (parseFloat(req.session.userCart[z].SubtotalWeight) + parseFloat(product.weight)).toFixed(2)
+                    check = true;
+                    console.log(req.session.userCart)
+                }
+            }
+            if (check == false) {
                 let qty = 1
-                // Image field not decided yet, the rest is done.
+                // Again, the Image field not decided yet, the rest is done.
+                // req.session.userCart[[id]] = {"ID":id, "Name":name, "Image":image, "Quantity":qty, "SubtotalPrice":product.price}
                 req.session.userCart[[id]] = {
                     "ID": id, "Name": name, "Author": author, "Publisher": publisher, "Genre": genre, "Price": price, "Stock": stock,
                     "Weight": weight, "Image": image, "Quantity": qty, "SubtotalPrice": price, "SubtotalWeight": weight
@@ -298,30 +318,8 @@ router.post('/individualProduct/:id', (req, res, next) => {
                 console.log(req.session.userCart)
             }
 
-            else {
-                var check = false;
-                for (z in req.session.userCart) {
-                    if (z == id) {
-                        console.log("FOUND EXISTING PRODUCT IN CART")
-                        req.session.userCart[z].Quantity += 1
-                        req.session.userCart[z].SubtotalPrice = (parseFloat(req.session.userCart[z].SubtotalPrice) + parseFloat(product.price)).toFixed(2)
-                        req.session.userCart[z].SubtotalWeight = (parseFloat(req.session.userCart[z].SubtotalWeight) + parseFloat(product.weight)).toFixed(2)
-                        check = true;
-                        console.log(req.session.userCart)
-                    }
-                }
-                if (check == false) {
-                    let qty = 1
-                    // Again, the Image field not decided yet, the rest is done.
-                    // req.session.userCart[[id]] = {"ID":id, "Name":name, "Image":image, "Quantity":qty, "SubtotalPrice":product.price}
-                    req.session.userCart[[id]] = {
-                        "ID": id, "Name": name, "Author": author, "Publisher": publisher, "Genre": genre, "Price": price, "Stock": stock,
-                        "Weight": weight, "Image": image, "Quantity": qty, "SubtotalPrice": price, "SubtotalWeight": weight
-                    }
-                    console.log(req.session.userCart)
-                }
-            }
             req.session.save();
+
         })
 
     res.redirect(`/product/individualProduct/${req.params.id}`)
@@ -421,13 +419,13 @@ router.get('/cart', (req, res) => {
     // Get Subtotal Price of each item
 
 
-    for (z in req.session.userCart) {
-        req.session.userCart[z].SubtotalPrice = (req.session.userCart[z].Quantity * req.session.userCart[z].Price).toFixed(2);
-    }
+    // for (z in req.session.userCart) {
+    //     req.session.userCart[z].SubtotalPrice = (req.session.userCart[z].Quantity * req.session.userCart[z].Price).toFixed(2);
+    // }
 
-    for (z in req.session.userCart) {
-        req.session.userCart[z].SubtotalWeight = (req.session.userCart[z].Quantity * req.session.userCart[z].Weight)
-    }
+    // for (z in req.session.userCart) {
+    //     req.session.userCart[z].SubtotalWeight = (req.session.userCart[z].Quantity * req.session.userCart[z].Weight)
+    // }
 
     // Get the full subtotal price of all items
     // req.session.full_subtotal_price = 0;
@@ -539,47 +537,48 @@ router.post('/applyCoupon', (req, res) => {
                         alertMessage(res, 'danger', 'code ' + req.body.coupon + ' is invalid', 'fas fa-exclamation-circle', true)
                         res.redirect("cart")
                     })
-            
+
             })
 
-            
+
             .catch(() => {
                 alertMessage(res, 'danger', 'No coupons are available at the moment', 'fas fa-exclamation-circle', true)
                 res.redirect("cart")
             })
 
-}});
+    }
+});
 
-    // Coupon.findOne({
-    //     where: { code: req.body.coupon }
-    // })
+// Coupon.findOne({
+//     where: { code: req.body.coupon }
+// })
 
-    //     .then((coupon) => {
-    //         console.log(coupon.code)
-    //         req.session.coupon_type = coupon.type
-    //         alertMessage(res, 'success', 'code ' + req.body.coupon + ' applied', 'fas fa-exclamation-circle', true)
-    //         if (req.session.coupon_type == "OVERALL") {
-    //             req.session.discount = coupon.discount;
-    //             req.session.discount_limit = coupon.limit;
-    //             alertMessage(res, 'success', `${(coupon.discount * 100)}% off your total order (save up to $${coupon.limit})`, 'fas fa-exclamation-circle', true)
-    //         }
-    //         else if (req.session.coupon_type == "SHIP") {
-    //             req.shipping_discount = coupon.discount
-    //             req.session.req.shipping_discount_limit = coupon.limit
-    //             alertMessage(res, 'success', `${(coupon.discount * 100)}% off your total shipping fee (save up to $${coupon.limit})`, 'fas fa-exclamation-circle', true)
-    //         }
+//     .then((coupon) => {
+//         console.log(coupon.code)
+//         req.session.coupon_type = coupon.type
+//         alertMessage(res, 'success', 'code ' + req.body.coupon + ' applied', 'fas fa-exclamation-circle', true)
+//         if (req.session.coupon_type == "OVERALL") {
+//             req.session.discount = coupon.discount;
+//             req.session.discount_limit = coupon.limit;
+//             alertMessage(res, 'success', `${(coupon.discount * 100)}% off your total order (save up to $${coupon.limit})`, 'fas fa-exclamation-circle', true)
+//         }
+//         else if (req.session.coupon_type == "SHIP") {
+//             req.shipping_discount = coupon.discount
+//             req.session.req.shipping_discount_limit = coupon.limit
+//             alertMessage(res, 'success', `${(coupon.discount * 100)}% off your total shipping fee (save up to $${coupon.limit})`, 'fas fa-exclamation-circle', true)
+//         }
 
-    //         else if (req.session.coupon_type == "SUB") {
-    //             req.session.sub_discount = coupon.discount
-    //             req.session.discount_limit = coupon.limit
-    //             alertMessage(res, 'success', `${(coupon.discount * 100)}% off your subtotal (excluding shipping) (save up to $${coupon.limit})`, 'fas fa-exclamation-circle', true)
-    //         }
+//         else if (req.session.coupon_type == "SUB") {
+//             req.session.sub_discount = coupon.discount
+//             req.session.discount_limit = coupon.limit
+//             alertMessage(res, 'success', `${(coupon.discount * 100)}% off your subtotal (excluding shipping) (save up to $${coupon.limit})`, 'fas fa-exclamation-circle', true)
+//         }
 
-    //         // discount = coupon.discount;
-    //         // discount_limit = coupon.limit;
-    //         // line below allows us to redirect to another POST request to handle cart update
-    //         res.redirect(307, 'goToCart')
-    //     })
+//         // discount = coupon.discount;
+//         // discount_limit = coupon.limit;
+//         // line below allows us to redirect to another POST request to handle cart update
+//         res.redirect(307, 'goToCart')
+//     })
 
 
 // Update Cart
