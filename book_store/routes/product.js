@@ -41,16 +41,34 @@ router.get('/listProduct', (req, res) => {
 });
 
 router.get('/individualProduct/:id', (req, res) => {
-    productadmin.findOne({
+    Discount.findOne({
         where: {
-            id: req.params.id
+            uid: req.params.id
         }
-    })
-        .then((product) => {
-            res.render('products/individualProduct', {
-                product
-            });
+    }).then((discount) => {
+        let disc = discount;
+        productadmin.findOne({
+            where: {
+                id: req.params.id
+            }
         })
+            .then((product) => {
+                res.render('products/individualProduct', {
+                    product,
+                    disc
+                });
+            })
+    })
+    // productadmin.findOne({
+    //     where: {
+    //         id: req.params.id
+    //     }
+    // })
+    //     .then((product) => {
+    //         res.render('products/individualProduct', {
+    //             product
+    //         });
+    //     })
 });
 
 router.get('/individualProduct2', (req, res) => {
@@ -260,8 +278,8 @@ router.get('/listproduct/:id', (req, res, next) => {
                                 console.log(`Special Value : ${special}`)
                                 // Multiply the special set discount first, then take the remainder quantity and multiply by normal price
                                 // Add these 2 set together
-                                req.session.userCart[z].SubtotalPrice = (((special * disc.min_qty * req.session.userCart[z].Price) * (1 - disc.discount_rate)))
-                                    + ((req.session.userCart[z].Quantity - (special * disc.min_qty)) * req.session.userCart[z].Price)
+                                req.session.userCart[z].SubtotalPrice = ( (((special * disc.min_qty * req.session.userCart[z].Price) * (1 - disc.discount_rate)))
+                                    + ((req.session.userCart[z].Quantity - (special * disc.min_qty)) * req.session.userCart[z].Price) ).toFixed(2)
                                 console.log("AFTER SPECIAL DISCOUNT " + ` Subtotal is ${req.session.userCart[z].SubtotalPrice}`)
                                 req.session.save();
                             }
@@ -297,10 +315,33 @@ router.get('/listproduct/:id', (req, res, next) => {
                 let qty = 1
                 // Again, the Image field not decided yet, the rest is done.
                 // req.session.userCart[[id]] = {"ID":id, "Name":name, "Image":image, "Quantity":qty, "SubtotalPrice":product.price}
-                req.session.userCart[[id]] = {
-                    "ID": id, "Name": name, "Author": author, "Publisher": publisher, "Genre": genre, "Price": price, "Stock": stock,
-                    "Weight": weight, "Image": image, "Quantity": qty, "SubtotalPrice": price, "SubtotalWeight": weight
-                }
+                Discount.findOne({
+                    where: {
+                        uid: id
+                    }
+                })
+
+                    .then((disc) => {
+                        if (disc && disc.min_qty == 1) {
+                            req.session.userCart[[id]] = {
+                                "ID": id, "Name": name, "Author": author, "Publisher": publisher, "Genre": genre, "Price": price, "Stock": stock,
+                                "Weight": weight, "Image": image, "Quantity": qty, "SubtotalPrice": (price * (1 - disc.discount_rate)).toFixed(2), "SubtotalWeight": weight
+                            }
+                        }
+
+                        else {
+                            req.session.userCart[[id]] = {
+                                "ID": id, "Name": name, "Author": author, "Publisher": publisher, "Genre": genre, "Price": price, "Stock": stock,
+                                "Weight": weight, "Image": image, "Quantity": qty, "SubtotalPrice": price, "SubtotalWeight": weight
+                            }
+                        }
+
+                        req.session.save();
+                    })
+                // req.session.userCart[[id]] = {
+                //     "ID": id, "Name": name, "Author": author, "Publisher": publisher, "Genre": genre, "Price": price, "Stock": stock,
+                //     "Weight": weight, "Image": image, "Quantity": qty, "SubtotalPrice": price, "SubtotalWeight": weight
+                // }
                 console.log(req.session.userCart)
             }
 
