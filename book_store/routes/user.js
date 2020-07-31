@@ -16,6 +16,9 @@ const jwt = require("jsonwebtoken");
 const SECRET = "fX7UvuRP55";
 const SECRET_2 = "NZqudk2svw";
 
+//Email Template
+//const Email = require('email-templates');
+
 //Contact Us Form at Footer by Hasan
 //BTW this is a testing ground for email notifications
 router.post("/contactUs", (req, res) => {
@@ -135,7 +138,7 @@ router.get("/userPage",ensureAuthenticated, (req, res) => {
   });
 });
 
-router.get("/userRecentOrder", (req, res) => {
+router.get("/userRecentOrder", ensureAuthenticated,(req, res) => {
   const title = "Order History";
 
   // Need to intergrate this later on
