@@ -236,26 +236,7 @@ router.get('/listproduct/:id', (req, res, next) => {
             let image = product.product_image;
 
             console.log('ID IS ' + id)
-            // Update: This redudant old code below does indeed causes the efficiency of the cart to drop, hence commented out
-            // Leave code intact just in case i might need it again.
-            // if statement probably not working already due to length only available for array and not objects
-            // however leave it as it works fine due to the else statement
-            // if (req.session.userCart.length < 1) {
-            //     let qty = 1
-            //     // Image field not decided yet, the rest is done.
-            //     // Double square bracket to store variable 'keys'
-            //     req.session.userCart[[id]] = {
-            //         "ID": id, "Name": name, "Author": author, "Publisher": publisher, "Genre": genre, "Price": price, "Stock": stock,
-            //         "Weight": weight, "Image": image, "Quantity": qty, "SubtotalPrice": price, "SubtotalWeight": weight
-            //     }
-            //     console.log(req.session.userCart)
-            //     req.session.save();
-            // }
-
             var check = false;
-            // Can't do if and else in for loop below, why?
-            // because if there aren't any items in the cart in the first place, nothing would be added as code won't run
-            // hence use 'check'
             for (z in req.session.userCart) {
                 if (z == id) {
                     console.log("FOUND EXISTING PRODUCT IN CART")
@@ -267,7 +248,16 @@ router.get('/listproduct/:id', (req, res, next) => {
                     })
 
                         .then((disc) => {
-                            if (disc && disc.min_qty <= req.session.userCart[z].Quantity) {
+                            if (disc.uid == product.id) {
+                            if (disc == undefined) {
+                                console.log("Product does not have a special offer")
+                                let special = 0;
+                                // basically left-hand-side -> Set of Quantity calculated at the special rate +
+                                // right-hand side -> left-over quantity not eligible for discount
+                                req.session.userCart[z].SubtotalPrice = ((req.session.userCart[z].Quantity * req.session.userCart[z].Price)).toFixed(2)
+                            }
+
+                            else if (disc.min_qty <= req.session.userCart[z].Quantity) {
                                 console.log("Quantity is " + req.session.userCart[z].Quantity)
                                 console.log("Discount Criteria FOUND")
                                 console.log(`Calculating for ${req.session.userCart[z].Name} `)
@@ -284,7 +274,7 @@ router.get('/listproduct/:id', (req, res, next) => {
                                 req.session.save();
                             }
 
-                            else if (disc && disc.min_qty < req.session.userCart[z].Quantity) {
+                            else if (disc.min_qty > req.session.userCart[z].Quantity) {
                                 console.log("Product has discount but amount not eligible for discount")
                                 let special = 0;
                                 // basically left-hand-side -> Set of Quantity calculated at the special rate +
@@ -294,17 +284,9 @@ router.get('/listproduct/:id', (req, res, next) => {
 
                             }
 
-                            else if (!disc) {
-                                console.log("Product does not have a special offer")
-                                let special = 0;
-                                // basically left-hand-side -> Set of Quantity calculated at the special rate +
-                                // right-hand side -> left-over quantity not eligible for discount
-                                req.session.userCart[z].SubtotalPrice = ((req.session.userCart[z].Quantity * req.session.userCart[z].Price)).toFixed(2)
-                            }
-
                             req.session.save();
                             console.log(req.session.userCart)
-                        })
+                        }})
                     //
                     // req.session.userCart[z].SubtotalPrice = (parseFloat(req.session.userCart[z].SubtotalPrice) + parseFloat(price)).toFixed(2)
                     req.session.userCart[z].SubtotalWeight = (parseFloat(req.session.userCart[z].SubtotalWeight) + parseFloat(product.weight)).toFixed(2)
