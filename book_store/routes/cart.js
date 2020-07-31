@@ -96,7 +96,7 @@ router.post("/processCheckout", (req, res) => {
     weight: 10, //change number according to weight of total books
   });
 
-  parcel.save(); //.then(console.log);
+  parcel.save();
 
   const fromAddress = new api.Address({
     //default address of company
@@ -250,11 +250,11 @@ router.get("/viewMoreOrder/:id", ensureAuthenticated,(req, res) => {
       const deliveryStatus = s.tracker.status;
       const trackingURL = s.tracker.public_url;
       if (deliveryStatus == "pre_transit"){
-        let progressPercentage =25;
+        let progressPercentage = 25;
         let progressColour = "bg-info";
         let progressColourText = "text-info";
         let deliveryStatusResult = "Pre-transit";
-        res.render("products/viewMoreOrder", {
+        res.render("user/viewMoreOrder", {
           order: order,
           title,
           deliveryStatusResult,
@@ -269,7 +269,7 @@ router.get("/viewMoreOrder/:id", ensureAuthenticated,(req, res) => {
         let progressColour = "bg-info";
         let progressColourText = "text-info";
         let deliveryStatusResult = "In-transit";
-        res.render("products/viewMoreOrder", {
+        res.render("user/viewMoreOrder", {
           order: order,
           title,
           deliveryStatusResult,
@@ -284,7 +284,7 @@ router.get("/viewMoreOrder/:id", ensureAuthenticated,(req, res) => {
         let progressColour = "bg-info";
         let progressColourText = "text-info";
         let deliveryStatusResult = "Out for delivery";
-        res.render("products/viewMoreOrder", {
+        res.render("user/viewMoreOrder", {
           order: order,
           title,
           deliveryStatusResult,
@@ -299,7 +299,7 @@ router.get("/viewMoreOrder/:id", ensureAuthenticated,(req, res) => {
         let progressColour = "bg-success";
         let progressColourText = "text-success";
         let deliveryStatusResult = "Delivered";
-        res.render("products/viewMoreOrder", {
+        res.render("user/viewMoreOrder", {
           order: order,
           title,
           deliveryStatusResult,
@@ -314,7 +314,7 @@ router.get("/viewMoreOrder/:id", ensureAuthenticated,(req, res) => {
         let progressColour = "bg-info";
         let progressColourText = "text-info";
         let deliveryStatusResult = "Return to sender";
-        res.render("products/viewMoreOrder", {
+        res.render("user/viewMoreOrder", {
           order: order,
           title,
           deliveryStatusResult,
@@ -329,7 +329,7 @@ router.get("/viewMoreOrder/:id", ensureAuthenticated,(req, res) => {
         let progressColour = "bg-danger";
         let progressColourText = "text-danger";
         let deliveryStatusResult = "Failure";
-        res.render("products/viewMoreOrder", {
+        res.render("user/viewMoreOrder", {
           order: order,
           title,
           deliveryStatusResult,
@@ -344,7 +344,7 @@ router.get("/viewMoreOrder/:id", ensureAuthenticated,(req, res) => {
         let progressColour = "bg-dark";
         let progressColourText = "text-dark";
         let deliveryStatusResult = "Unknown";
-        res.render("products/viewMoreOrder", {
+        res.render("user/viewMoreOrder", {
           order: order,
           title,
           deliveryStatusResult,

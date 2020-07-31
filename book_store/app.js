@@ -184,23 +184,26 @@ app.post("/deliveryUpdates", (req, res) => {
 	console.log("++++++++++++++++++++++")
 	objectWeb = req.body.object
 	console.log(objectWeb)
-	descriptionWeb = req.body.description
+	let descriptionWeb = req.body.description
 	console.log(descriptionWeb)
-	shippingIDWeb = req.body.result.shipment_id
+	let shippingIDWeb = req.body.result.shipment_id
 	console.log(shippingIDWeb)
+	//checks if event is tracker update
 	if (objectWeb == "Event" && descriptionWeb == "tracker.updated"){
-		deliveryStatus = req.body.result.status_detail;
+		let deliveryStatus = req.body.result.status_detail;
 		if (deliveryStatus == "delivered"){
 			console.log("this is delivery status")
 			api.Shipment.retrieve(shippingIDWeb).then((s) => {
-				toAddressWeb = s.to_address
+				let toAddressWeb = s.to_address
 				console.log(toAddressWeb)
-				toNumberWeb = s.to_address.phone;
+				let toNumberWeb = "+" + s.to_address.phone;
 				console.log(toNumberWeb)
+				let twilioMessage = "this is delivered"
+				console.log(twilioMessage)
 				client.messages
                   .create({
                     body:
-                      "this is delivery",
+					twilioMessage,
                     from: "+12059461964",
                     to: toNumberWeb,
 				  })
@@ -208,16 +211,18 @@ app.post("/deliveryUpdates", (req, res) => {
 			});
 		}
 		else {
-			console.log("this is not delivery status")
+			console.log("this is not delivered status")
 			api.Shipment.retrieve(shippingIDWeb).then((s) => {
-				toAddressWeb = s.to_address
+				let toAddressWeb = s.to_address
 				console.log(toAddressWeb)
-				toNumberWeb = s.to_address.phone;
+				let toNumberWeb = "+" + s.to_address.phone;
 				console.log(toNumberWeb)
+				let twilioMessage = "this is not delivered"
+				console.log(twilioMessage)
 				client.messages
                   .create({
                     body:
-                      "this is not delivery",
+                      twilioMessage,
                     from: "+12059461964",
                     to: toNumberWeb,
 				  })
@@ -225,6 +230,17 @@ app.post("/deliveryUpdates", (req, res) => {
 			});
 		}
 	}
+	// else if(objectWeb == "Event" && descriptionWeb == "tracker.created"){
+	// 	trackingResult = req.body.result
+	// 	console.log(trackingResult.length)
+	// 	for (i = 0; i<trackingResult.length; i++){
+	// 		console.log("______________________________")
+	// 		console.log(i)
+	// 		console.log("______________________________")
+
+	// 	}
+	// 	console.log("currently shifting sms notification to here")
+	// }
 	else{
 		console.log("might put other stuff here but let's just put a sms notification only")
 	}

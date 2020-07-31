@@ -14,9 +14,10 @@ const setUpDB = (drop) => {
             In this case the primary key from user will be a foreign key               
             in video.             */
 
-            //user.hasMany(cartItem);
             //user.hasMany
             //order.hasMany(cartItem);
+
+            //Priority work by Hasan 31/7/2020
             //user.hasMany(order)
             mySQLDB.sync({ // Creates table if none exists                 
                 force: drop

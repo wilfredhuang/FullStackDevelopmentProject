@@ -1,14 +1,13 @@
-
-    <div class="breadcrumb">
-        <div class="container">
-            <a class="breadcrumb-item" href="/User/userpage">Userpage</a>
-            <span class="breadcrumb-item active">Change Infomation</span>
-        </div>
+<div class="breadcrumb">
+    <div class="container">
+        <a class="breadcrumb-item" href="/User/userpage">Userpage</a>
+        <span class="breadcrumb-item active">Change Infomation</span>
     </div>
-    <section class="static about-sec">
-        <div class="container">
+</div>
+<section class="static about-sec">
+    <div class="container">
         <div class="row">
-          <div class="tab col-6 col-md-2">
+            <div class="tab col-6 col-md-2">
                 <button class="tab">Navigation</button>
                 <a href="/user/userPage">
                     <button class="inactive-tab">User Page</button>
@@ -29,32 +28,35 @@
                     <button class="inactive-tab">Wishlist</button>
                 </a>
             </div>
-          <div class="col-6">
-            <div class="form">
-            <form method="POST" action="/user/userpage/changeinfo">
-                <div class="col-md-8">
-                    <label for="name">Name:</label><br>
-                    <input name="name" placeholder="{{name}}" required>
+            <div class="col-6">
+                <br>
+                <h2>Change Information</h2>
+                <br>
+                <div class="form">
+                    <form method="POST" action="/user/userpage/changeinfo">
+                        <div class="col-md-8">
+                            <label for="name">Name:</label><br>
+                            <input name="name" placeholder="{{name}}" required>
+                        </div>
+                        <div class="col-md-8">
+                            <label for="email">Email:</label><br>
+                            <input name="email" type="email" placeholder="{{email}}" required>
+                        </div>
+                        <div class="col-md-8">
+                            <label for="password">Old password:</label><br>
+                            <input name="password" type="password" placeholder="old password" required>
+                        </div>
+                        <div class="col-md-8">
+                            <label for="password">New password:</label><br>
+                            <input name="password2" type="password" placeholder="new password" required>
+                        </div>
+                        <div class="col-lg-8 col-md-12">
+                            <button class="btn black" type="submit">Change</button>
+                    </form>
                 </div>
-                <div class="col-md-8">
-                  <label for="email">Email:</label><br>
-                    <input name="email" type="email" placeholder="{{email}}" required>
-                </div>
-                <div class="col-md-8">
-                   <label for="password">Old password:</label><br>
-                    <input name="password" type="password" placeholder="old password" required>
-                </div>
-                <div class="col-md-8">
-                   <label for="password">New password:</label><br>
-                    <input name="password2" type="password" placeholder="new password" required>
-                </div>
-                <div class="col-lg-8 col-md-12">
-                    <button class="btn black" type="submit">Change</button>
-              </form>
             </div>
-          </div>
-          <div class="col-3">
-          </div>
+            <div class="col-3">
+            </div>
         </div>
-      </div>
-    </section>
+    </div>
+</section>
