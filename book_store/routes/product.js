@@ -9,6 +9,7 @@ const User = require('../models/User');
 
 const alertMessage = require('../helpers/messenger');
 const Coupon = require('../models/coupon');
+const Discount = require('../models/Discount');
 
 
 // Stripe Payment - secret key
@@ -241,10 +242,45 @@ router.get('/listproduct/:id', (req, res, next) => {
                 if (z == id) {
                     console.log("FOUND EXISTING PRODUCT IN CART")
                     req.session.userCart[z].Quantity += 1
-                    req.session.userCart[z].SubtotalPrice = (parseFloat(req.session.userCart[z].SubtotalPrice) + parseFloat(product.price)).toFixed(2)
+                    Discount.findOne({
+                        where: {
+                            uid: req.session.userCart[z].ID
+                        }
+                    })
+
+                        .then((disc) => {
+                            if (disc && disc.min_qty <= req.session.userCart[z].Quantity) {
+                                console.log("Quantity is " + req.session.userCart[z].Quantity)
+                                console.log("Discount Criteria FOUND")
+                                console.log(`Calculating for ${req.session.userCart[z].Name} `)
+                                // Calculate the number of times the special discount should be applied
+                                // e.g i have 5 items , for every 3 item i get 20% off, so i save a floor value because discount
+                                // in that case is applied once
+                                let special = Math.floor(req.session.userCart[z].Quantity / disc.min_qty)
+                                console.log(`Special Value : ${special}`)
+                                // Multiply the special set discount first, then take the remainder quantity and multiply by normal price
+                                // Add these 2 set together
+                                req.session.userCart[z].SubtotalPrice = (((special * disc.min_qty * req.session.userCart[z].Price) * (1 - disc.discount_rate)))
+                                    + ((req.session.userCart[z].Quantity - (special * disc.min_qty)) * req.session.userCart[z].Price)
+                                console.log("AFTER SPECIAL DISCOUNT " + ` Subtotal is ${req.session.userCart[z].SubtotalPrice}`)
+                                req.session.save();
+                            }
+
+                            else {
+                                console.log("Not eligible for discount")
+                                let special = 0;
+                                req.session.userCart[z].SubtotalPrice = (((special * disc.min_qty * req.session.userCart[z].Price) * (1 - disc.discount_rate)))
+                                    + ((req.session.userCart[z].Quantity - (special * disc.min_qty)) * req.session.userCart[z].Price)
+
+                            }
+
+                            req.session.save();
+                            console.log(req.session.userCart)
+                        })
+                    //
+                    // req.session.userCart[z].SubtotalPrice = (parseFloat(req.session.userCart[z].SubtotalPrice) + parseFloat(price)).toFixed(2)
                     req.session.userCart[z].SubtotalWeight = (parseFloat(req.session.userCart[z].SubtotalWeight) + parseFloat(product.weight)).toFixed(2)
                     check = true;
-                    console.log(req.session.userCart)
                 }
             }
             if (check == false) {
@@ -423,9 +459,9 @@ router.get('/cart', (req, res) => {
     //     req.session.userCart[z].SubtotalPrice = (req.session.userCart[z].Quantity * req.session.userCart[z].Price).toFixed(2);
     // }
 
-    // for (z in req.session.userCart) {
-    //     req.session.userCart[z].SubtotalWeight = (req.session.userCart[z].Quantity * req.session.userCart[z].Weight)
-    // }
+    for (z in req.session.userCart) {
+        req.session.userCart[z].SubtotalWeight = (req.session.userCart[z].Quantity * req.session.userCart[z].Weight)
+    }
 
     // Get the full subtotal price of all items
     // req.session.full_subtotal_price = 0;
@@ -596,7 +632,43 @@ router.post('/cart', (req, res) => {
 
 
             for (z in req.session.userCart) {
-                req.session.userCart[z].SubtotalPrice = (req.session.userCart[z].Quantity * req.session.userCart[z].Price).toFixed(2);
+                Discount.findOne({
+                    where: {
+                        uid: req.session.userCart[z].ID
+                    }
+                })
+
+                    .then((disc) => {
+                        if (disc && disc.min_qty <= req.session.userCart[z].Quantity) {
+                            console.log("Quantity is " + req.session.userCart[z].Quantity)
+                            console.log("Discount Criteria FOUND")
+                            console.log(`Calculating for ${req.session.userCart[z].Name} `)
+                            // Calculate the number of times the special discount should be applied
+                            // e.g i have 5 items , for every 3 item i get 20% off, so i save a floor value because discount
+                            // in that case is applied once
+                            let special = Math.floor(req.session.userCart[z].Quantity / disc.min_qty)
+                            console.log(`Special Value : ${special}`)
+                            // Multiply the special set discount first, then take the remainder quantity and multiply by normal price
+                            // Add these 2 set together
+                            req.session.userCart[z].SubtotalPrice = (((special * disc.min_qty * req.session.userCart[z].Price) * (1 - disc.discount_rate)))
+                                + ((req.session.userCart[z].Quantity - (special * disc.min_qty)) * req.session.userCart[z].Price)
+                            // price = ((price * special) * 1-disc.discount_rate) + ((req.session.userCart[z].Quantity - (special * disc.min_qty)) * price) 
+                            // price = (price * 1 - disc.discount_rate) (1 - req.session.ssd.discount_rate)
+                            console.log("AFTER SPECIAL DISCOUNT " + ` Subtotal is ${req.session.userCart[z].SubtotalPrice}`)
+                        }
+
+                        else {
+                            console.log("Not eligible for discount")
+                            let special = 0;
+                            req.session.userCart[z].SubtotalPrice = (((special * disc.min_qty * req.session.userCart[z].Price) * (1 - disc.discount_rate)))
+                                + ((req.session.userCart[z].Quantity - (special * disc.min_qty)) * req.session.userCart[z].Price)
+
+                        }
+
+                        req.session.save();
+                    })
+                // console.log("END OF SPECIAL DISCOUNT " + `${req.session.userCart[z].SubtotalPrice}`)
+                // req.session.userCart[z].SubtotalPrice = (req.session.userCart[z].Quantity * req.session.userCart[z].Price).toFixed(2);
             }
 
             for (z in req.session.userCart) {
