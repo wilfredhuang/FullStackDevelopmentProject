@@ -1,0 +1,67 @@
+<div class="breadcrumb">
+    <div class="container">
+        <a class="breadcrumb-item" href="/user/userpage">User Page</a>
+        <span class="breadcrumb-item active">Add Address</span>
+    </div>
+</div>
+<section class="static about-sec">
+    <div class="container">
+            <div class="row">
+                <div class="tab col-6 col-md-2">
+                <button class="tab">Navigation</button>
+                <a href="/user/userPage">
+                    <button class="inactive-tab">User Page</button>
+                </a>
+                <a href="/user/changeinfo">
+                    <button class="inactive-tab">Change Info</button>
+                </a>
+                <a href="/user/userPage/chnageaddress">
+                    <button class="active-tab">Set Address</button>
+                </a>
+                <a href="/user/userRecentOrder">
+                    <button class="inactive-tab">Recent Orders</button>
+                </a>
+                <a href="/user/userCart">
+                    <button class="inactive-tab">Cart</button>
+                </a>
+                <a href="/user/userPage/wishlist">
+                    <button class="inactive-tab">Wishlist</button>
+                </a>
+            </div>
+                <div class="col-6">
+                    <div class="form">
+                        <form method="POST" action="/user/userpage/changeaddress">
+                        <div class="form-group">
+                            <label for="PhoneNo">Phone Number</label>
+                            <input  name="PhoneNo" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="address">Address Line 1</label>
+                            <input  name="address" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="address1"> Address Line 2</label>
+                            <input  name="address1" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="city">City</label>
+                            <input  name="city" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="country">Country</label>
+                            <input  name="country" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="postalCode">Postal Code</label>
+                            <input  name="postalCode" class="form-control">
+                        </div>
+                    
+                        <div class="row">
+                                <button class="btn black" type="submit">Save</button>
+                        </div>                   
+                    </form>
+                    </div>
+                </div>
+            </div>
+    </div>
+</section>

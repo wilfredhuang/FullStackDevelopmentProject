@@ -14,6 +14,7 @@ const { v1: uuidv1 } = require("uuid");
 const nodemailer = require("nodemailer");
 const jwt = require("jsonwebtoken");
 const SECRET = "fX7UvuRP55";
+const SECRET_2 = "NZqudk2svw";
 
 //Email Template
 //const Email = require('email-templates');
@@ -59,6 +60,55 @@ let transporter = nodemailer.createTransport({
   },
 });
 
+
+router.post("/changepassword/:token", async (req, res) => {
+  let passsword = req.body.password; 
+  const token = jwt.verify(req.params.token, SECRET_2);
+  User.findOne({ where: { id: token.user } }).then((user) => {
+    bcrypt.hash(password, salt, function (err, hash) {
+      if (err) return next(err);
+      password = hash;
+      User.update({password :password})
+    });
+  });
+});
+
+router.get("/changepassword/:token", async (req, res) => {
+  res.render("/user/changepassword");
+});
+
+router.post("/forgetpassword"),(req,res)=>{
+  let email = req.body.email
+  User.findOne({email: email})
+  .then((user) =>{
+    if(!user){
+      res.redirect('/user/login');
+    }else{
+      user.id = theid;
+      jwt.sign(
+        {
+          user: theid,
+        },
+        SECRET_2,
+        {
+          expiresIn: "1d",
+        },
+        (err, passwordToken) => {
+          const url = `https://localhost:5000/user/changepassword/${passwordToken}`;
+          console.log(url);
+          transporter.sendMail({
+            to: req.body.email,
+            subject: "Password Reset ",
+            html: `Please click this link to change you password: <a href="${url}">${url}</a>`,
+          });
+        }
+      );
+      alertMessage(res,"success","please check your email","fas fa-sign-in-alt",true);
+      res.redirect("/user/login");
+    }
+  })
+};
+
 router.get("/confirmation/:token", async (req, res) => {
   const token = jwt.verify(req.params.token, SECRET);
   User.findOne({ where: { id: token.user } }).then((user) => {
@@ -67,6 +117,7 @@ router.get("/confirmation/:token", async (req, res) => {
   });
   res.redirect("https://localhost:5000/user/login");
 });
+
 router.get(
   "/auth/facebook",
   passport.authenticate("facebook", { scope: ["email"] })
@@ -80,7 +131,7 @@ router.get(
   })
 );
 
-router.get("/userPage", (req, res) => {
+router.get("/userPage",ensureAuthenticated, (req, res) => {
   const title = "User Information";
   res.render("user/userpage", {
     title,
@@ -200,7 +251,8 @@ router.post("/login", (req, res, next) => {
     successRedirect: "/",
     failureRedirect: "/user/login",
     failureFlash: true,
-  })(req, res, next);
+  })
+  (req, res, next);
 });
 
 router.get("/register", (req, res) => {
@@ -294,10 +346,13 @@ router.get("/userPage", ensureAuthenticated, (req, res) => {
   res.render("user/userPage");
 });
 
-router.post("/userPage/changeinfo", (req, res) => {
+router.post("/userPage/changeinfo",ensureAuthenticated, (req, res) => {
   errors = [];
   let { email, name, password, password2 } = req.body;
   console.log(req.body);
+  User.findOne({id: req.user.id})
+  .then((user) =>{
+    console.log(user);
   bcrypt.genSalt(10, function (err, salt) {
     if (err) return next(err);
     bcrypt.hash(password, salt, function (err, hash) {
@@ -307,25 +362,61 @@ router.post("/userPage/changeinfo", (req, res) => {
         error.push({ text: "Wrong password" });
       } else {
         if (name != null) {
-          User.update({ name: name });
+          User.update({ name: name }, { where: {id: req.user.id} });;
         }
         if (email != null) {
-          User.update({ email: email });
+          User.update({ email: email }, { where: {id: req.user.id} });
         }
         if (password2 != null) {
           bcrypt.hash(password2, salt, function (err, hash) {
             if (err) return next(err);
             password2 = hash;
-            User.update({ password: password2 });
+            User.update({ password: password2 }, { where: {id: req.user.id} });
           });
         }
       }
     });
   });
+  alertMessage(res,"success","information has been updated","fas fa-sign-in-alt",true);
+  res.redirect('/user/userpage')
+})
 });
 
-router.get("/changeinfo", function (req, res) {
+router.get("/userPage/changeinfo",ensureAuthenticated, function (req, res) {
   res.render("user/changeinfo");
+});
+
+router.get("/userPage/changeaddress",ensureAuthenticated, function (req, res) {
+  res.render("user/changeaddress");
+});
+router.post("/userPage/changeaddress",ensureAuthenticated, (req, res) => {
+  errors = [];
+  let { PhoneNo, address, address1, city, country, postalCode } = req.body;
+  console.log(req.body);
+  User.findOne({id: req.user.id})
+  .then((user) =>{
+    if (PhoneNo != null) {
+      User.update({PhoneNo: PhoneNo}, { where: {id: req.user.id} });
+
+    }
+    if (address!= null) {
+      User.update({ address: address }, { where: {id: req.user.id} });
+    }
+    if (address1 != null) {
+      User.update({ address1: address1 }, { where: {id: req.user.id} });
+    }
+    if (city != null) {
+      User.update({ city: city}, { where: {id: req.user.id} });
+    }
+    if (country != null) {
+      User.update({ country: country}, { where: {id: req.user.id} });
+    }
+    if (postalCode != null) {
+      User.update({ postalCode: postalCode}, { where: {id: req.user.id} });
+    }
+    alertMessage(res,"success","information has been updated","fas fa-sign-in-alt",true);
+    res.redirect('/user/userpage')
+  })
 });
 
 module.exports = router;

@@ -73,33 +73,51 @@ module.exports = {
     return string.replace(/ /g, "_");
   },
 
-    cartQty: function (userCart) {
-        let totalqty = 0;
-        for (z in userCart) {
-            let qty = userCart[z].Quantity 
-            totalqty = parseInt(totalqty) + parseInt(qty)
-        }
-        return totalqty;
-    },
+  checkPromo: function (public_coupon_session_obj) {
+    if (public_coupon_session_obj == null) {
+      return false;
+    }
 
-    isSg:function (country_var) {
-        console.log(`The user country is ${country_var}`)
-        if (country_var == "Singapore")  {
-            return true;
-        }
-
-        else {
-            return false;
-        }
-    },
-
-  retrieveDeliveryStatus: function (shipmentID) {
-    api.Shipment.retrieve(shipmentID).then((s) => {
-      let deliveryStatus = s.status;
-      //let shipmentID = deliveryStatus
-      //console.log(s.status);
-      //console.log(deliveryStatus);
-      return deliveryStatus;
-    });
+    else {
+      return true;
+    }
   },
+
+  convertDiscount: function (discount) {
+    let converted_discount = discount * 100
+    return converted_discount
+  },
+
+  displayCouponType: function (coupon_type) {
+    if (coupon_type == "OVERALL") {
+      return "total order"
+    }
+
+    else if (coupon_type == "SHIP") {
+      return "shipping fee"
+    }
+
+    else if (coupon_type == "SUB") {
+      return "subtotal (excluding shipping charge)"
+    }
+  },
+
+  isSg: function (country_var) {
+    console.log(`The user country is ${country_var}`);
+    if (country_var == "Singapore") {
+      return true;
+    } else {
+      return false;
+    }
+  },
+
+retrieveDeliveryStatus: function (shipmentID) {
+  api.Shipment.retrieve(shipmentID).then((s) => {
+    let deliveryStatus = s.status;
+    //let shipmentID = deliveryStatus
+    //console.log(s.status);
+    //console.log(deliveryStatus);
+    return deliveryStatus;
+  });
+},
 };

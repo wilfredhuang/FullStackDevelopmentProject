@@ -2,23 +2,30 @@ const express = require("express");
 const router = express.Router();
 const cartItem = require("../models/CartItem");
 const alertMessage = require("../helpers/messenger");
+const Coupon = require('../models/coupon');
+const moment = require('moment');
+const userAuth = require('../helpers/auth');
 
 router.get("/", (req, res) => {
   const title = "Bookstore Home Page";
+  const navStatusHome = "active";
+  // check if logged in or not
   if (req.user) {
-    console.log("LOGGED IN")
+    console.log("LOGGED IN");
+    console.log(req.user.email)
   }
   else {
-    console.log("NOT LOGGED IN ")
-    console.log(req.user)
+    console.log("NOT LOGGED IN");
   }
+
+  // If no session cart created yet, create one
   if (!req.session.userCart) {
     // Initialise session variables on the server start-up
     req.session.userCart = {};
     req.session.coupon_type;
     req.session.discount = 0;
     req.session.discount_limit = 0;
-    req.session.discounted_price = 0;
+    req.session.discounted_price = (0).toFixed(2);
     req.session.shipping_discount = 0;
     req.session.shipping_discount_limit = 0;
     req.session.shipping_discounted_price = 0;
@@ -28,11 +35,42 @@ router.get("/", (req, res) => {
     req.session.full_total_price = 0;
     // ssn = req.session.userCart;
   }
+  // at website startup, when no ssn var set, find if a public coupon(if exists) 
+  // and assign to ssn var to display promo banner
+  if (req.session.public_coupon == null) {
+    Coupon.findOne({
+      where: { public: 1 }
+    })
+
+      .then((c) => {
+        req.session.public_coupon = c
+        req.session.save();
+      })
+  }
+
+  // If ssn var is not null (default), check if the public coupon still exist in db,
+  // If not, reassign ssn var to null again
+  else {
+    Coupon.findOne({
+      where: { public: 1 }
+    })
+
+      .then((c) => {
+        console.log("Public Coupon " + c.code + " found")
+      })
+
+      .catch(() => {
+        console.log("Seems like public coupon has expired already, deleting it's session variable...")
+        req.session.public_coupon = null;
+        req.session.save();
+      })
+  }
 
   console.log(req.session)
   res.render("index", {
     // renders views/index.handlebars
     title,
+    navStatusHome
   });
 });
 

@@ -6,7 +6,7 @@ AdminBro.registerAdapter(AdminBroSequelize)
 const express = require('express')
 const app = express()
 const User = require('../models/User.js')
-
+const ensureAuthenticated = require("../helpers/auth");
 const adminBro = new AdminBro({
   rootPath: '/admin',
   resources:[{
@@ -24,7 +24,15 @@ const adminBro = new AdminBro({
   }
 })
 
-const router = AdminBroExpress.buildRouter(adminBro)
+let router = express.Router()
+router.use(ensureAuthenticated,(req, res, next) => {
+  if (req.user.isadmin == true) {
+    next()
+  } else {
+    res.redirect("https://localhost:5000/user/login")
+  }
+})
+router = AdminBroExpress.buildRouter(adminBro, router)
 
 app.use(adminBro.options.rootPath, router)
 module.exports = router;
