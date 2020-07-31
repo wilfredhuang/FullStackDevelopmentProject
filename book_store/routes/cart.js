@@ -3,6 +3,7 @@ const router = express.Router();
 const Order = require("../models/Order");
 const alertMessage = require("../helpers/messenger");
 const cartItem = require("../models/CartItem");
+const ensureAuthenticated = require("../helpers/auth");
 
 //Request Function
 const request = require('request');
@@ -232,7 +233,7 @@ router.get("/checkout2", (req, res) => {
 });
 
 //view More Details of Order //still uses cart.js for example, will change later on
-router.get("/viewMoreOrder/:id", (req, res) => {
+router.get("/viewMoreOrder/:id", ensureAuthenticated,(req, res) => {
   const title = "Order Details";
 
   Order.findOne({

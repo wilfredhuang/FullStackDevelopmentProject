@@ -138,7 +138,7 @@ router.get("/userPage",ensureAuthenticated, (req, res) => {
   });
 });
 
-router.get("/userRecentOrder", (req, res) => {
+router.get("/userRecentOrder", ensureAuthenticated,(req, res) => {
   const title = "Order History";
 
   // Need to intergrate this later on
