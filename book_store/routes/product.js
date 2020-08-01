@@ -497,6 +497,8 @@ router.get('/cart', (req, res) => {
         total_weight = total_weight + req.session.userCart[z].SubtotalWeight
     }
 
+    var discounts = Discount.findAll({})
+
 
 
     // Round up to next number regardless of decimal value with ceil function
@@ -504,7 +506,8 @@ router.get('/cart', (req, res) => {
 
     res.render('checkout/cart', {
         total_weight,
-        total_weight_oz
+        total_weight_oz,
+        discounts
     })
 });
 
@@ -621,7 +624,7 @@ router.post('/cart', async (req, res) => {
             // console.log("Q is" + req.body["Q" + ID])
         }
 
-
+        req.session.deducted = 0;
         for (z in req.session.userCart) {
             var product = await productadmin.findOne({ where: { id: req.session.userCart[z].ID } })
             var disc_object = await Discount.findOne({ where: { target_id: req.session.userCart[z].ID } })
@@ -637,7 +640,9 @@ router.post('/cart', async (req, res) => {
                 let second_half = ((req.session.userCart[z].Quantity - (special * disc_object.min_qty)) * req.session.userCart[z].Price)
                 req.session.userCart[z].SubtotalPrice = (first_half + second_half).toFixed(2)
                 discounted_value = ((req.session.userCart[z].Quantity * req.session.userCart[z].Price) - (first_half + second_half)).toFixed(2)
+                req.session.deducted = (parseFloat(req.session.deducted) + parseFloat(discounted_value)).toFixed(2);
                 console.log("DEDUCTED VALUE IS " + discounted_value)
+                console.log("DEDUCTED TOTAL IS " + req.session.deducted)
                 console.log("AFTER SPECIAL DISCOUNT " + ` Subtotal is ${req.session.userCart[z].SubtotalPrice}`)
 
                 req.session.userCart[z].SubtotalWeight = (parseFloat(req.session.userCart[z].SubtotalWeight) + parseFloat(product.weight)).toFixed(2)
