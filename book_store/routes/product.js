@@ -216,96 +216,59 @@ router.get('/listproduct/:id', async (req, res, next) => {
     // 'Add to Cart' button passes value of product id to server
     // queries product id with database
     // stores each cartitesm with id, name and quantity
-    var disc_object = await Discount.findOne({where:{target_id:req.params.id}})
-    console.log("ADDDDDING")
-    productadmin.findOne({
-        where: {
-            id: req.params.id // Button with name: id
+    var disc_object = await Discount.findOne({ where: { target_id: req.params.id } })
+    var product = await productadmin.findOne({ where: { id: req.params.id } })
+    var id = product.id;
+    let name = product.product_name;
+    let author = product.author;
+    let publisher = product.publisher;
+    let genre = product.genre;
+    let price = product.price;
+    let stock = product.stock;
+    let details = product.details;
+    let weight = product.weight;
+    let image = product.product_image;
+
+
+    var check = false;
+
+    for (z in req.session.userCart) {
+        if (disc_object != null && z == id) {
+            console.log("FOUND EXISTING PRODUCT IN CART")
+            console.log("Quantity is " + req.session.userCart[z].Quantity)
+            console.log("Discount Criteria FOUND for " + req.session.userCart[z].Name)
+            req.session.userCart[z].Quantity += 1
+            // req.session.userCart[z].SubtotalPrice = 
+            req.session.userCart[z].SubtotalPrice = (parseFloat(req.session.userCart[z].SubtotalPrice) + parseFloat(product.price)).toFixed(2)
+            req.session.userCart[z].SubtotalWeight = (parseFloat(req.session.userCart[z].SubtotalWeight) + parseFloat(product.weight)).toFixed(2)
+            check = true;
+            // console.log(req.session.userCart)
         }
-    })
 
-        .then((product) => {
-            var id = product.id;
-            let name = product.product_name;
-            let author = product.author;
-            let publisher = product.publisher;
-            let genre = product.genre;
-            let price = product.price;
-            let stock = product.stock;
-            let details = product.details;
-            let weight = product.weight;
-            let image = product.product_image;
-
-            console.log('ID IS ' + id)
-            // Update: This redudant old code below does indeed causes the efficiency of the cart to drop, hence commented out
-            // Leave code intact just in case i might need it again.
-            // if statement probably not working already due to length only available for array and not objects
-            // however leave it as it works fine due to the else statement
-            // if (req.session.userCart.length < 1) {
-            //     let qty = 1
-            //     // Image field not decided yet, the rest is done.
-            //     // Double square bracket to store variable 'keys'
-            //     req.session.userCart[[id]] = {
-            //         "ID": id, "Name": name, "Author": author, "Publisher": publisher, "Genre": genre, "Price": price, "Stock": stock,
-            //         "Weight": weight, "Image": image, "Quantity": qty, "SubtotalPrice": price, "SubtotalWeight": weight
-            //     }
-            //     console.log(req.session.userCart)
-            //     req.session.save();
-            // }
-            // Discount.findOne({where:{target_id:req.params.id}})
-            // .then((disc)=> {
-            //     // console.log("FOUND A DISCOUNT FOR THIS PRODUCT")
-            //     console.log(disc.min_qty)
-            //     console.log(disc.discount_rate)
-            //     let abc =  disc.discount_rate;
-            // })
-            // .catch(()=>{
-            //     console.log("THIS PROD NO DISCOUNT")
-            // })
-
-            var check = false;
-            for (z in req.session.userCart) {
-                if (disc_object != null && z == id) {
-                    console.log("FOUND EXISTING PRODUCT IN CART")
-                    console.log("Quantity is " + req.session.userCart[z].Quantity)
-                    console.log("Discount Criteria FOUND for " + req.session.userCart[z].Name)
-                    req.session.userCart[z].Quantity += 1
-                    // req.session.userCart[z].SubtotalPrice = 
-                    req.session.userCart[z].SubtotalPrice = (parseFloat(req.session.userCart[z].SubtotalPrice) + parseFloat(product.price)).toFixed(2)
-                    req.session.userCart[z].SubtotalWeight = (parseFloat(req.session.userCart[z].SubtotalWeight) + parseFloat(product.weight)).toFixed(2)
-                    check = true;
-                    console.log(req.session.userCart)
-                }
-
-                else if (disc_object == null && z == id) {
-                    console.log("FOUND EXISTING PRODUCT IN CART")
-                    console.log("Quantity is " + req.session.userCart[z].Quantity)
-                    console.log("Discount Criteria FOUND for " + req.session.userCart[z].Name)
-                    req.session.userCart[z].Quantity += 1
-                    req.session.userCart[z].SubtotalPrice = (parseFloat(req.session.userCart[z].SubtotalPrice) + parseFloat(product.price)).toFixed(2)
-                    req.session.userCart[z].SubtotalWeight = (parseFloat(req.session.userCart[z].SubtotalWeight) + parseFloat(product.weight)).toFixed(2)
-                    check = true;
-                    console.log(req.session.userCart)
-                }
-            }
-            if (check == false) {
-                let qty = 1
-                // Again, the Image field not decided yet, the rest is done.
-                // req.session.userCart[[id]] = {"ID":id, "Name":name, "Image":image, "Quantity":qty, "SubtotalPrice":product.price}
-                req.session.userCart[[id]] = {
-                    "ID": id, "Name": name, "Author": author, "Publisher": publisher, "Genre": genre, "Price": price, "Stock": stock,
-                    "Weight": weight, "Image": image, "Quantity": qty, "SubtotalPrice": price, "SubtotalWeight": weight
-                }
-                console.log(req.session.userCart)
-            }
-
-            req.session.save();
-        })
+        else if (disc_object == null && z == id) {
+            console.log("FOUND EXISTING PRODUCT IN CART")
+            console.log("Quantity is " + req.session.userCart[z].Quantity)
+            req.session.userCart[z].Quantity += 1
+            req.session.userCart[z].SubtotalPrice = (parseFloat(req.session.userCart[z].SubtotalPrice) + parseFloat(product.price)).toFixed(2)
+            req.session.userCart[z].SubtotalWeight = (parseFloat(req.session.userCart[z].SubtotalWeight) + parseFloat(product.weight)).toFixed(2)
+            check = true;
+            // console.log(req.session.userCart)
+        }
+    }
+    if (check == false) {
+        console.log("Adding New Cart Item")
+        let qty = 1
+        req.session.userCart[[id]] = {
+            "ID": id, "Name": name, "Author": author, "Publisher": publisher, "Genre": genre, "Price": price, "Stock": stock,
+            "Weight": weight, "Image": image, "Quantity": qty, "SubtotalPrice": price, "SubtotalWeight": weight
+        }
+        // console.log(req.session.userCart)
+    }
 
     res.redirect('/product/listproduct')
     console.log("Added to cart");
     console.log(req.session.userCart);
-});
+})
 
 
 // Add to Cart - individual page
