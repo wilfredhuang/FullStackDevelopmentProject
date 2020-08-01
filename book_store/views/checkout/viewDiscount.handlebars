@@ -17,11 +17,14 @@
 {{#if discounts}}
 <div class="container" id="discount_form">
     <div class="row mt-2">
-        <div class="col-lg-3">
+        <div class="col-lg-1">
             <p><strong>ID</strong></p>
         </div>
-        <div class="col-lg-3">
+        <div class="col-lg-2">
             <p><strong>Minimum Quantity</strong></p>
+        </div>
+        <div class="col-lg-3">
+            <p><strong>Discount Rate</strong></p>
         </div>
         <div class="col-lg-3">
             <p><strong>Expiry Date</strong></p>
@@ -32,11 +35,14 @@
     </div>
     {{#each discounts}}
     <div class="row">
-        <div class="col-lg-3">
+        <div class="col-lg-1">
             <p>{{target_id}}</p>
         </div>
-        <div class="col-lg-3">
+        <div class="col-lg-2">
             <p>{{min_qty}}</p>
+        </div>
+        <div class="col-lg-3">
+            <p>{{discount_rate}}</p>
         </div>
         <div class="col-lg-3">
             <p>{{expiry}}</p>

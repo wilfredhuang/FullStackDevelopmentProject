@@ -825,7 +825,30 @@ router.post('/goToPayNow', (req, res) => {
     res.redirect('paynow')
 })
 
-router.get('/stripepayment', (req, res) => {
+router.get('/stripepayment', async (req, res) => {
+    stripe.customers.retrieve(
+        'cus_Hky6LViahDgEcl',
+        function(err, customer) {
+          // asynchronously called
+          console.log(err)
+          console.log("CUSTOMER IS " + customer)
+        }
+      );
+
+    const customer = await stripe.customers.create({
+        name: req.user.name,
+        email: req.user.email,
+        phone:req.user.PhoneNo,
+        shipping: {address: {
+            line1: req.user.address,
+            line2: req.user.address1,
+            city: req.user.city,
+            country: req.user.country,
+            postal_code: req.user.postalCode
+        }, name:"Insert shipping name", phone:req.user.PhoneNo}
+    });
+    console.log("CUSTOMER NAME IS " + customer.name)
+    console.log(customer)
     title = "Stripe Payment"
     console.log("Full total price is " + req.session.full_total_price);
     const paymentIntent = stripe.paymentIntents.create({
@@ -848,7 +871,8 @@ router.post('/stripepayment', (req, res) => {
     //     fullName, phoneNumber, address, address1, city, country, postalCode
     // })
     alertMessage(res, 'success', 'Order placed', 'fas fa-exclamation-circle', true)
-    res.redirect('/')
+    res.redirect("/delivery/checkout2");
+
 })
 
 router.get('/paynow', (req, res) => {
@@ -872,7 +896,8 @@ router.get('/paynow', (req, res) => {
 
 router.post('/paynow', (req, res) => {
     alertMessage(res, 'success', 'Order placed, the administrator will shortly confirm your payment', 'fas fa-exclamation-circle', true)
-    res.redirect('/')
+    res.redirect("/delivery/checkout2");
+
 })
 
 // Admin Side
