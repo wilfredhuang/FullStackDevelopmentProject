@@ -1049,9 +1049,66 @@ router.post('/createDiscount', async(req, res)=> {
 
 })
 
+// Admin - View Discounts and Coupons and Delete together
 
+router.get('/viewDiscount', async (req, res)=> {
+    let title = "View Discount"
+    let discounts = await Discount.findAll({})
+    let coupons = await Coupon.findAll({})
+    res.render('checkout/viewDiscount', {
+        title,
+        discounts,
+        coupons
+    })
+})
 
+router.get('/deleteDiscount/:id', async(req, res)=> {
+    let target_id = req.params.id;
+    let url = "/product/viewDiscount"
+    Discount.findOne({
+        where: {target_id: target_id}
+    }).then((disc_object)=> {
+        if (disc_object != null) {
+            disc_object.destroy();
+            alertMessage(res, 'success','Discount for Product ' + target_id  + ' is successfully deleted', 'fas fa-sign-in-alt', true)
+        }
 
+        else {
+            url = "/"
+            console.log("Invalid ID provided, not deleting anything")
+
+        }
+
+    }).catch((err)=> {
+        console.log(err)
+    })
+
+    res.redirect(url)
+})
+
+router.get('/deleteCoupon/:id', async(req, res)=> {
+    let id = req.params.id;
+    let url = "/product/viewDiscount"
+    Coupon.findOne({
+        where: {id: id}
+    }).then((c)=> {
+        if (c != null) {
+            c.destroy();
+            alertMessage(res, 'success','Coupon ' + id  + ' is successfully deleted', 'fas fa-sign-in-alt', true)
+        }
+
+        else {
+            url = "/"
+            console.log("Invalid ID provided, not deleting anything")
+
+        }
+
+    }).catch((err)=> {
+        console.log(err)
+    })
+
+    res.redirect(url)
+})
 
 
 
