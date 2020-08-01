@@ -30,7 +30,7 @@ const nodemailer = require('nodemailer');
 //Email Template
 //const Email = require('email-templates');
 
-router.get("/checkout", (req, res) => {
+router.get("/checkout", ensureAuthenticated,(req, res) => {
   const title = "Check Out";
   cartItem.findAll({}).then((cartItem) => {
     res.render("delivery/checkOut", {
@@ -96,7 +96,7 @@ router.post("/processCheckout", (req, res) => {
     weight: 10, //change number according to weight of total books
   });
 
-  parcel.save(); //.then(console.log);
+  parcel.save();
 
   const fromAddress = new api.Address({
     //default address of company
@@ -224,7 +224,7 @@ router.post("/processCheckout", (req, res) => {
 // });
 
 //after checkout page
-router.get("/checkout2", (req, res) => {
+router.get("/checkout2",ensureAuthenticated, (req, res) => {
   const title = "Thank You";
   res.render("delivery/thankYou"),
     {
@@ -250,11 +250,11 @@ router.get("/viewMoreOrder/:id", ensureAuthenticated,(req, res) => {
       const deliveryStatus = s.tracker.status;
       const trackingURL = s.tracker.public_url;
       if (deliveryStatus == "pre_transit"){
-        let progressPercentage =25;
+        let progressPercentage = 25;
         let progressColour = "bg-info";
         let progressColourText = "text-info";
         let deliveryStatusResult = "Pre-transit";
-        res.render("products/viewMoreOrder", {
+        res.render("user/viewMoreOrder", {
           order: order,
           title,
           deliveryStatusResult,
@@ -269,7 +269,7 @@ router.get("/viewMoreOrder/:id", ensureAuthenticated,(req, res) => {
         let progressColour = "bg-info";
         let progressColourText = "text-info";
         let deliveryStatusResult = "In-transit";
-        res.render("products/viewMoreOrder", {
+        res.render("user/viewMoreOrder", {
           order: order,
           title,
           deliveryStatusResult,
@@ -284,7 +284,7 @@ router.get("/viewMoreOrder/:id", ensureAuthenticated,(req, res) => {
         let progressColour = "bg-info";
         let progressColourText = "text-info";
         let deliveryStatusResult = "Out for delivery";
-        res.render("products/viewMoreOrder", {
+        res.render("user/viewMoreOrder", {
           order: order,
           title,
           deliveryStatusResult,
@@ -299,7 +299,7 @@ router.get("/viewMoreOrder/:id", ensureAuthenticated,(req, res) => {
         let progressColour = "bg-success";
         let progressColourText = "text-success";
         let deliveryStatusResult = "Delivered";
-        res.render("products/viewMoreOrder", {
+        res.render("user/viewMoreOrder", {
           order: order,
           title,
           deliveryStatusResult,
@@ -314,7 +314,7 @@ router.get("/viewMoreOrder/:id", ensureAuthenticated,(req, res) => {
         let progressColour = "bg-info";
         let progressColourText = "text-info";
         let deliveryStatusResult = "Return to sender";
-        res.render("products/viewMoreOrder", {
+        res.render("user/viewMoreOrder", {
           order: order,
           title,
           deliveryStatusResult,
@@ -329,7 +329,7 @@ router.get("/viewMoreOrder/:id", ensureAuthenticated,(req, res) => {
         let progressColour = "bg-danger";
         let progressColourText = "text-danger";
         let deliveryStatusResult = "Failure";
-        res.render("products/viewMoreOrder", {
+        res.render("user/viewMoreOrder", {
           order: order,
           title,
           deliveryStatusResult,
@@ -344,7 +344,7 @@ router.get("/viewMoreOrder/:id", ensureAuthenticated,(req, res) => {
         let progressColour = "bg-dark";
         let progressColourText = "text-dark";
         let deliveryStatusResult = "Unknown";
-        res.render("products/viewMoreOrder", {
+        res.render("user/viewMoreOrder", {
           order: order,
           title,
           deliveryStatusResult,
@@ -395,7 +395,15 @@ router.post("/checkingDelivery", (req, res) => {
     console.log(body)  //retrieves response from google and return its json info
 
     if (body.success !== undefined && !body.success) {
-      return res.json({ "success": false, "msg": "Failed captcha" });
+      alertMessage(
+        res,
+        "danger",
+        "Please re-enter the recaptcha",
+        "fas faexclamation-circle",
+        true
+      );
+      res.redirect("/delivery/checkDelivery")
+      //return res.json({ "success": false, "msg": "Failed captcha" });
     } else {
       api.Tracker.retrieve(trackingId)
     .then((s) => {
@@ -573,12 +581,10 @@ router.post("/checkingDelivery", (req, res) => {
     })
     // catch any errors
     .catch((e) => {
-      //console.log(e.error.error.code)
       console.log(e);
       let errorCode = e.error.error.code;
       if (errorCode == "TRACKER.NOT_FOUND") {
         //check if tracking code not found
-        //console.log("hello")
         alertMessage(
           res,
           "danger",
@@ -589,7 +595,6 @@ router.post("/checkingDelivery", (req, res) => {
         res.redirect("checkDelivery");
       }
     });
-      //return res.json({ "success": true, "msg": "Successful captcha" });
     }
   });
 });
