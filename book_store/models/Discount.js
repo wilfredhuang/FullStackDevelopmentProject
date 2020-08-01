@@ -7,7 +7,7 @@ const Discount = db.define('discount',
         },
 
         min_qty: {
-            type: Sequelize.INTEGER()
+            type: Sequelize.INTEGER
         },
 
         expiry: {
@@ -20,6 +20,10 @@ const Discount = db.define('discount',
 
         message: {
             type:Sequelize.STRING
+        },
+
+        target_id: {
+            type:Sequelize.INTEGER
         }
 
         

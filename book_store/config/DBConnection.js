@@ -20,12 +20,12 @@ const setUpDB = (drop) => {
             //user.hasMany
             //order.hasMany(cartItem);
             //user.hasMany(order)
-            Discount.belongsTo(ProductAdmin,{
-                foreignKey: {
-                    name:'uid',
-                    allowNull:false
-                }
-            });
+            // Discount.belongsTo(ProductAdmin,{
+            //     foreignKey: {
+            //         name:'uid',
+            //         allowNull:false
+            //     }
+            // });
 
             mySQLDB.sync({ // Creates table if none exists                 
                 force: drop
