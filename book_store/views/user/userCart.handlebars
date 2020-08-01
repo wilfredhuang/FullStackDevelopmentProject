@@ -7,7 +7,7 @@
 <section class="static about-sec">
     <div class="container">
         <div class="row">
-            <div class="tab col-6 col-md-2">
+            <div class="tab col-12 col-md-2">
                 <button class="tab">Navigation</button>
                 <a href="/user/userPage">
                     <button class="inactive-tab">User Page</button>
@@ -19,17 +19,21 @@
                     <button class="inactive-tab">Set Address</button>
                 </a>
                 <a href="/user/userRecentOrder">
-                    <button class="inactive-tab">Recent Orders</button>
+                    <button class="inactive-tab">Order History</button>
                 </a>
                 <a href="/user/userCart">
-                    <button class="active-tab">Cart</button>
+                    <button class="active-tab">Cart - Hasan</button>
+                </a>
+                <a href="/product/cart">
+                    <button class="inactive-tab">Cart - Wilfred</button>
                 </a>
                 <a href="/user/userPage/wishlist">
                     <button class="inactive-tab">Wishlist</button>
                 </a>
             </div>
             <div class="col-md-10" id="cart">
-                <h2>Cart</h2>
+                <br>
+                <h2>Cart - Hasan</h2>
                 <br>
                 <!--- add in each product--->
                 {{#if cartItem}}

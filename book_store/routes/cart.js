@@ -30,7 +30,7 @@ const nodemailer = require('nodemailer');
 //Email Template
 //const Email = require('email-templates');
 
-router.get("/checkout", (req, res) => {
+router.get("/checkout", ensureAuthenticated,(req, res) => {
   const title = "Check Out";
   cartItem.findAll({}).then((cartItem) => {
     res.render("delivery/checkOut", {
@@ -224,7 +224,7 @@ router.post("/processCheckout", (req, res) => {
 // });
 
 //after checkout page
-router.get("/checkout2", (req, res) => {
+router.get("/checkout2",ensureAuthenticated, (req, res) => {
   const title = "Thank You";
   res.render("delivery/thankYou"),
     {
@@ -395,7 +395,15 @@ router.post("/checkingDelivery", (req, res) => {
     console.log(body)  //retrieves response from google and return its json info
 
     if (body.success !== undefined && !body.success) {
-      return res.json({ "success": false, "msg": "Failed captcha" });
+      alertMessage(
+        res,
+        "danger",
+        "Please re-enter the recaptcha",
+        "fas faexclamation-circle",
+        true
+      );
+      res.redirect("/delivery/checkDelivery")
+      //return res.json({ "success": false, "msg": "Failed captcha" });
     } else {
       api.Tracker.retrieve(trackingId)
     .then((s) => {
@@ -573,12 +581,10 @@ router.post("/checkingDelivery", (req, res) => {
     })
     // catch any errors
     .catch((e) => {
-      //console.log(e.error.error.code)
       console.log(e);
       let errorCode = e.error.error.code;
       if (errorCode == "TRACKER.NOT_FOUND") {
         //check if tracking code not found
-        //console.log("hello")
         alertMessage(
           res,
           "danger",
@@ -589,7 +595,6 @@ router.post("/checkingDelivery", (req, res) => {
         res.redirect("checkDelivery");
       }
     });
-      //return res.json({ "success": true, "msg": "Successful captcha" });
     }
   });
 });
