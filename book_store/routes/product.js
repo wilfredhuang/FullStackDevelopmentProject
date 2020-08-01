@@ -470,6 +470,7 @@ router.post('/goToCart', (req, res) => {
 // Make sure to use POST request to handle updated cart info or you need to double refresh
 
 router.get('/cart', (req, res) => {
+    let title = "Shopping Cart"
     // let time = moment("2020-05-10", "YYYY/MM/DD");
     // let time2 = time.toString();
     // console.log(time2)
@@ -507,7 +508,8 @@ router.get('/cart', (req, res) => {
     res.render('checkout/cart', {
         total_weight,
         total_weight_oz,
-        discounts
+        discounts,
+        title
     })
 });
 
@@ -757,6 +759,7 @@ router.get('/deleteCartItem/:id', (req, res) => {
 
 // Checkout Form
 router.get('/checkout', (req, res) => {
+    title = "Checkout"
     if (req.user) {
         let user_name = req.user.name;
         let user_phone = req.user.PhoneNo;
@@ -773,7 +776,8 @@ router.get('/checkout', (req, res) => {
             user_address1,
             user_city,
             user_country,
-            user_postalCode
+            user_postalCode,
+            title
         });
     }
 
@@ -821,6 +825,7 @@ router.post('/goToPayNow', (req, res) => {
 })
 
 router.get('/stripepayment', (req, res) => {
+    title = "Stripe Payment"
     console.log("Full total price is " + req.session.full_total_price);
     const paymentIntent = stripe.paymentIntents.create({
         amount: Math.ceil((req.session.full_total_price * 100)),
@@ -832,7 +837,7 @@ router.get('/stripepayment', (req, res) => {
         .then((paymentIntent) => {
             console.log(paymentIntent)
             console.log("Client secret is " + paymentIntent.client_secret)
-            res.render('checkout/stripe', { client_secret: paymentIntent.client_secret });
+            res.render('checkout/stripe', { client_secret: paymentIntent.client_secret, title });
         })
 })
 
@@ -846,6 +851,7 @@ router.post('/stripepayment', (req, res) => {
 })
 
 router.get('/paynow', (req, res) => {
+    title = "PayNow Payment"
     // let payNowString = paynow('proxyType','proxyValue','edit',price,'merchantName','additionalComments')
     let payNowString = paynow('mobile', '87558054', 'no', req.session.full_total_price, 'Test Merchant Name', 'Testing paynow')
     let qr = QRCode.toDataURL(payNowString)
