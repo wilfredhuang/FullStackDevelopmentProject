@@ -20,6 +20,7 @@ const stripe = require('stripe')('sk_test_ns9DyHTray5Wihniw93C2ANH00IMJTVjKw', {
 const paynow = require('paynow-generator').paynowGenerator
 const QRCode = require('qrcode');
 const { CheckboxRadioContainer } = require('admin-bro');
+const ProductAdmin = require('../models/ProductAdmin');
 
 // variables below for coupon feature, dont change - wilfred
 // switched req.session.userCart to global variable @app.js
@@ -975,6 +976,84 @@ router.post('/createCoupon', (req, res) => {
         })
 
 })
+
+// Create Discount Page
+router.get('/createDiscount', async (req, res)=> {
+    title = "Create Discount"
+    let currentDate = moment(req.body.currentDate, "DD/MM/YYYY");
+    let currentTime = moment().format("HH:mm");
+    let errors;
+    
+
+    let products = await ProductAdmin.findAll({})
+    res.render('checkout/createDiscount', {
+        title,
+        currentTime,
+        errors,
+        products
+    })
+})
+
+router.post('/createDiscount', async(req, res)=> {
+    // Retrieve the inputs from the create discount form
+    let target_id = req.body.target_id;
+    let product_discount = req.body.product_discount;
+    let min_qty = req.body.min_qty;
+    let discount_msg = req.body.discount_msg;
+    let discount_expire_date = req.body.discount_expire_date
+    let discount_expire_time = req.body.discount_expire_time
+    let stackable = 0;
+    // let coupon_expire_date = req.body.coupon_expire_date;
+    // let coupon_expire_time = req.body.coupon_expire_time;
+    let full_time = req.body.discount_expire_date + " " + req.body.discount_expire_time;
+
+    // Note that the date/time stored in mySQL will be GMT althought date/time is based on our server(SGT)
+    // E.g Coupon expiry date and time is SGT (GMT+8) 09/08/2020, 06:00 -> GMT 08/08/2020, 22:00
+    let expiry_date_time = moment(full_time, 'DD/MM/YYYY, hh:mm:ss a');
+
+    let current_time = moment();
+    let et = moment(expiry_date_time); // format into the same way as current_time (in ms) 
+
+    let d = await Discount.findOne({where: { target_id: target_id }})
+
+    // Duplicate case
+    if (d != null) {
+        console.log("Discount of the same code already exist")
+        alertMessage(res, 'danger', `Discount for ID: ${d.target_id} already exists!`, 'fas fa-exclamation-circle', true)
+        // res.redirect('createDiscount')
+    }
+
+    // Invalid/Expired time case
+    else if (et.isBefore(current_time)) {    // prevent user from inputting a date/time that has already passed
+        alertMessage(res, 'danger', `Date or Time entered invalid!`, 'fas fa-exclamation-circle', true)
+        // res.redirect('createDiscount')
+    }
+
+    // No problem, create
+    else if (d == null) {
+
+        let new_d = await Discount.create({
+            discount_rate: product_discount,
+            min_qty: min_qty,
+            expiry: expiry_date_time,
+            stackable: stackable,
+            message: discount_msg,
+            target_id: target_id,
+        })
+
+        alertMessage(res, 'success', `Discount for Product ID: ${new_d.target_id} Created, it expires on ${new_d.expiry}`, 'fas fa-exclamation-circle', true)
+
+    }
+
+    res.redirect('/product/createDiscount')
+
+})
+
+
+
+
+
+
 
 
 module.exports = router;
