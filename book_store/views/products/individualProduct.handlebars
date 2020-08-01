@@ -73,7 +73,7 @@
                         </li>
                     </ul>
                     <div class="btn-sec">
-                        <form action="/product/individualProduct/{{product.id}}" method="POST">
+                        <form id="atcform" action="/product/individualProduct/{{product.id}}" method="POST">
                         <button name="atc" class="btn" type="submit" value="{{product.id}}" href="#">Add To cart</button>
                         <button class="btn black">Buy Now</button>
                         </form>
@@ -81,6 +81,30 @@
                 </div>
             </div>
         </div>
+        <script>
+            /*
+                $(function () {
+                    $('#atcform').on('submit', function (e) {
+
+                        $.ajax({
+                            type: 'post',
+                            url: '/',
+                            data: $('#atcform').serialize(),
+                            success: function () {
+                                alert("Email has been sent!");
+                            }
+                        });
+                        e.preventDefault();
+                    });
+                });
+                */
+            //document.getElementById('atcform').addEventListener("submit", async function (ev) {
+    //ev.preventDefault();
+    //await fetch(ev.target.getAttribute("action"), {credentials: "include"});
+    //$.post("/product/individualProduct/{{product.id}}")
+    //$.post('/product/individualProduct/{{product.id}}', {  });
+//});
+            </script>
     </section>
 {{!-- </form> --}}
     <section class="related-books">

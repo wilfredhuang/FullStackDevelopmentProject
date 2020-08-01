@@ -216,7 +216,18 @@ router.get('/listproduct/:id', async (req, res, next) => {
     // 'Add to Cart' button passes value of product id to server
     // queries product id with database
     // stores each cartitesm with id, name and quantity
+
+    // Check for the expiry of the discount if discount exists
     var disc_object = await Discount.findOne({ where: { target_id: req.params.id } })
+    if (disc_object != null) {
+        let expiry_time = moment(disc_object.expiry)
+        let current_time = moment()
+        if (current_time.isAfter(expiry_time)) {
+            await disc_object.destroy();
+            disc_object = null;
+            console.log(disc_object)
+        }
+    }
     var product = await productadmin.findOne({ where: { id: req.params.id } })
     var id = product.id;
     let name = product.product_name;
@@ -238,8 +249,20 @@ router.get('/listproduct/:id', async (req, res, next) => {
             console.log("Quantity is " + req.session.userCart[z].Quantity)
             console.log("Discount Criteria FOUND for " + req.session.userCart[z].Name)
             req.session.userCart[z].Quantity += 1
-            // req.session.userCart[z].SubtotalPrice = 
-            req.session.userCart[z].SubtotalPrice = (parseFloat(req.session.userCart[z].SubtotalPrice) + parseFloat(product.price)).toFixed(2)
+            // special is the number of times the special offer can be applied, i.e 
+            // if discount is for every 3 items and i have 10 items, special will be 10 / 3 rounded down to 3
+            let special = Math.floor(req.session.userCart[z].Quantity / disc_object.min_qty)
+            if (special != 0) {
+                console.log(`Special Value : ${special}`)
+                alertMessage(res, 'success', `Special Offer for this product applied ${special} times`, 'fas fa-exclamation-circle', false)
+            }
+            let first_half = (((special * disc_object.min_qty * req.session.userCart[z].Price) * (1 - disc_object.discount_rate)))
+            let second_half = ((req.session.userCart[z].Quantity - (special * disc_object.min_qty)) * req.session.userCart[z].Price)
+            req.session.userCart[z].SubtotalPrice = (first_half + second_half).toFixed(2)
+            discounted_value = ((req.session.userCart[z].Quantity * req.session.userCart[z].Price) - (first_half + second_half)).toFixed(2)
+            console.log("DEDUCTED VALUE IS " + discounted_value)
+            console.log("AFTER SPECIAL DISCOUNT " + ` Subtotal is ${req.session.userCart[z].SubtotalPrice}`)
+
             req.session.userCart[z].SubtotalWeight = (parseFloat(req.session.userCart[z].SubtotalWeight) + parseFloat(product.weight)).toFixed(2)
             check = true;
             // console.log(req.session.userCart)
@@ -273,60 +296,89 @@ router.get('/listproduct/:id', async (req, res, next) => {
 
 // Add to Cart - individual page
 
-router.post('/individualProduct/:id', (req, res, next) => {
+router.post('/individualProduct/:id', async (req, res, next) => {
     // 'Add to Cart' button passes value of product id to server
     // queries product id with database
     // stores each cartitesm with id, name and quantity
-    console.log("ADDDDDING")
-    productadmin.findOne({
-        where: {
-            id: req.params.id // Button with name: id
+
+    // Check for the expiry of the discount if discount exists
+    var disc_object = await Discount.findOne({ where: { target_id: req.params.id } })
+    if (disc_object != null) {
+        let expiry_time = moment(disc_object.expiry)
+        let current_time = moment()
+        if (current_time.isAfter(expiry_time)) {
+            await disc_object.destroy();
+            disc_object = null;
+            console.log(disc_object)
         }
-    })
+    }
+    var product = await productadmin.findOne({ where: { id: req.params.id } })
+    var id = product.id;
+    let name = product.product_name;
+    let author = product.author;
+    let publisher = product.publisher;
+    let genre = product.genre;
+    let price = product.price;
+    let stock = product.stock;
+    let details = product.details;
+    let weight = product.weight;
+    let image = product.product_image;
 
-        .then((product) => {
-            var id = product.id;
-            let name = product.product_name;
-            let author = product.author;
-            let publisher = product.publisher;
-            let genre = product.genre;
-            let price = product.price;
-            let stock = product.stock;
-            let details = product.details;
-            let weight = product.weight;
-            let image = product.product_image;
 
-            console.log('ID IS ' + id)
+    var check = false;
 
-            var check = false;
-            // Can't do if and else in for loop below, why?
-            // because if there aren't any items in the cart in the first place, nothing would be added as code won't run
-            // hence use 'check'
-            for (z in req.session.userCart) {
-                if (z == id) {
-                    console.log("FOUND EXISTING PRODUCT IN CART")
-                    req.session.userCart[z].Quantity += 1
-                    req.session.userCart[z].SubtotalPrice = (parseFloat(req.session.userCart[z].SubtotalPrice) + parseFloat(product.price)).toFixed(2)
-                    req.session.userCart[z].SubtotalWeight = (parseFloat(req.session.userCart[z].SubtotalWeight) + parseFloat(product.weight)).toFixed(2)
-                    check = true;
-                    console.log(req.session.userCart)
-                }
+    for (z in req.session.userCart) {
+        if (disc_object != null && z == id) {
+            console.log("FOUND EXISTING PRODUCT IN CART")
+            console.log("Quantity is " + req.session.userCart[z].Quantity)
+            console.log("Discount Criteria FOUND for " + req.session.userCart[z].Name)
+            req.session.userCart[z].Quantity += 1
+            // special is the number of times the special offer can be applied, i.e 
+            // if discount is for every 3 items and i have 10 items, special will be 10 / 3 rounded down to 3
+            let special = Math.floor(req.session.userCart[z].Quantity / disc_object.min_qty)
+            if (special != 0) {
+                console.log(`Special Value : ${special}`)
+                alertMessage(res, 'success', `Special Offer for this product applied ${special} times`, 'fas fa-exclamation-circle', false)
             }
-            if (check == false) {
-                let qty = 1
-                // Again, the Image field not decided yet, the rest is done.
-                // req.session.userCart[[id]] = {"ID":id, "Name":name, "Image":image, "Quantity":qty, "SubtotalPrice":product.price}
-                req.session.userCart[[id]] = {
-                    "ID": id, "Name": name, "Author": author, "Publisher": publisher, "Genre": genre, "Price": price, "Stock": stock,
-                    "Weight": weight, "Image": image, "Quantity": qty, "SubtotalPrice": price, "SubtotalWeight": weight
-                }
-                console.log(req.session.userCart)
-            }
+            let first_half = (((special * disc_object.min_qty * req.session.userCart[z].Price) * (1 - disc_object.discount_rate)))
+            let second_half = ((req.session.userCart[z].Quantity - (special * disc_object.min_qty)) * req.session.userCart[z].Price)
+            req.session.userCart[z].SubtotalPrice = (first_half + second_half).toFixed(2)
+            discounted_value = ((req.session.userCart[z].Quantity * req.session.userCart[z].Price) - (first_half + second_half)).toFixed(2)
+            console.log("DEDUCTED VALUE IS " + discounted_value)
+            console.log("AFTER SPECIAL DISCOUNT " + ` Subtotal is ${req.session.userCart[z].SubtotalPrice}`)
 
-            req.session.save();
+            req.session.userCart[z].SubtotalWeight = (parseFloat(req.session.userCart[z].SubtotalWeight) + parseFloat(product.weight)).toFixed(2)
+            check = true;
+            // console.log(req.session.userCart)
+        }
 
-        })
+        else if (disc_object == null && z == id) {
+            console.log("FOUND EXISTING PRODUCT IN CART")
+            console.log("Quantity is " + req.session.userCart[z].Quantity)
+            req.session.userCart[z].Quantity += 1
+            req.session.userCart[z].SubtotalPrice = (parseFloat(req.session.userCart[z].SubtotalPrice) + parseFloat(product.price)).toFixed(2)
+            req.session.userCart[z].SubtotalWeight = (parseFloat(req.session.userCart[z].SubtotalWeight) + parseFloat(product.weight)).toFixed(2)
+            check = true;
+            // console.log(req.session.userCart)
+        }
+    }
+    if (check == false) {
+        console.log("Adding New Cart Item")
+        let qty = 1
+        req.session.userCart[[id]] = {
+            "ID": id, "Name": name, "Author": author, "Publisher": publisher, "Genre": genre, "Price": price, "Stock": stock,
+            "Weight": weight, "Image": image, "Quantity": qty, "SubtotalPrice": price, "SubtotalWeight": weight
+        }
+        // console.log(req.session.userCart)
+    }
 
+    // res.send('POST recieved', 200);
+    // res.end();
+    // return next();
+    // return res.json({
+    //     success: true,
+    //     message: "Some success message"
+    // });
     res.redirect(`/product/individualProduct/${req.params.id}`)
     console.log("Added to cart");
     console.log(req.session.userCart);
@@ -558,7 +610,7 @@ router.post('/applyCoupon', (req, res) => {
 // Update Cart
 // When a user want to change the product qty in cart page
 
-router.post('/cart', (req, res) => {
+router.post('/cart', async (req, res) => {
     if (req.body.checkoutButton == "Update") {
         for (ID in req.session.userCart) {
             // Make sure to parseInt the updated qty or it will become a string!!
@@ -567,54 +619,41 @@ router.post('/cart', (req, res) => {
             req.session.userCart[ID].Quantity = query
             // newSubTotal = query * req.session.userCart[ID].SubtotalPrice
             // console.log("Q is" + req.body["Q" + ID])
+        }
 
 
-            for (z in req.session.userCart) {
-                Discount.findOne({
-                    where: {
-                        target_id: req.session.userCart[z].ID
-                    }
-                })
+        for (z in req.session.userCart) {
+            var product = await productadmin.findOne({ where: { id: req.session.userCart[z].ID } })
+            var disc_object = await Discount.findOne({ where: { target_id: req.session.userCart[z].ID } })
+            if (disc_object != null && disc_object.target_id == req.session.userCart[z].ID) {
+                // special is the number of times the special offer can be applied, i.e 
+                // if discount is for every 3 items and i have 10 items, special will be 10 / 3 rounded down to 3
+                let special = Math.floor(req.session.userCart[z].Quantity / disc_object.min_qty)
+                if (special != 0) {
+                    console.log(`Special Value : ${special}`)
+                    alertMessage(res, 'success', `Special Offer: Buy ${disc_object.min_qty} for ${(disc_object.discount_rate * 100)}% off for '${product.product_name}' applied ${special} times`, 'fas fa-exclamation-circle', true)
+                }
+                let first_half = (((special * disc_object.min_qty * req.session.userCart[z].Price) * (1 - disc_object.discount_rate)))
+                let second_half = ((req.session.userCart[z].Quantity - (special * disc_object.min_qty)) * req.session.userCart[z].Price)
+                req.session.userCart[z].SubtotalPrice = (first_half + second_half).toFixed(2)
+                discounted_value = ((req.session.userCart[z].Quantity * req.session.userCart[z].Price) - (first_half + second_half)).toFixed(2)
+                console.log("DEDUCTED VALUE IS " + discounted_value)
+                console.log("AFTER SPECIAL DISCOUNT " + ` Subtotal is ${req.session.userCart[z].SubtotalPrice}`)
 
-                    .then((disc) => {
-                        if (disc && disc.min_qty <= req.session.userCart[z].Quantity) {
-                            console.log("Quantity is " + req.session.userCart[z].Quantity)
-                            console.log("Discount Criteria FOUND")
-                            console.log(`Calculating for ${req.session.userCart[z].Name} `)
-                            // Calculate the number of times the special discount should be applied
-                            // e.g i have 5 items , for every 3 item i get 20% off, so i save a floor value because discount
-                            // in that case is applied once
-                            let special = Math.floor(req.session.userCart[z].Quantity / disc.min_qty)
-                            console.log(`Special Value : ${special}`)
-                            // Multiply the special set discount first, then take the remainder quantity and multiply by normal price
-                            // Add these 2 set together
-                            req.session.userCart[z].SubtotalPrice = (((special * disc.min_qty * req.session.userCart[z].Price) * (1 - disc.discount_rate)))
-                                + ((req.session.userCart[z].Quantity - (special * disc.min_qty)) * req.session.userCart[z].Price)
-                            // price = ((price * special) * 1-disc.discount_rate) + ((req.session.userCart[z].Quantity - (special * disc.min_qty)) * price) 
-                            // price = (price * 1 - disc.discount_rate) (1 - req.session.ssd.discount_rate)
-                            console.log("AFTER SPECIAL DISCOUNT " + ` Subtotal is ${req.session.userCart[z].SubtotalPrice}`)
-                        }
-
-                        else {
-                            console.log("Not eligible for discount")
-                            let special = 0;
-                            req.session.userCart[z].SubtotalPrice = (((special * disc.min_qty * req.session.userCart[z].Price) * (1 - disc.discount_rate)))
-                                + ((req.session.userCart[z].Quantity - (special * disc.min_qty)) * req.session.userCart[z].Price)
-
-                        }
-
-                        req.session.save();
-                    })
-                // console.log("END OF SPECIAL DISCOUNT " + `${req.session.userCart[z].SubtotalPrice}`)
-                // req.session.userCart[z].SubtotalPrice = (req.session.userCart[z].Quantity * req.session.userCart[z].Price).toFixed(2);
+                req.session.userCart[z].SubtotalWeight = (parseFloat(req.session.userCart[z].SubtotalWeight) + parseFloat(product.weight)).toFixed(2)
             }
 
-            for (z in req.session.userCart) {
-                req.session.userCart[z].SubtotalWeight = (req.session.userCart[z].Quantity * req.session.userCart[z].Weight)
+            else if (disc_object == null) {
+                req.session.userCart[z].SubtotalPrice = (parseFloat(req.session.userCart[z].SubtotalPrice) + parseFloat(product.price)).toFixed(2)
             }
         }
-        console.log(req.session.userCart)
-        console.log(req.session.full_subtotal_price)
+
+        for (z in req.session.userCart) {
+            req.session.userCart[z].SubtotalWeight = (req.session.userCart[z].Quantity * req.session.userCart[z].Weight)
+        }
+        
+        // console.log(req.session.userCart)
+        // console.log(req.session.full_subtotal_price)
         res.redirect(307, 'goToCart')
     }
 
