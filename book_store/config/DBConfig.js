@@ -5,7 +5,7 @@ const db = require('./db');
 
 // Instantiates Sequelize with database parameters 
 const sequelize = new Sequelize(db.database, db.username, db.password, {
-    host: db.host,            // N ame or IP address of MySQL server     
+    host: db.host,            // Name or IP address of MySQL server     
     dialect: 'mysql',         // Tells squelize that MySQL is used     
     operatorsAliases: false,
 

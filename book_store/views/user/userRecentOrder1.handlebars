@@ -8,7 +8,7 @@
     <div class="container">
         <div class="row">
             <div class="tab col-12 col-md-2">
-                <button class="tab">Navigation</button>
+                <button class="tab navi">Navigation</button>
                 <a href="/user/userPage">
                     <button class="inactive-tab">User Page</button>
                 </a>
@@ -80,7 +80,24 @@
                                 <hr>
                                 <div class="card-body">
                                     <h5 class="card-title">Product Information</h5>
-                                    <p class="card-text">hello world</p>
+                                    <!---put in nested array here --->
+                                    <div class="row">
+                                        <div class="col-md-2"><img class="card-img"
+                                                src="http://books.google.com/books/content?id=A3-NDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                                                alt="bookCover"></div>
+                                        <div class="col-md-10">
+                                            <div class="row">
+                                                <div class="col-md-8">
+                                                    <h6 class="card-text">Ninja: Get Good</h6>
+                                                    <p class="card-text">Tyler "Ninja" Belvins | Clarkson Potter</p>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <p class="card-text">Qty: 1</p>
+                                                    <p class="card-text">$20</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="card-footer">
                                     <div class="row">
@@ -95,10 +112,9 @@
                                             </address>
                                         </div>
                                         <div class="col-md-3">
-                                            <p class="card-text">Subtotal: </p>
+                                            <p class="card-text">Subtotal: $20</p>
                                             <p class="card-text">Delivery Fee: Free</p>
                                             <p class="card-text">Total Price: ${{totalPrice}}</p>
-
                                         </div>
                                     </div>
                                     {{!-- <p class="card-text">{{address}}</p>

@@ -140,7 +140,9 @@ router.get("/userPage",ensureAuthenticated, (req, res) => {
 
 router.get("/userRecentOrder", ensureAuthenticated,(req, res) => {
   const title = "Order History";
-
+  cartItem.findAll({
+    //
+  })
   // Need to intergrate this later on
   order
     .findAll({
@@ -157,6 +159,7 @@ router.get("/userRecentOrder", ensureAuthenticated,(req, res) => {
     .catch((err) => console.log(err));
 });
 
+//Need to integrate this later
 router.get("/userCart", (req, res) => {
   const title = "Cart";
   cartItem
