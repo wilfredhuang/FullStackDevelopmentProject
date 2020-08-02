@@ -8,11 +8,10 @@
 <section class="static about-sec">
     <div class="container">
         <h1>Delivery Information</h1>
-        <!--- {% for order in orderList %}   add in conditions here--->
         <div class="row">
             <div class="col-md-8">
                 <h3>Delivery Status - <span
-                        class="{{progressColourText}}">{{capitaliseFirstLetter deliveryStatus}}</span></h3>
+                        class="{{progressColourText}}">{{deliveryStatusResult}}</span></h3>
                 <br>
                 <div class="progress">
                     <div class="progress-bar {{progressColour}}" style="width: {{progressPercentage}}%"

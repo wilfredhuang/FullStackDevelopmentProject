@@ -10,7 +10,6 @@ const User = require('../models/User');
 const alertMessage = require('../helpers/messenger');
 const Coupon = require('../models/coupon');
 
-
 // Stripe Payment - secret key
 const stripe = require('stripe')('sk_test_ns9DyHTray5Wihniw93C2ANH00IMJTVjKw', {
     apiVersion: '2020-03-02',
@@ -774,7 +773,6 @@ router.get('/stripepayment', (req, res) => {
         payment_method_types: ['card'],
         receipt_email: 'whjw1536@gmail.com',
     })
-
         .then((paymentIntent) => {
             console.log(paymentIntent)
             console.log("Client secret is " + paymentIntent.client_secret)
@@ -802,7 +800,6 @@ router.get('/paynow', (req, res) => {
                 qr,
                 url
             })
-
         })
         .catch(err => {
             console.error(err)
@@ -910,12 +907,8 @@ router.post('/createCoupon', (req, res) => {
                         console.log("Something went wrong with creating the coupon")
                     })
             }
-
-
         })
-
 })
 
 
 module.exports = router;
-
