@@ -10,6 +10,18 @@ const order = require("../models/Order");
 const ensureAuthenticated = require("../helpers/auth");
 const { v1: uuidv1 } = require("uuid");
 
+//admin auth 
+const ensureAdmin = (req, res, next) => {
+  if(req.isAuthenticated() ) { // If user is authenticated
+      console.log(req.user.confirmed);
+      if (req.user.isadmin == true){
+              return next(); // Calling next() to proceed to the next statement
+          }
+  }
+      // If not authenticated, show alert message and redirect to ‘/’
+  alertMessage(res, 'danger', 'Access Denied', 'fas fa-exclamation-circle', true);
+  res.redirect('/');
+};
 //NodeMailer
 const nodemailer = require("nodemailer");
 const jwt = require("jsonwebtoken");
@@ -130,9 +142,15 @@ router.get(
 
 router.get("/userPage",ensureAuthenticated, (req, res) => {
   const title = "User Information";
+  if(req.user.facebookId != null){
+    res.render('user/facebookuserpage', {
+      title,
+    });
+  }else{
   res.render("user/userpage", {
     title,
   });
+}
 });
 
 router.get("/userRecentOrder", (req, res) => {
@@ -242,7 +260,7 @@ router.get("/userCart", (req, res) => {
 router.get("/login", (req, res) => {
   res.render("user/login");
 });
-
+/*
 router.post("/login", (req, res, next) => {
   passport.authenticate("local", {
     successRedirect: "/",
@@ -250,8 +268,23 @@ router.post("/login", (req, res, next) => {
     failureFlash: true,
   })
   (req, res, next);
+});*/
+router.post('/login', function(req, res, next) {
+  passport.authenticate('local', function(err, user, info) {
+    if (err) { return next(err); }
+    if (!user) { return res.redirect('/login'); }
+    req.logIn(user, function(err) {
+      if (err) { return next(err);}
+      else if (user.isadmin == true){
+        return res.redirect('/user/admin');
+      }
+      return res.redirect('/');
+    });
+  })(req, res, next);
 });
-
+router.get("/admin",ensureAdmin, (req, res) => {
+  res.render("user/adminmenu");
+});
 router.get("/register", (req, res) => {
   res.render("user/register");
 });
