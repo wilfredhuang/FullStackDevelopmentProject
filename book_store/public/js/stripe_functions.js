@@ -75,6 +75,8 @@ function myFoo() {
 //   });
 //   }
 
+var cust_name = document.getElementById('customer-name').value
+
 function confirmStripe(card123) {
   console.log(card123)
   // alert(card)
@@ -83,7 +85,7 @@ function confirmStripe(card123) {
     payment_method: {
       card: card123,
       billing_details: {
-        name: 'placebo name'
+        name: cust_name
       }
       //  Not working A request to confirm a PaymentIntent pi_1H47ztEsVjFQQiZ9KbgOCANp failed
       // Dont on it

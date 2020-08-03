@@ -856,6 +856,8 @@ router.get('/stripepayment', async (req, res) => {
         currency: 'sgd',
         payment_method_types: ['card'],
         receipt_email: 'whjw1536@gmail.com',
+        setup_future_usage: 'on_session',
+        description: `Order worth $${req.session.full_total_price} by ${req.user.name}`
     })
 
         .then((paymentIntent) => {
