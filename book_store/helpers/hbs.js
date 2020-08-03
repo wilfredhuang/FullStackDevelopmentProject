@@ -127,7 +127,7 @@ module.exports = {
       return false;
     }
 
-    else {
+    else if (!isNaN(og_subtotal)) {
       return true;
     }
   },

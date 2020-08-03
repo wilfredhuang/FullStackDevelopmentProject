@@ -372,14 +372,6 @@ router.post('/individualProduct/:id', async (req, res, next) => {
         }
         // console.log(req.session.userCart)
     }
-
-    // res.send('POST recieved', 200);
-    // res.end();
-    // return next();
-    // return res.json({
-    //     success: true,
-    //     message: "Some success message"
-    // });
     res.redirect(`/product/individualProduct/${req.params.id}`)
     console.log("Added to cart");
     console.log(req.session.userCart);
@@ -466,6 +458,210 @@ router.post('/goToCart', (req, res) => {
 
     res.redirect('cart')
 })
+
+
+
+// Update Cart
+// When a user want to change the product qty in cart page
+
+router.post('/cart', async (req, res) => {
+    if (req.body.checkoutButton == "Update") {
+        for (ID in req.session.userCart) {
+            // Make sure to parseInt the updated qty or it will become a string!!
+            let query = parseInt(req.body["Q" + ID])
+            console.log("Queried Quantity is " + query)
+            req.session.userCart[ID].Quantity = query
+            // newSubTotal = query * req.session.userCart[ID].SubtotalPrice
+            // console.log("Q is" + req.body["Q" + ID])
+        }
+
+        req.session.deducted = (0).toFixed(2);
+        for (z in req.session.userCart) {
+            var product = await productadmin.findOne({ where: { id: req.session.userCart[z].ID } })
+            var disc_object = await Discount.findOne({ where: { target_id: req.session.userCart[z].ID } })
+            if (disc_object != null && disc_object.target_id == req.session.userCart[z].ID) {
+                // special is the number of times the special offer can be applied, i.e 
+                // if discount is for every 3 items and i have 10 items, special will be 10 / 3 rounded down to 3
+                let special = Math.floor(req.session.userCart[z].Quantity / disc_object.min_qty)
+                if (special != 0) {
+                    console.log(`Special Value : ${special}`)
+                    alertMessage(res, 'success', `Special Offer: Buy ${disc_object.min_qty} for ${(disc_object.discount_rate * 100)}% off for '${product.product_name}' applied ${special} times`, 'fas fa-exclamation-circle', true)
+                }
+                let first_half = (((special * disc_object.min_qty * req.session.userCart[z].Price) * (1 - disc_object.discount_rate)))
+                let second_half = ((req.session.userCart[z].Quantity - (special * disc_object.min_qty)) * req.session.userCart[z].Price)
+                req.session.userCart[z].SubtotalPrice = (first_half + second_half).toFixed(2)
+                discounted_value = ((req.session.userCart[z].Quantity * req.session.userCart[z].Price) - (first_half + second_half)).toFixed(2)
+                req.session.deducted = (parseFloat(req.session.deducted) + parseFloat(discounted_value)).toFixed(2);
+                console.log("DEDUCTED VALUE IS " + discounted_value)
+                console.log("DEDUCTED TOTAL IS " + req.session.deducted)
+                console.log("AFTER SPECIAL DISCOUNT " + ` Subtotal is ${req.session.userCart[z].SubtotalPrice}`)
+
+                req.session.userCart[z].SubtotalWeight = (parseFloat(req.session.userCart[z].SubtotalWeight) + parseFloat(product.weight)).toFixed(2)
+            }
+
+            else if (disc_object == null) {
+                req.session.userCart[z].SubtotalPrice = (parseFloat(req.session.userCart[z].Quantity) * parseFloat(product.price)).toFixed(2)
+            }
+        }
+
+        for (z in req.session.userCart) {
+            req.session.userCart[z].SubtotalWeight = (req.session.userCart[z].Quantity * req.session.userCart[z].Weight)
+        }
+
+        // console.log(req.session.userCart)
+        // console.log(req.session.full_subtotal_price)
+        res.redirect(307, 'goToCart')
+    }
+
+    else {
+        res.redirect('checkout')
+        alertMessage(res, 'danger', 'You are not logged in', 'fas fa-exclamation-circle', true)
+    }
+})
+
+// Delete Item in Cart
+// Recalculate req.session.full_subtotal_price when item is deleted
+// must set req.session.full_subtotal_price = 0 otherwise it will be incremented value
+
+router.get('/deleteCartItem/:id', async (req, res) => {
+    console.log(req.session.userCart[req.params.id])
+    console.log(req.params.id)
+    console.log('Before Delete' + req.session.userCart)
+    delete req.session.userCart[req.params.id];
+    console.log('After Delete' + req.session.userCart)
+
+
+    req.session.deducted = (0).toFixed(2);
+    for (z in req.session.userCart) {
+        var product = await productadmin.findOne({ where: { id: req.session.userCart[z].ID } })
+        var disc_object = await Discount.findOne({ where: { target_id: req.session.userCart[z].ID } })
+        if (disc_object != null && disc_object.target_id == req.session.userCart[z].ID) {
+            // special is the number of times the special offer can be applied, i.e 
+            // if discount is for every 3 items and i have 10 items, special will be 10 / 3 rounded down to 3
+            let special = Math.floor(req.session.userCart[z].Quantity / disc_object.min_qty)
+            if (special != 0) {
+                console.log(`Special Value : ${special}`)
+                alertMessage(res, 'success', `Special Offer: Buy ${disc_object.min_qty} for ${(disc_object.discount_rate * 100)}% off for '${product.product_name}' applied ${special} times`, 'fas fa-exclamation-circle', true)
+            }
+            let first_half = (((special * disc_object.min_qty * req.session.userCart[z].Price) * (1 - disc_object.discount_rate)))
+            let second_half = ((req.session.userCart[z].Quantity - (special * disc_object.min_qty)) * req.session.userCart[z].Price)
+            req.session.userCart[z].SubtotalPrice = (first_half + second_half).toFixed(2)
+            discounted_value = ((req.session.userCart[z].Quantity * req.session.userCart[z].Price) - (first_half + second_half)).toFixed(2)
+            req.session.deducted = (parseFloat(req.session.deducted) + parseFloat(discounted_value)).toFixed(2);
+            console.log("DEDUCTED VALUE IS " + discounted_value)
+            console.log("DEDUCTED TOTAL IS " + req.session.deducted)
+            console.log("AFTER SPECIAL DISCOUNT " + ` Subtotal is ${req.session.userCart[z].SubtotalPrice}`)
+
+            req.session.userCart[z].SubtotalWeight = (parseFloat(req.session.userCart[z].SubtotalWeight) + parseFloat(product.weight)).toFixed(2)
+        }
+
+        else if (disc_object == null) {
+            req.session.userCart[z].SubtotalPrice = (parseFloat(req.session.userCart[z].Quantity) * parseFloat(product.price)).toFixed(2)
+        }
+    }
+
+    for (z in req.session.userCart) {
+        req.session.userCart[z].SubtotalWeight = (req.session.userCart[z].Quantity * req.session.userCart[z].Weight)
+    }
+    // let disc_object = await Discount.findOne({ where: { target_id: req.params.id } })
+    // if (disc_object != null) {
+    //     let special = Math.floor(req.session.userCart[req.params.id].Quantity / disc_object.min_qty)
+    //     // if (special != 0) {
+    //     //     console.log(`Special Value : ${special}`)
+    //     //     alertMessage(res, 'success', `Special Offer: Buy ${disc_object.min_qty} for ${(disc_object.discount_rate * 100)}% off for '${product.product_name}' applied ${special} times`, 'fas fa-exclamation-circle', true)
+    //     // }
+    //     let first_half = (((special * disc_object.min_qty * req.session.userCart[req.params.id].Price) * (1 - disc_object.discount_rate)))
+    //     let second_half = ((req.session.userCart[req.params.id].Quantity - (special * disc_object.min_qty)) * req.session.userCart[req.params.id].Price)
+    //     req.session.userCart[z].SubtotalPrice = (first_half + second_half).toFixed(2)
+    //     discounted_value = ((req.session.userCart[req.params.id].Quantity * req.session.userCart[req.params.id].Price) - (first_half + second_half)).toFixed(2)
+    //     console.log("DEEDUCTED VAUE IS " + req.session.deducted)
+    //     console.log("DEEDUCTED VAUE IS " + discounted_value)
+    //     req.session.deducted = (parseFloat(req.session.deducted) - parseFloat(discounted_value)).toFixed(2);
+    //     delete req.session.userCart[req.params.id];
+    //     console.log('After Delete' + req.session.userCart)
+    //     console.log(req.session.deducted)
+
+    // }
+
+    // else if (disc_object == null) {
+    //     delete req.session.userCart[req.params.id];
+    //     console.log('After Delete' + req.session.userCart)
+    // }
+
+    req.session.full_subtotal_price = 0
+    if (req.session.coupon_type == "OVERALL") {
+        console.log("Coupon TYPE IS OVERALL")
+        for (z in req.session.userCart) {
+            req.session.full_subtotal_price = (parseFloat(req.session.full_subtotal_price) + parseFloat(req.session.userCart[z].SubtotalPrice)).toFixed(2)
+            console.log(req.session.full_subtotal_price)
+        }
+        req.session.discounted_price = ((parseFloat(req.session.full_subtotal_price) + parseFloat(req.session.shipping_fee)) * (parseFloat(req.session.discount))).toFixed(2)
+        if (parseFloat(req.session.discounted_price) > parseFloat(req.session.discount_limit)) {
+            req.session.discounted_price = req.session.discount_limit
+            req.session.full_total_price = ((parseFloat(req.session.full_subtotal_price) + parseFloat(req.session.shipping_fee)) - parseFloat(req.session.discount_limit)).toFixed(2)
+        }
+        else {
+            // req.session. = (parseFloat(full_subtotal_price) + parseFloat(req.session.shipping_fee)).toFixed(2) * (1- parseFloat(discount)).toFixed(2)
+            req.session.full_total_price = ((parseFloat(req.session.full_subtotal_price) + parseFloat(req.session.shipping_fee)) * (1.00 - parseFloat(req.session.discount))).toFixed(2)
+        }
+    }
+
+    else if (req.session.coupon_type == "SHIP") {
+        console.log("Coupon TYPE IS SHIP")
+        for (z in req.session.userCart) {
+            req.session.full_subtotal_price = (parseFloat(req.session.full_subtotal_price) + parseFloat(req.session.userCart[z].SubtotalPrice)).toFixed(2)
+            console.log(req.session.full_subtotal_price)
+        }
+        req.session.req.shipping_discounted_price = parseFloat(req.session.shipping_fee) * (req.shipping_discount)
+        if (parseFloat(req.session.req.shipping_discounted_price) > parseFloat(req.session.req.shipping_discount_limit)) {
+            req.session.discounted_price = req.session.req.shipping_discount_limit
+            req.session.shipping_fee = (parseFloat(req.session.shipping_fee) - parseFloat(req.session.discount_limit)).toFixed(2)
+            req.session.full_total_price = (parseFloat(req.session.full_subtotal_price) + parseFloat(req.session.shipping_fee)).toFixed(2)
+        }
+
+        else {
+            req.session.discounted_price = ((parseFloat(req.session.shipping_fee)) * (parseFloat(req.shipping_discount))).toFixed(2)
+            req.session.shipping_fee = ((parseFloat(req.session.shipping_fee)) * (1 - parseFloat(req.shipping_discount))).toFixed(2)
+            req.session.full_total_price = (parseFloat(req.session.full_subtotal_price) + parseFloat(req.session.shipping_fee)).toFixed(2)
+        }
+    }
+
+    else if (req.session.coupon_type == "SUB") {
+        console.log("Coupon TYPE IS SUB")
+        for (z in req.session.userCart) {
+            req.session.full_subtotal_price = (parseFloat(req.session.full_subtotal_price) + parseFloat(req.session.userCart[z].SubtotalPrice)).toFixed(2)
+            console.log(req.session.full_subtotal_price)
+        }
+        req.session.discounted_price = parseFloat(req.session.full_subtotal_price) * (req.session.sub_discount)
+        if (parseFloat(req.session.discounted_price) > parseFloat(req.session.discount_limit)) {
+            req.session.discounted_price = req.session.discount_limit
+            console.log(req.session.full_subtotal_price)
+            req.session.full_subtotal_price = (parseFloat(req.session.full_subtotal_price) - parseFloat(req.session.discount_limit)).toFixed(2)
+            console.log(req.session.full_subtotal_price)
+            req.session.full_total_price = (parseFloat(req.session.full_subtotal_price) + parseFloat(req.session.shipping_fee)).toFixed(2)
+        }
+
+        else {
+            req.session.discounted_price = (parseFloat(req.session.full_subtotal_price) * parseFloat(req.session.sub_discount)).toFixed(2)
+            req.session.full_subtotal_price = (parseFloat(req.session.full_subtotal_price) * parseFloat(1 - req.session.sub_discount)).toFixed(2)
+            req.session.full_total_price = (parseFloat(req.session.full_subtotal_price) + parseFloat(req.session.shipping_fee)).toFixed(2)
+        }
+
+    }
+
+    else {
+        req.session.discounted_price = 0.00
+        for (z in req.session.userCart) {
+            req.session.full_subtotal_price = (parseFloat(req.session.full_subtotal_price) + parseFloat(req.session.userCart[z].SubtotalPrice)).toFixed(2)
+            console.log(req.session.full_subtotal_price)
+        }
+        req.session.full_total_price = (parseFloat(req.session.full_subtotal_price) + parseFloat(req.session.shipping_fee)).toFixed(2)
+    }
+    console.log(req.session.userCart)
+    console.log(req.session.full_subtotal_price)
+    alertMessage(res, 'success', req.params.id + ' is successfully deleted', 'fas fa-sign-in-alt', true)
+    res.redirect(307, '/product/cart');
+});
 
 // Retrieve Cart
 // Make sure to use POST request to handle updated cart info or you need to double refresh
@@ -613,151 +809,6 @@ router.post('/applyCoupon', (req, res) => {
 });
 
 
-// Update Cart
-// When a user want to change the product qty in cart page
-
-router.post('/cart', async (req, res) => {
-    if (req.body.checkoutButton == "Update") {
-        for (ID in req.session.userCart) {
-            // Make sure to parseInt the updated qty or it will become a string!!
-            let query = parseInt(req.body["Q" + ID])
-            console.log("Queried Quantity is " + query)
-            req.session.userCart[ID].Quantity = query
-            // newSubTotal = query * req.session.userCart[ID].SubtotalPrice
-            // console.log("Q is" + req.body["Q" + ID])
-        }
-
-        req.session.deducted = 0;
-        for (z in req.session.userCart) {
-            var product = await productadmin.findOne({ where: { id: req.session.userCart[z].ID } })
-            var disc_object = await Discount.findOne({ where: { target_id: req.session.userCart[z].ID } })
-            if (disc_object != null && disc_object.target_id == req.session.userCart[z].ID) {
-                // special is the number of times the special offer can be applied, i.e 
-                // if discount is for every 3 items and i have 10 items, special will be 10 / 3 rounded down to 3
-                let special = Math.floor(req.session.userCart[z].Quantity / disc_object.min_qty)
-                if (special != 0) {
-                    console.log(`Special Value : ${special}`)
-                    alertMessage(res, 'success', `Special Offer: Buy ${disc_object.min_qty} for ${(disc_object.discount_rate * 100)}% off for '${product.product_name}' applied ${special} times`, 'fas fa-exclamation-circle', true)
-                }
-                let first_half = (((special * disc_object.min_qty * req.session.userCart[z].Price) * (1 - disc_object.discount_rate)))
-                let second_half = ((req.session.userCart[z].Quantity - (special * disc_object.min_qty)) * req.session.userCart[z].Price)
-                req.session.userCart[z].SubtotalPrice = (first_half + second_half).toFixed(2)
-                discounted_value = ((req.session.userCart[z].Quantity * req.session.userCart[z].Price) - (first_half + second_half)).toFixed(2)
-                req.session.deducted = (parseFloat(req.session.deducted) + parseFloat(discounted_value)).toFixed(2);
-                console.log("DEDUCTED VALUE IS " + discounted_value)
-                console.log("DEDUCTED TOTAL IS " + req.session.deducted)
-                console.log("AFTER SPECIAL DISCOUNT " + ` Subtotal is ${req.session.userCart[z].SubtotalPrice}`)
-
-                req.session.userCart[z].SubtotalWeight = (parseFloat(req.session.userCart[z].SubtotalWeight) + parseFloat(product.weight)).toFixed(2)
-            }
-
-            else if (disc_object == null) {
-                req.session.userCart[z].SubtotalPrice = (parseFloat(req.session.userCart[z].SubtotalPrice) + parseFloat(product.price)).toFixed(2)
-            }
-        }
-
-        for (z in req.session.userCart) {
-            req.session.userCart[z].SubtotalWeight = (req.session.userCart[z].Quantity * req.session.userCart[z].Weight)
-        }
-        
-        // console.log(req.session.userCart)
-        // console.log(req.session.full_subtotal_price)
-        res.redirect(307, 'goToCart')
-    }
-
-    else {
-        res.redirect('checkout')
-        alertMessage(res, 'danger', 'You are not logged in', 'fas fa-exclamation-circle', true)
-    }
-})
-
-// Delete Item in Cart
-// Recalculate req.session.full_subtotal_price when item is deleted
-// must set req.session.full_subtotal_price = 0 otherwise it will be incremented value
-
-router.get('/deleteCartItem/:id', (req, res) => {
-    console.log(req.session.userCart[req.params.id])
-    console.log(req.params.id)
-    console.log('Before Delete' + req.session.userCart)
-    delete req.session.userCart[req.params.id];
-    console.log('After Delete' + req.session.userCart)
-
-    req.session.full_subtotal_price = 0
-    if (req.session.coupon_type == "OVERALL") {
-        console.log("Coupon TYPE IS OVERALL")
-        for (z in req.session.userCart) {
-            req.session.full_subtotal_price = (parseFloat(req.session.full_subtotal_price) + parseFloat(req.session.userCart[z].SubtotalPrice)).toFixed(2)
-            console.log(req.session.full_subtotal_price)
-        }
-        req.session.discounted_price = ((parseFloat(req.session.full_subtotal_price) + parseFloat(req.session.shipping_fee)) * (parseFloat(req.session.discount))).toFixed(2)
-        if (parseFloat(req.session.discounted_price) > parseFloat(req.session.discount_limit)) {
-            req.session.discounted_price = req.session.discount_limit
-            req.session.full_total_price = ((parseFloat(req.session.full_subtotal_price) + parseFloat(req.session.shipping_fee)) - parseFloat(req.session.discount_limit)).toFixed(2)
-        }
-        else {
-            // req.session. = (parseFloat(full_subtotal_price) + parseFloat(req.session.shipping_fee)).toFixed(2) * (1- parseFloat(discount)).toFixed(2)
-            req.session.full_total_price = ((parseFloat(req.session.full_subtotal_price) + parseFloat(req.session.shipping_fee)) * (1.00 - parseFloat(req.session.discount))).toFixed(2)
-        }
-    }
-
-    else if (req.session.coupon_type == "SHIP") {
-        console.log("Coupon TYPE IS SHIP")
-        for (z in req.session.userCart) {
-            req.session.full_subtotal_price = (parseFloat(req.session.full_subtotal_price) + parseFloat(req.session.userCart[z].SubtotalPrice)).toFixed(2)
-            console.log(req.session.full_subtotal_price)
-        }
-        req.session.req.shipping_discounted_price = parseFloat(req.session.shipping_fee) * (req.shipping_discount)
-        if (parseFloat(req.session.req.shipping_discounted_price) > parseFloat(req.session.req.shipping_discount_limit)) {
-            req.session.discounted_price = req.session.req.shipping_discount_limit
-            req.session.shipping_fee = (parseFloat(req.session.shipping_fee) - parseFloat(req.session.discount_limit)).toFixed(2)
-            req.session.full_total_price = (parseFloat(req.session.full_subtotal_price) + parseFloat(req.session.shipping_fee)).toFixed(2)
-        }
-
-        else {
-            req.session.discounted_price = ((parseFloat(req.session.shipping_fee)) * (parseFloat(req.shipping_discount))).toFixed(2)
-            req.session.shipping_fee = ((parseFloat(req.session.shipping_fee)) * (1 - parseFloat(req.shipping_discount))).toFixed(2)
-            req.session.full_total_price = (parseFloat(req.session.full_subtotal_price) + parseFloat(req.session.shipping_fee)).toFixed(2)
-        }
-    }
-
-    else if (req.session.coupon_type == "SUB") {
-        console.log("Coupon TYPE IS SUB")
-        for (z in req.session.userCart) {
-            req.session.full_subtotal_price = (parseFloat(req.session.full_subtotal_price) + parseFloat(req.session.userCart[z].SubtotalPrice)).toFixed(2)
-            console.log(req.session.full_subtotal_price)
-        }
-        req.session.discounted_price = parseFloat(req.session.full_subtotal_price) * (req.session.sub_discount)
-        if (parseFloat(req.session.discounted_price) > parseFloat(req.session.discount_limit)) {
-            req.session.discounted_price = req.session.discount_limit
-            console.log(req.session.full_subtotal_price)
-            req.session.full_subtotal_price = (parseFloat(req.session.full_subtotal_price) - parseFloat(req.session.discount_limit)).toFixed(2)
-            console.log(req.session.full_subtotal_price)
-            req.session.full_total_price = (parseFloat(req.session.full_subtotal_price) + parseFloat(req.session.shipping_fee)).toFixed(2)
-        }
-
-        else {
-            req.session.discounted_price = (parseFloat(req.session.full_subtotal_price) * parseFloat(req.session.sub_discount)).toFixed(2)
-            req.session.full_subtotal_price = (parseFloat(req.session.full_subtotal_price) * parseFloat(1 - req.session.sub_discount)).toFixed(2)
-            req.session.full_total_price = (parseFloat(req.session.full_subtotal_price) + parseFloat(req.session.shipping_fee)).toFixed(2)
-        }
-
-    }
-
-    else {
-        req.session.discounted_price = 0.00
-        for (z in req.session.userCart) {
-            req.session.full_subtotal_price = (parseFloat(req.session.full_subtotal_price) + parseFloat(req.session.userCart[z].SubtotalPrice)).toFixed(2)
-            console.log(req.session.full_subtotal_price)
-        }
-        req.session.full_total_price = (parseFloat(req.session.full_subtotal_price) + parseFloat(req.session.shipping_fee)).toFixed(2)
-    }
-    console.log(req.session.userCart)
-    console.log(req.session.full_subtotal_price)
-    alertMessage(res, 'success', req.params.id + ' is successfully deleted', 'fas fa-sign-in-alt', true)
-    res.redirect('/product/cart');
-});
-
-
 // Checkout Form
 router.get('/checkout', (req, res) => {
     title = "Checkout"
@@ -828,24 +879,26 @@ router.post('/goToPayNow', (req, res) => {
 router.get('/stripepayment', async (req, res) => {
     stripe.customers.retrieve(
         'cus_Hky6LViahDgEcl',
-        function(err, customer) {
-          // asynchronously called
-          console.log(err)
-          console.log("CUSTOMER IS " + customer)
+        function (err, customer) {
+            // asynchronously called
+            console.log(err)
+            console.log("CUSTOMER IS " + customer)
         }
-      );
+    );
 
     const customer = await stripe.customers.create({
         name: req.user.name,
         email: req.user.email,
-        phone:req.user.PhoneNo,
-        shipping: {address: {
-            line1: req.user.address,
-            line2: req.user.address1,
-            city: req.user.city,
-            country: req.user.country,
-            postal_code: req.user.postalCode
-        }, name:"Insert shipping name", phone:req.user.PhoneNo}
+        phone: req.user.PhoneNo,
+        shipping: {
+            address: {
+                line1: req.user.address,
+                line2: req.user.address1,
+                city: req.user.city,
+                country: req.user.country,
+                postal_code: req.user.postalCode
+            }, name: "Insert shipping name", phone: req.user.PhoneNo
+        }
     });
     console.log("CUSTOMER NAME IS " + customer.name)
     console.log(customer)
@@ -872,6 +925,24 @@ router.post('/stripepayment', (req, res) => {
     // order.create({
     //     fullName, phoneNumber, address, address1, city, country, postalCode
     // })
+    // for (i in req.session.userCart) {
+    //     delete req.session.userCart[i]
+    //     console.log("User Cart should be empty now")
+    //     console.log(req.session.userCart)
+    // }
+    req.session.userCart = {};
+    req.session.coupon_type = null;
+    req.session.discount = 0;
+    req.session.discount_limit = 0;
+    req.session.discounted_price = (0).toFixed(2);
+    req.session.shipping_discount = 0;
+    req.session.shipping_discount_limit = 0;
+    req.session.shipping_discounted_price = 0;
+    req.session.sub_discount = 0;
+    req.session.sub_discount_limit = 0;
+    req.session.sub_discounted_price = 0;
+    req.session.full_total_price = 0;
+    req.session.deducted = 0;
     alertMessage(res, 'success', 'Order placed', 'fas fa-exclamation-circle', true)
     res.redirect("/delivery/checkout2");
 
@@ -897,6 +968,19 @@ router.get('/paynow', (req, res) => {
 });
 
 router.post('/paynow', (req, res) => {
+    req.session.userCart = {};
+    req.session.coupon_type = null;
+    req.session.discount = 0;
+    req.session.discount_limit = 0;
+    req.session.discounted_price = (0).toFixed(2);
+    req.session.shipping_discount = 0;
+    req.session.shipping_discount_limit = 0;
+    req.session.shipping_discounted_price = 0;
+    req.session.sub_discount = 0;
+    req.session.sub_discount_limit = 0;
+    req.session.sub_discounted_price = 0;
+    req.session.full_total_price = 0;
+    req.session.deducted = 0;
     alertMessage(res, 'success', 'Order placed, the administrator will shortly confirm your payment', 'fas fa-exclamation-circle', true)
     res.redirect("/delivery/checkout2");
 
@@ -1005,12 +1089,12 @@ router.post('/createCoupon', (req, res) => {
 })
 
 // Create Discount Page
-router.get('/createDiscount', async (req, res)=> {
+router.get('/createDiscount', async (req, res) => {
     title = "Create Discount"
     let currentDate = moment(req.body.currentDate, "DD/MM/YYYY");
     let currentTime = moment().format("HH:mm");
     let errors;
-    
+
 
     let products = await ProductAdmin.findAll({})
     res.render('checkout/createDiscount', {
@@ -1021,7 +1105,7 @@ router.get('/createDiscount', async (req, res)=> {
     })
 })
 
-router.post('/createDiscount', async(req, res)=> {
+router.post('/createDiscount', async (req, res) => {
     // Retrieve the inputs from the create discount form
     let target_id = req.body.target_id;
     let product_discount = req.body.product_discount;
@@ -1041,7 +1125,7 @@ router.post('/createDiscount', async(req, res)=> {
     let current_time = moment();
     let et = moment(expiry_date_time); // format into the same way as current_time (in ms) 
 
-    let d = await Discount.findOne({where: { target_id: target_id }})
+    let d = await Discount.findOne({ where: { target_id: target_id } })
 
     // Duplicate case
     if (d != null) {
@@ -1078,7 +1162,7 @@ router.post('/createDiscount', async(req, res)=> {
 
 // Admin - View Discounts and Coupons and Delete together
 
-router.get('/viewDiscount', async (req, res)=> {
+router.get('/viewDiscount', async (req, res) => {
     let title = "View Discount"
     let discounts = await Discount.findAll({})
     let coupons = await Coupon.findAll({})
@@ -1089,15 +1173,15 @@ router.get('/viewDiscount', async (req, res)=> {
     })
 })
 
-router.get('/deleteDiscount/:id', async(req, res)=> {
+router.get('/deleteDiscount/:id', async (req, res) => {
     let target_id = req.params.id;
     let url = "/product/viewDiscount"
     Discount.findOne({
-        where: {target_id: target_id}
-    }).then((disc_object)=> {
+        where: { target_id: target_id }
+    }).then((disc_object) => {
         if (disc_object != null) {
             disc_object.destroy();
-            alertMessage(res, 'success','Discount for Product ' + target_id  + ' is successfully deleted', 'fas fa-sign-in-alt', true)
+            alertMessage(res, 'success', 'Discount for Product ' + target_id + ' is successfully deleted', 'fas fa-sign-in-alt', true)
         }
 
         else {
@@ -1106,22 +1190,22 @@ router.get('/deleteDiscount/:id', async(req, res)=> {
 
         }
 
-    }).catch((err)=> {
+    }).catch((err) => {
         console.log(err)
     })
 
     res.redirect(url)
 })
 
-router.get('/deleteCoupon/:id', async(req, res)=> {
+router.get('/deleteCoupon/:id', async (req, res) => {
     let id = req.params.id;
     let url = "/product/viewDiscount"
     Coupon.findOne({
-        where: {id: id}
-    }).then((c)=> {
+        where: { id: id }
+    }).then((c) => {
         if (c != null) {
             c.destroy();
-            alertMessage(res, 'success','Coupon ' + id  + ' is successfully deleted', 'fas fa-sign-in-alt', true)
+            alertMessage(res, 'success', 'Coupon ' + id + ' is successfully deleted', 'fas fa-sign-in-alt', true)
         }
 
         else {
@@ -1130,7 +1214,7 @@ router.get('/deleteCoupon/:id', async(req, res)=> {
 
         }
 
-    }).catch((err)=> {
+    }).catch((err) => {
         console.log(err)
     })
 
