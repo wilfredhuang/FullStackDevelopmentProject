@@ -26,6 +26,7 @@ var QRCode = require('qrcode')
 
 //NodeMailer
 const nodemailer = require('nodemailer');
+const CartItem = require("../models/CartItem");
 
 //Email Template
 //const Email = require('email-templates');
@@ -235,9 +236,14 @@ router.get("/checkout2",ensureAuthenticated, (req, res) => {
 //view More Details of Order //still uses cart.js for example, will change later on
 router.get("/viewMoreOrder/:id", ensureAuthenticated,(req, res) => {
   const title = "Order Details";
-
+  CartItem.findAll({
+    userId:req.user.id,
+    //id: req.params.id,
+    //orderId:req.order.id,
+  })
   Order.findOne({
     where: {
+      userId: req.user.id,
       id: req.params.id,
     },
   }).then((order) => {

@@ -86,17 +86,18 @@ router.post("/changepassword/:token", async (req, res) => {
 });
 
 router.get("/changepassword/:token", async (req, res) => {
-  res.render("/user/changepassword");
+  res.render("user/changepassword");
 });
 
-router.post("/forgetpassword"),(req,res)=>{
+router.post("/forgetpassword",(req,res)=>{
   let email = req.body.email
+  console.log(email)
   User.findOne({email: email})
   .then((user) =>{
     if(!user){
       res.redirect('/user/login');
     }else{
-      user.id = theid;
+      theid = user.id;
       jwt.sign(
         {
           user: theid,
@@ -119,7 +120,7 @@ router.post("/forgetpassword"),(req,res)=>{
       res.redirect("/user/login");
     }
   })
-};
+});
 
 router.get("/confirmation/:token", async (req, res) => {
   const token = jwt.verify(req.params.token, SECRET);
@@ -162,16 +163,22 @@ router.get("/userRecentOrder", ensureAuthenticated,(req, res) => {
     //
   })
   // Need to intergrate this later on
+  console.log(cartItem)
+
   order
     .findAll({
-      //where:{
-      //  id: req.params.id,
-      //}
+      where:{
+        userId: req.user.id,
+      }
     })
     .then((order) => {
+      console.log(order)
+      console.log("======================")
       res.render("user/userRecentOrder1", {
         order: order,
         title,
+        cartItem:cartItem
+        //order:cartItem
       });
     })
     .catch((err) => console.log(err));
@@ -454,5 +461,9 @@ router.post("/userPage/changeaddress",ensureAuthenticated, (req, res) => {
     res.redirect('/user/userpage')
   })
 });
+
+router.get("/forgetPassword",(req,res) => {
+  res.render("user/forgetPassword")
+})
 
 module.exports = router;

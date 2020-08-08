@@ -15,10 +15,11 @@ const setUpDB = (drop) => {
             in video.             */
 
             //user.hasMany
-            //order.hasMany(cartItem);
-
             //Priority work by Hasan 31/7/2020
-            //user.hasMany(order)
+            user.hasMany(order);
+            user.hasMany(cartItem);
+            order.hasMany(cartItem);
+            cartItem.belongsTo(order);
             mySQLDB.sync({ // Creates table if none exists                 
                 force: drop
             })
