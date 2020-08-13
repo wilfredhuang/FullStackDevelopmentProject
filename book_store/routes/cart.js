@@ -3,12 +3,13 @@ const router = express.Router();
 const Order = require("../models/Order");
 const alertMessage = require("../helpers/messenger");
 const cartItem = require("../models/CartItem");
-const EasyPost = require("@easypost/api");
+const ensureAuthenticated = require("../helpers/auth");
 
 //Request Function
 const request = require('request');
 
 //EasyPost API
+const EasyPost = require("@easypost/api");
 const apiKey = "EZTK29b55ab4ee7a437890e19551520f5dd0uaJjPiW9XsVqXYFNVI0kog";
 const api = new EasyPost(apiKey);
 
@@ -26,8 +27,10 @@ var QRCode = require('qrcode')
 //NodeMailer
 const nodemailer = require('nodemailer');
 
+//Email Template
+//const Email = require('email-templates');
 
-router.get("/checkout", (req, res) => {
+router.get("/checkout", ensureAuthenticated,(req, res) => {
   const title = "Check Out";
   cartItem.findAll({}).then((cartItem) => {
     res.render("delivery/checkOut", {
@@ -93,7 +96,7 @@ router.post("/processCheckout", (req, res) => {
     weight: 10, //change number according to weight of total books
   });
 
-  parcel.save(); //.then(console.log);
+  parcel.save();
 
   const fromAddress = new api.Address({
     //default address of company
@@ -123,6 +126,7 @@ router.post("/processCheckout", (req, res) => {
     name: "George Costanza",
     company: "Vandelay Industries",
     street1: "1 E 161st St.",
+    phone: "+6590257144",
     city: "Bronx",
     state: "NY",
     //zip: "10451", //Actual zipcode
@@ -212,8 +216,6 @@ router.post("/processCheckout", (req, res) => {
     });
 });
 
-//SMS Notification - in progress
-router.post("/deliveryUpdates", (req, res) => {});
 
 // Dont touch, stripe code -W
 // router.get('/checkout', async (req, res) => {
@@ -222,7 +224,7 @@ router.post("/deliveryUpdates", (req, res) => {});
 // });
 
 //after checkout page
-router.get("/checkout2", (req, res) => {
+router.get("/checkout2",ensureAuthenticated, (req, res) => {
   const title = "Thank You";
   res.render("delivery/thankYou"),
     {
@@ -231,7 +233,7 @@ router.get("/checkout2", (req, res) => {
 });
 
 //view More Details of Order //still uses cart.js for example, will change later on
-router.get("/viewMoreOrder/:id", (req, res) => {
+router.get("/viewMoreOrder/:id", ensureAuthenticated,(req, res) => {
   const title = "Order Details";
 
   Order.findOne({
@@ -248,13 +250,14 @@ router.get("/viewMoreOrder/:id", (req, res) => {
       const deliveryStatus = s.tracker.status;
       const trackingURL = s.tracker.public_url;
       if (deliveryStatus == "pre_transit"){
-        let progressPercentage =25;
+        let progressPercentage = 25;
         let progressColour = "bg-info";
         let progressColourText = "text-info";
-        res.render("products/viewMoreOrder", {
+        let deliveryStatusResult = "Pre-transit";
+        res.render("user/viewMoreOrder", {
           order: order,
           title,
-          deliveryStatus,
+          deliveryStatusResult,
           trackingURL,
           progressPercentage,
           progressColour,
@@ -265,10 +268,11 @@ router.get("/viewMoreOrder/:id", (req, res) => {
         let progressPercentage = 50;
         let progressColour = "bg-info";
         let progressColourText = "text-info";
-        res.render("products/viewMoreOrder", {
+        let deliveryStatusResult = "In-transit";
+        res.render("user/viewMoreOrder", {
           order: order,
           title,
-          deliveryStatus,
+          deliveryStatusResult,
           trackingURL,
           progressPercentage,
           progressColour,
@@ -279,10 +283,11 @@ router.get("/viewMoreOrder/:id", (req, res) => {
         let progressPercentage = 75;
         let progressColour = "bg-info";
         let progressColourText = "text-info";
-        res.render("products/viewMoreOrder", {
+        let deliveryStatusResult = "Out for delivery";
+        res.render("user/viewMoreOrder", {
           order: order,
           title,
-          deliveryStatus,
+          deliveryStatusResult,
           trackingURL,
           progressPercentage,
           progressColour,
@@ -293,10 +298,11 @@ router.get("/viewMoreOrder/:id", (req, res) => {
         let progressPercentage = 100;
         let progressColour = "bg-success";
         let progressColourText = "text-success";
-        res.render("products/viewMoreOrder", {
+        let deliveryStatusResult = "Delivered";
+        res.render("user/viewMoreOrder", {
           order: order,
           title,
-          deliveryStatus,
+          deliveryStatusResult,
           trackingURL,
           progressPercentage,
           progressColour,
@@ -307,10 +313,11 @@ router.get("/viewMoreOrder/:id", (req, res) => {
         let progressPercentage = 0;
         let progressColour = "bg-info";
         let progressColourText = "text-info";
-        res.render("products/viewMoreOrder", {
+        let deliveryStatusResult = "Return to sender";
+        res.render("user/viewMoreOrder", {
           order: order,
           title,
-          deliveryStatus,
+          deliveryStatusResult,
           trackingURL,
           progressPercentage,
           progressColour,
@@ -321,10 +328,11 @@ router.get("/viewMoreOrder/:id", (req, res) => {
         let progressPercentage = 100;
         let progressColour = "bg-danger";
         let progressColourText = "text-danger";
-        res.render("products/viewMoreOrder", {
+        let deliveryStatusResult = "Failure";
+        res.render("user/viewMoreOrder", {
           order: order,
           title,
-          deliveryStatus,
+          deliveryStatusResult,
           trackingURL,
           progressPercentage,
           progressColour,
@@ -335,10 +343,11 @@ router.get("/viewMoreOrder/:id", (req, res) => {
         let progressPercentage = 0;
         let progressColour = "bg-dark";
         let progressColourText = "text-dark";
-        res.render("products/viewMoreOrder", {
+        let deliveryStatusResult = "Unknown";
+        res.render("user/viewMoreOrder", {
           order: order,
           title,
-          deliveryStatus,
+          deliveryStatusResult,
           trackingURL,
           progressPercentage,
           progressColour,
@@ -386,7 +395,15 @@ router.post("/checkingDelivery", (req, res) => {
     console.log(body)  //retrieves response from google and return its json info
 
     if (body.success !== undefined && !body.success) {
-      return res.json({ "success": false, "msg": "Failed captcha" });
+      alertMessage(
+        res,
+        "danger",
+        "Please re-enter the recaptcha",
+        "fas faexclamation-circle",
+        true
+      );
+      res.redirect("/delivery/checkDelivery")
+      //return res.json({ "success": false, "msg": "Failed captcha" });
     } else {
       api.Tracker.retrieve(trackingId)
     .then((s) => {
@@ -402,11 +419,12 @@ router.post("/checkingDelivery", (req, res) => {
         let progressPercentage =25;
         let progressColour = "bg-info";
         let progressColourText = "text-info";
+        let deliveryStatusResult = "Pre-transit";
         QRCode.toDataURL(URL, function (err, url) {
           let showQRCODE = url;
           res.render("delivery/deliveryStatusPage", {
             title,
-            deliveryStatus,
+            deliveryStatusResult,
             statusDetail,
             URL,
             carrierType,
@@ -424,11 +442,12 @@ router.post("/checkingDelivery", (req, res) => {
         let progressPercentage = 50;
         let progressColour = "bg-info";
         let progressColourText = "text-info";
+        let deliveryStatusResult = "In-transit";
         QRCode.toDataURL(URL, function (err, url) {
           let showQRCODE = url;
           res.render("delivery/deliveryStatusPage", {
             title,
-            deliveryStatus,
+            deliveryStatusResult,
             statusDetail,
             URL,
             carrierType,
@@ -446,11 +465,12 @@ router.post("/checkingDelivery", (req, res) => {
         let progressPercentage = 75;
         let progressColour = "bg-info";
         let progressColourText = "text-info";
+        let deliveryStatusResult = "Out for delivery";
         QRCode.toDataURL(URL, function (err, url) {
           let showQRCODE = url;
           res.render("delivery/deliveryStatusPage", {
             title,
-            deliveryStatus,
+            deliveryStatusResult,
             statusDetail,
             URL,
             carrierType,
@@ -468,11 +488,12 @@ router.post("/checkingDelivery", (req, res) => {
         let progressPercentage = 100;
         let progressColour = "bg-success";
         let progressColourText = "text-success";
+        let deliveryStatusResult = "Delivered";
         QRCode.toDataURL(URL, function (err, url) {
           let showQRCODE = url;
           res.render("delivery/deliveryStatusPage", {
             title,
-            deliveryStatus,
+            deliveryStatusResult,
             statusDetail,
             URL,
             carrierType,
@@ -490,11 +511,12 @@ router.post("/checkingDelivery", (req, res) => {
         let progressPercentage = 0;
         let progressColour = "bg-info";
         let progressColourText = "text-info";
+        let deliveryStatusResult = "Return to sender";
         QRCode.toDataURL(URL, function (err, url) {
           let showQRCODE = url;
           res.render("delivery/deliveryStatusPage", {
             title,
-            deliveryStatus,
+            deliveryStatusResult,
             statusDetail,
             URL,
             carrierType,
@@ -512,11 +534,12 @@ router.post("/checkingDelivery", (req, res) => {
         let progressPercentage = 100;
         let progressColour = "bg-danger";
         let progressColourText = "text-danger";
+        let deliveryStatusResult = "Failure";
         QRCode.toDataURL(URL, function (err, url) {
           let showQRCODE = url;
           res.render("delivery/deliveryStatusPage", {
             title,
-            deliveryStatus,
+            deliveryStatusResult,
             statusDetail,
             URL,
             carrierType,
@@ -534,11 +557,12 @@ router.post("/checkingDelivery", (req, res) => {
         let progressPercentage = 0;
         let progressColour = "bg-dark";
         let progressColourText = "text-dark";
+        let deliveryStatusResult = "Unknown";
         QRCode.toDataURL(URL, function (err, url) {
           let showQRCODE = url;
           res.render("delivery/deliveryStatusPage", {
             title,
-            deliveryStatus,
+            deliveryStatusResult,
             statusDetail,
             URL,
             carrierType,
@@ -557,12 +581,10 @@ router.post("/checkingDelivery", (req, res) => {
     })
     // catch any errors
     .catch((e) => {
-      //console.log(e.error.error.code)
       console.log(e);
       let errorCode = e.error.error.code;
       if (errorCode == "TRACKER.NOT_FOUND") {
         //check if tracking code not found
-        //console.log("hello")
         alertMessage(
           res,
           "danger",
@@ -573,7 +595,6 @@ router.post("/checkingDelivery", (req, res) => {
         res.redirect("checkDelivery");
       }
     });
-      //return res.json({ "success": true, "msg": "Successful captcha" });
     }
   });
 });

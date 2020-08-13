@@ -1,49 +1,67 @@
 <div class="breadcrumb">
     <div class="container">
-        <a class="breadcrumb-item" href="/">User Page</a>
+        <a class="breadcrumb-item" href="/user/userpage">User Page</a>
         <span class="breadcrumb-item active">Add Address</span>
     </div>
 </div>
 <section class="static about-sec">
     <div class="container">
-        <h1>Add Address</h1>
-        <h3></h3>
-        <div class="form">
-            <div class="row">
-                <div class="col-3">
-                </div>
-                <div class="col-md-6">
+        <div class="row">
+            <div class="tab col-6 col-md-2">
+                <button class="tab">Navigation</button>
+                <a href="/user/userPage">
+                    <button class="inactive-tab">User Page</button>
+                </a>
+                <a href="/user/userPage/changeinfo">
+                    <button class="inactive-tab">Change Info</button>
+                </a>
+                <a href="/user/userPage/chnageaddress">
+                    <button class="active-tab">Set Address</button>
+                </a>
+                <a href="/user/userRecentOrder">
+                    <button class="inactive-tab">Order History</button>
+                </a>
+                <a href="/user/userCart">
+                    <button class="inactive-tab">Cart</button>
+                </a>
+                <a href="/user/userPage/wishlist">
+                    <button class="inactive-tab">Wishlist</button>
+                </a>
+            </div>
+            <div class="col-6">
+                <br>
+                <h2>Change Password</h2>
+                <br>
+                <div class="form">
                     <form method="POST" action="/user/userpage/changeaddress">
-                        <!--- add in forms here--->
                         <div class="form-group">
                             <label for="PhoneNo">Phone Number</label>
-                            <input  name="PhoneNo" class="form-control">
+                            <input name="PhoneNo" class="form-control">
                         </div>
                         <div class="form-group">
                             <label for="address">Address Line 1</label>
-                            <input  name="address" class="form-control">
+                            <input name="address" class="form-control">
                         </div>
                         <div class="form-group">
                             <label for="address1"> Address Line 2</label>
-                            <input  name="address1" class="form-control">
+                            <input name="address1" class="form-control">
                         </div>
                         <div class="form-group">
                             <label for="city">City</label>
-                            <input  name="city" class="form-control">
+                            <input name="city" class="form-control">
                         </div>
                         <div class="form-group">
                             <label for="country">Country</label>
-                            <input  name="country" class="form-control">
+                            <input name="country" class="form-control">
                         </div>
                         <div class="form-group">
                             <label for="postalCode">Postal Code</label>
-                            <input  name="postalCode" class="form-control">
+                            <input name="postalCode" class="form-control">
                         </div>
+
                         <div class="row">
-                            <div>
-                                <button class="btn black" type="submit">Save</button>
-                            </div>
-                        </div>                   
+                            <button class="btn black" type="submit">Save</button>
+                        </div>
                     </form>
                 </div>
             </div>

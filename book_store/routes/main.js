@@ -180,6 +180,7 @@ router.get("/forgetPassword", (req, res) => {
   });
 });
 
+
 // // Exercise 2 solution
 // router.get('/about', (req, res) => {
 //     const author = 'Denzel Washington';

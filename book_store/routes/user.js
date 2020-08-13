@@ -10,11 +10,26 @@ const order = require("../models/Order");
 const ensureAuthenticated = require("../helpers/auth");
 const { v1: uuidv1 } = require("uuid");
 
+//admin auth 
+const ensureAdmin = (req, res, next) => {
+  if(req.isAuthenticated() ) { // If user is authenticated
+      console.log(req.user.confirmed);
+      if (req.user.isadmin == true){
+              return next(); // Calling next() to proceed to the next statement
+          }
+  }
+      // If not authenticated, show alert message and redirect to ‘/’
+  alertMessage(res, 'danger', 'Access Denied', 'fas fa-exclamation-circle', true);
+  res.redirect('/');
+};
 //NodeMailer
 const nodemailer = require("nodemailer");
 const jwt = require("jsonwebtoken");
 const SECRET = "fX7UvuRP55";
 const SECRET_2 = "NZqudk2svw";
+
+//Email Template
+//const Email = require('email-templates');
 
 //Contact Us Form at Footer by Hasan
 //BTW this is a testing ground for email notifications
@@ -100,6 +115,7 @@ router.post("/forgetpassword"),(req,res)=>{
           });
         }
       );
+      alertMessage(res,"success","please check your email","fas fa-sign-in-alt",true);
       res.redirect("/user/login");
     }
   })
@@ -127,14 +143,20 @@ router.get(
   })
 );
 
-router.get("/userPage", (req, res) => {
+router.get("/userPage",ensureAuthenticated, (req, res) => {
   const title = "User Information";
+  if(req.user.facebookId != null){
+    res.render('user/facebookuserpage', {
+      title,
+    });
+  }else{
   res.render("user/userpage", {
     title,
   });
+}
 });
 
-router.get("/userRecentOrder", (req, res) => {
+router.get("/userRecentOrder", ensureAuthenticated,(req, res) => {
   const title = "Order History";
 
   // Need to intergrate this later on
@@ -241,15 +263,31 @@ router.get("/userCart", (req, res) => {
 router.get("/login", (req, res) => {
   res.render("user/login");
 });
-
+/*
 router.post("/login", (req, res, next) => {
   passport.authenticate("local", {
     successRedirect: "/",
     failureRedirect: "/user/login",
     failureFlash: true,
+  })
+  (req, res, next);
+});*/
+router.post('/login', function(req, res, next) {
+  passport.authenticate('local', function(err, user, info) {
+    if (err) { return next(err); }
+    if (!user) { return res.redirect('/login'); }
+    req.logIn(user, function(err) {
+      if (err) { return next(err);}
+      else if (user.isadmin == true){
+        return res.redirect('/user/admin');
+      }
+      return res.redirect('/');
+    });
   })(req, res, next);
 });
-
+router.get("/admin",ensureAdmin, (req, res) => {
+  res.render("user/adminmenu");
+});
 router.get("/register", (req, res) => {
   res.render("user/register");
 });
@@ -332,7 +370,7 @@ router.post("/register", (req, res) => {
   }
 });
 
-router.get("/logout",ensureAuthenticated, function (req, res) {
+router.get("/logout", function (req, res) {
   req.logout();
   res.redirect("/");
 });
@@ -347,6 +385,7 @@ router.post("/userPage/changeinfo",ensureAuthenticated, (req, res) => {
   console.log(req.body);
   User.findOne({id: req.user.id})
   .then((user) =>{
+    console.log(user);
   bcrypt.genSalt(10, function (err, salt) {
     if (err) return next(err);
     bcrypt.hash(password, salt, function (err, hash) {
@@ -356,21 +395,22 @@ router.post("/userPage/changeinfo",ensureAuthenticated, (req, res) => {
         error.push({ text: "Wrong password" });
       } else {
         if (name != null) {
-          user.update({ name: name });
+          User.update({ name: name }, { where: {id: req.user.id} });;
         }
         if (email != null) {
-          user.update({ email: email });
+          User.update({ email: email }, { where: {id: req.user.id} });
         }
         if (password2 != null) {
           bcrypt.hash(password2, salt, function (err, hash) {
             if (err) return next(err);
             password2 = hash;
-            user.update({ password: password2 });
+            User.update({ password: password2 }, { where: {id: req.user.id} });
           });
         }
       }
     });
   });
+  alertMessage(res,"success","information has been updated","fas fa-sign-in-alt",true);
   res.redirect('/user/userpage')
 })
 });
@@ -389,23 +429,25 @@ router.post("/userPage/changeaddress",ensureAuthenticated, (req, res) => {
   User.findOne({id: req.user.id})
   .then((user) =>{
     if (PhoneNo != null) {
-      user.update({PhoneNo: PhoneNo})
+      User.update({PhoneNo: PhoneNo}, { where: {id: req.user.id} });
+
     }
     if (address!= null) {
-      user.update({ address: address });
+      User.update({ address: address }, { where: {id: req.user.id} });
     }
     if (address1 != null) {
-      user.update({ address1: address1 });
+      User.update({ address1: address1 }, { where: {id: req.user.id} });
     }
     if (city != null) {
-      user.update({ city: city});
+      User.update({ city: city}, { where: {id: req.user.id} });
     }
     if (country != null) {
-      user.update({ country: country});
+      User.update({ country: country}, { where: {id: req.user.id} });
     }
     if (postalCode != null) {
-      user.update({ postalCode: postalCode});
+      User.update({ postalCode: postalCode}, { where: {id: req.user.id} });
     }
+    alertMessage(res,"success","information has been updated","fas fa-sign-in-alt",true);
     res.redirect('/user/userpage')
   })
 });
