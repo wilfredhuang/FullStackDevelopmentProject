@@ -37,6 +37,7 @@
                         type="search" placeholder="Search Order No" aria-label="Search">
                 </form>
                 <br>
+                {{log 'cartItems' cartItem}}
                 <div id="myItems">
                     {{#if order}}
                     {{#each order}}

@@ -12,6 +12,7 @@
   "dependencies": {
     "@easypost/api": "^3.8.1",
     "@handlebars/allow-prototype-access": "^1.0.3",
+    "@thiagoelg/node-printer": "^0.5.3",
     "admin-bro": "^2.8.0",
     "admin-bro-expressjs": "^2.1.1",
     "admin-bro-sequelizejs": "^0.5.1",

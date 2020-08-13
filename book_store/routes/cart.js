@@ -158,6 +158,7 @@ router.post("/processCheckout", (req, res) => {
             let dateStart = t.created_at;
             let dateEnd = t.tracker.est_delivery_date;
             let deliveryStatus = t.tracker.status;
+            let userId = req.user.id;
             Order.create({
               fullName,
               phoneNumber,
@@ -175,6 +176,7 @@ router.post("/processCheckout", (req, res) => {
               dateStart,
               dateEnd,
               deliveryStatus,
+              userId,
             }).then((Order) => {
               console.log(Order);
               res.redirect("/delivery/checkout2");
@@ -376,16 +378,13 @@ router.post("/checkingDelivery", (req, res) => {
   let trackingId = req.body.trackingIdInput;
   //trk_f10a3961f7c4419184aca1dabc09e4f8
   //console.log(trackingId);
-  let siteUrl = 'https://www.google.com/recaptcha/api/siteverify?secret=your_secret&response=response_string&remoteip=user_ip_address'
+  let siteUrl =
+    "https://www.google.com/recaptcha/api/siteverify?secret=your_secret&response=response_string&remoteip=user_ip_address";
   //let captcha = document.querySelector("#g-recaptcha-response").value
-  let captcha = req.body['g-recaptcha-response'] //get user token value
+  let captcha = req.body["g-recaptcha-response"]; //get user token value
 
   //checks if captcha response is valid
-  if (
-    captcha === undefined ||
-    captcha === "" ||
-    captcha === null
-  ) {
+  if (captcha === undefined || captcha === "" || captcha === null) {
     return res.json({ success: false, msg: "Please select captcha" });
   }
 
@@ -398,7 +397,7 @@ router.post("/checkingDelivery", (req, res) => {
 
   request(verifyURL, (err, response, body) => {
     body = JSON.parse(body);
-    console.log(body)  //retrieves response from google and return its json info
+    console.log(body); //retrieves response from google and return its json info
 
     if (body.success !== undefined && !body.success) {
       alertMessage(
@@ -408,199 +407,199 @@ router.post("/checkingDelivery", (req, res) => {
         "fas faexclamation-circle",
         true
       );
-      res.redirect("/delivery/checkDelivery")
+      res.redirect("/delivery/checkDelivery");
       //return res.json({ "success": false, "msg": "Failed captcha" });
     } else {
       api.Tracker.retrieve(trackingId)
-    .then((s) => {
-      console.log(s);
-      let deliveryStatus = s.status;
-      let URL = s.public_url;
-      let statusDetail = s.status_detail
-      let carrierType = s.carrier;
-      let createdAt = s.created_at;
-      let updatedAt = s.updated_at;
-      let carrierService = s.carrier_detail.service;
-      if (deliveryStatus == "pre_transit"){
-        let progressPercentage =25;
-        let progressColour = "bg-info";
-        let progressColourText = "text-info";
-        let deliveryStatusResult = "Pre-transit";
-        QRCode.toDataURL(URL, function (err, url) {
-          let showQRCODE = url;
-          res.render("delivery/deliveryStatusPage", {
-            title,
-            deliveryStatusResult,
-            statusDetail,
-            URL,
-            carrierType,
-            carrierService,
-            createdAt,
-            updatedAt,
-            trackingId,
-            showQRCODE,
-            progressPercentage,
-            progressColour,
-            progressColourText
-          });})
-      }
-      else if (deliveryStatus == "in_transit"){
-        let progressPercentage = 50;
-        let progressColour = "bg-info";
-        let progressColourText = "text-info";
-        let deliveryStatusResult = "In-transit";
-        QRCode.toDataURL(URL, function (err, url) {
-          let showQRCODE = url;
-          res.render("delivery/deliveryStatusPage", {
-            title,
-            deliveryStatusResult,
-            statusDetail,
-            URL,
-            carrierType,
-            carrierService,
-            createdAt,
-            updatedAt,
-            trackingId,
-            showQRCODE,
-            progressPercentage,
-            progressColour,
-            progressColourText
-          });})
-      }
-      else if (deliveryStatus == "out_for_delivery"){
-        let progressPercentage = 75;
-        let progressColour = "bg-info";
-        let progressColourText = "text-info";
-        let deliveryStatusResult = "Out for delivery";
-        QRCode.toDataURL(URL, function (err, url) {
-          let showQRCODE = url;
-          res.render("delivery/deliveryStatusPage", {
-            title,
-            deliveryStatusResult,
-            statusDetail,
-            URL,
-            carrierType,
-            carrierService,
-            createdAt,
-            updatedAt,
-            trackingId,
-            showQRCODE,
-            progressPercentage,
-            progressColour,
-            progressColourText
-          });})
-      }
-      else if (deliveryStatus == "delivered"){
-        let progressPercentage = 100;
-        let progressColour = "bg-success";
-        let progressColourText = "text-success";
-        let deliveryStatusResult = "Delivered";
-        QRCode.toDataURL(URL, function (err, url) {
-          let showQRCODE = url;
-          res.render("delivery/deliveryStatusPage", {
-            title,
-            deliveryStatusResult,
-            statusDetail,
-            URL,
-            carrierType,
-            carrierService,
-            createdAt,
-            updatedAt,
-            trackingId,
-            showQRCODE,
-            progressPercentage,
-            progressColour,
-            progressColourText
-          });})
-      }
-      else if (deliveryStatus == "return_to_sender"){
-        let progressPercentage = 0;
-        let progressColour = "bg-info";
-        let progressColourText = "text-info";
-        let deliveryStatusResult = "Return to sender";
-        QRCode.toDataURL(URL, function (err, url) {
-          let showQRCODE = url;
-          res.render("delivery/deliveryStatusPage", {
-            title,
-            deliveryStatusResult,
-            statusDetail,
-            URL,
-            carrierType,
-            carrierService,
-            createdAt,
-            updatedAt,
-            trackingId,
-            showQRCODE,
-            progressPercentage,
-            progressColour,
-            progressColourText
-          });})
-      }
-      else if (deliveryStatus == "failure"){
-        let progressPercentage = 100;
-        let progressColour = "bg-danger";
-        let progressColourText = "text-danger";
-        let deliveryStatusResult = "Failure";
-        QRCode.toDataURL(URL, function (err, url) {
-          let showQRCODE = url;
-          res.render("delivery/deliveryStatusPage", {
-            title,
-            deliveryStatusResult,
-            statusDetail,
-            URL,
-            carrierType,
-            carrierService,
-            createdAt,
-            updatedAt,
-            trackingId,
-            showQRCODE,
-            progressPercentage,
-            progressColour,
-            progressColourText
-          });})
-      }
-      else{
-        let progressPercentage = 0;
-        let progressColour = "bg-dark";
-        let progressColourText = "text-dark";
-        let deliveryStatusResult = "Unknown";
-        QRCode.toDataURL(URL, function (err, url) {
-          let showQRCODE = url;
-          res.render("delivery/deliveryStatusPage", {
-            title,
-            deliveryStatusResult,
-            statusDetail,
-            URL,
-            carrierType,
-            carrierService,
-            createdAt,
-            updatedAt,
-            trackingId,
-            showQRCODE,
-            progressPercentage,
-            progressColour,
-            progressColourText
-          });})
-      }
-      console.log("correct btw");
-      
-    })
-    // catch any errors
-    .catch((e) => {
-      console.log(e);
-      let errorCode = e.error.error.code;
-      if (errorCode == "TRACKER.NOT_FOUND") {
-        //check if tracking code not found
-        alertMessage(
-          res,
-          "danger",
-          "Please enter a valid tracking number",
-          "fas faexclamation-circle",
-          true
-        );
-        res.redirect("checkDelivery");
-      }
-    });
+        .then((s) => {
+          console.log(s);
+          let deliveryStatus = s.status;
+          let URL = s.public_url;
+          let statusDetail = s.status_detail;
+          let carrierType = s.carrier;
+          let createdAt = s.created_at;
+          let updatedAt = s.updated_at;
+          let carrierService = s.carrier_detail.service;
+          if (deliveryStatus == "pre_transit") {
+            let progressPercentage = 25;
+            let progressColour = "bg-info";
+            let progressColourText = "text-info";
+            let deliveryStatusResult = "Pre-transit";
+            QRCode.toDataURL(URL, function (err, url) {
+              let showQRCODE = url;
+              res.render("delivery/deliveryStatusPage", {
+                title,
+                deliveryStatusResult,
+                statusDetail,
+                URL,
+                carrierType,
+                carrierService,
+                createdAt,
+                updatedAt,
+                trackingId,
+                showQRCODE,
+                progressPercentage,
+                progressColour,
+                progressColourText,
+              });
+            });
+          } else if (deliveryStatus == "in_transit") {
+            let progressPercentage = 50;
+            let progressColour = "bg-info";
+            let progressColourText = "text-info";
+            let deliveryStatusResult = "In-transit";
+            QRCode.toDataURL(URL, function (err, url) {
+              let showQRCODE = url;
+              res.render("delivery/deliveryStatusPage", {
+                title,
+                deliveryStatusResult,
+                statusDetail,
+                URL,
+                carrierType,
+                carrierService,
+                createdAt,
+                updatedAt,
+                trackingId,
+                showQRCODE,
+                progressPercentage,
+                progressColour,
+                progressColourText,
+              });
+            });
+          } else if (deliveryStatus == "out_for_delivery") {
+            let progressPercentage = 75;
+            let progressColour = "bg-info";
+            let progressColourText = "text-info";
+            let deliveryStatusResult = "Out for delivery";
+            QRCode.toDataURL(URL, function (err, url) {
+              let showQRCODE = url;
+              res.render("delivery/deliveryStatusPage", {
+                title,
+                deliveryStatusResult,
+                statusDetail,
+                URL,
+                carrierType,
+                carrierService,
+                createdAt,
+                updatedAt,
+                trackingId,
+                showQRCODE,
+                progressPercentage,
+                progressColour,
+                progressColourText,
+              });
+            });
+          } else if (deliveryStatus == "delivered") {
+            let progressPercentage = 100;
+            let progressColour = "bg-success";
+            let progressColourText = "text-success";
+            let deliveryStatusResult = "Delivered";
+            QRCode.toDataURL(URL, function (err, url) {
+              let showQRCODE = url;
+              res.render("delivery/deliveryStatusPage", {
+                title,
+                deliveryStatusResult,
+                statusDetail,
+                URL,
+                carrierType,
+                carrierService,
+                createdAt,
+                updatedAt,
+                trackingId,
+                showQRCODE,
+                progressPercentage,
+                progressColour,
+                progressColourText,
+              });
+            });
+          } else if (deliveryStatus == "return_to_sender") {
+            let progressPercentage = 0;
+            let progressColour = "bg-info";
+            let progressColourText = "text-info";
+            let deliveryStatusResult = "Return to sender";
+            QRCode.toDataURL(URL, function (err, url) {
+              let showQRCODE = url;
+              res.render("delivery/deliveryStatusPage", {
+                title,
+                deliveryStatusResult,
+                statusDetail,
+                URL,
+                carrierType,
+                carrierService,
+                createdAt,
+                updatedAt,
+                trackingId,
+                showQRCODE,
+                progressPercentage,
+                progressColour,
+                progressColourText,
+              });
+            });
+          } else if (deliveryStatus == "failure") {
+            let progressPercentage = 100;
+            let progressColour = "bg-danger";
+            let progressColourText = "text-danger";
+            let deliveryStatusResult = "Failure";
+            QRCode.toDataURL(URL, function (err, url) {
+              let showQRCODE = url;
+              res.render("delivery/deliveryStatusPage", {
+                title,
+                deliveryStatusResult,
+                statusDetail,
+                URL,
+                carrierType,
+                carrierService,
+                createdAt,
+                updatedAt,
+                trackingId,
+                showQRCODE,
+                progressPercentage,
+                progressColour,
+                progressColourText,
+              });
+            });
+          } else {
+            let progressPercentage = 0;
+            let progressColour = "bg-dark";
+            let progressColourText = "text-dark";
+            let deliveryStatusResult = "Unknown";
+            QRCode.toDataURL(URL, function (err, url) {
+              let showQRCODE = url;
+              res.render("delivery/deliveryStatusPage", {
+                title,
+                deliveryStatusResult,
+                statusDetail,
+                URL,
+                carrierType,
+                carrierService,
+                createdAt,
+                updatedAt,
+                trackingId,
+                showQRCODE,
+                progressPercentage,
+                progressColour,
+                progressColourText,
+              });
+            });
+          }
+          console.log("correct btw");
+        })
+        // catch any errors
+        .catch((e) => {
+          console.log(e);
+          let errorCode = e.error.error.code;
+          if (errorCode == "TRACKER.NOT_FOUND") {
+            //check if tracking code not found
+            alertMessage(
+              res,
+              "danger",
+              "Please enter a valid tracking number",
+              "fas faexclamation-circle",
+              true
+            );
+            res.redirect("checkDelivery");
+          }
+        });
     }
   });
 });

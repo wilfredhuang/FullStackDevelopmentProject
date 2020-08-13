@@ -42,6 +42,7 @@ const options = {
 	key: fs.readFileSync('key.pem'),
 	cert: fs.readFileSync('cert.crt')
   };
+  
 //admin 
 const AdminBroExpress = require('admin-bro-expressjs')
 
@@ -245,7 +246,7 @@ app.post("/deliveryUpdates", (req, res) => {
 		console.log("might put other stuff here but let's just put a sms notification only")
 	}
 	console.log("=================") // Call your action on the request here
-	res.status(200).end() // Responding is important
+	//res.status(200).end() // Responding is important
   });
 
 // Use Routes

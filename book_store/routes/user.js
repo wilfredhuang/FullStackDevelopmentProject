@@ -9,6 +9,8 @@ const cartItem = require("../models/CartItem");
 const order = require("../models/Order");
 const ensureAuthenticated = require("../helpers/auth");
 const { v1: uuidv1 } = require("uuid");
+//const orderItem = require("../models/OrderItem");
+
 
 //admin auth 
 const ensureAdmin = (req, res, next) => {
@@ -25,6 +27,7 @@ const ensureAdmin = (req, res, next) => {
 //NodeMailer
 const nodemailer = require("nodemailer");
 const jwt = require("jsonwebtoken");
+const { reservationsUrl } = require("twilio/lib/jwt/taskrouter/util");
 const SECRET = "fX7UvuRP55";
 const SECRET_2 = "NZqudk2svw";
 
@@ -160,11 +163,23 @@ router.get("/userPage",ensureAuthenticated, (req, res) => {
 router.get("/userRecentOrder", ensureAuthenticated,(req, res) => {
   const title = "Order History";
   cartItem.findAll({
-    //
+    where:{
+      userId: req.user.id,
+    }
   })
   // Need to intergrate this later on
-  console.log(cartItem)
-
+  //console.log(cartItem)
+  .then((cartItem) => {
+    console.log(cartItem)
+    
+  })
+  console.log("----------------------------these are order items------------------------------")
+//  console.log(req.user)
+//  console.log("===========2")
+//  console.log(req.body)
+//  console.log("===========3")
+//  console.log(req.param)
+//  console.log("===========4")
   order
     .findAll({
       where:{
@@ -172,8 +187,10 @@ router.get("/userRecentOrder", ensureAuthenticated,(req, res) => {
       }
     })
     .then((order) => {
+      console.log("========================these is orders=======================")
       console.log(order)
-      console.log("======================")
+      //res.render('404')
+  //     console.log("======================")
       res.render("user/userRecentOrder1", {
         order: order,
         title,
