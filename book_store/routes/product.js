@@ -6,6 +6,7 @@ const productadmin = require('../models/ProductAdmin');
 const cartItem = require('../models/CartItem');
 const order = require('../models/Order');
 const User = require('../models/User');
+const Pending_Order = require('../models/Pending_Orders');
 
 const alertMessage = require('../helpers/messenger');
 const Coupon = require('../models/coupon');
@@ -21,6 +22,11 @@ const paynow = require('paynow-generator').paynowGenerator
 const QRCode = require('qrcode');
 const { CheckboxRadioContainer } = require('admin-bro');
 const ProductAdmin = require('../models/ProductAdmin');
+
+// twilo API - Send SMS
+const accountSid = 'AC583c7d4bc97864b67d16d8430ad9da88';
+const authToken = 'e46e5a7f50ee56da9999d8feefe82ee9';
+const client = require('twilio')(accountSid, authToken);
 
 // variables below for coupon feature, dont change - wilfred
 // switched req.session.userCart to global variable @app.js
@@ -714,7 +720,6 @@ router.get('/cart', (req, res) => {
 // Cart Coupon
 router.post('/applyCoupon', (req, res) => {
     // Check if coupon expired already or not
-    if (req.session.public_coupon != null) {
         Coupon.findAll({
             // order: [['id', 'ASC']],
         })
@@ -804,8 +809,6 @@ router.post('/applyCoupon', (req, res) => {
                 alertMessage(res, 'danger', 'No coupons are available at the moment', 'fas fa-exclamation-circle', true)
                 res.redirect("cart")
             })
-
-    }
 });
 
 
@@ -930,6 +933,9 @@ router.post('/stripepayment', (req, res) => {
     //     console.log("User Cart should be empty now")
     //     console.log(req.session.userCart)
     // }
+
+
+    // Empty the cart
     req.session.userCart = {};
     req.session.coupon_type = null;
     req.session.discount = 0;
@@ -968,6 +974,30 @@ router.get('/paynow', (req, res) => {
 });
 
 router.post('/paynow', (req, res) => {
+
+    Pending_Order.create({
+        fullName: req.session.recipientName, phoneNumber: req.session.recipientPhoneNo, address: req.session.address, address1:req.session.address1,
+        city:req.session.city, countryShipment: req.session.countryShipment, postalCode: req.session.postalCode, deliverFee:0, totalPrice:req.session.full_total_price
+    })
+
+    // This block of code below will send a message
+    client.messages
+    .create({
+        body: 'You made an order with BookStore, your order will be confirmed shortly by the administrator',
+        from: '+14242066417',
+        to: '+6587558054'
+    })
+    .then(message => console.log(message.sid));
+
+    // req.session.recipientName = req.body.fullName
+    // req.session.recipientPhoneNo = req.body.phoneNumber
+    // req.session.address = req.body.address
+    // req.session.address1 = req.body.address1
+    // req.session.city = req.body.city
+    // req.session.countryShipment = req.body.country
+    // req.session.postalCode = req.body.postalCode
+
+    // Empty the cart
     req.session.userCart = {};
     req.session.coupon_type = null;
     req.session.discount = 0;
