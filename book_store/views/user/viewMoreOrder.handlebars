@@ -21,18 +21,18 @@
                 <br>
                 <p>Check <a href="{{trackingURL}}">here</a> for more delivery information.</p>
                 <br>
-                {{#if cartItem}}
-                {{#each cartItem}}
+                {{#if orderitems}}
+                {{#each orderitems}}
                 <div class="row">
                     <div class="col-md-2">
-                        <img src="/images/product1.jpg" class="img">
+                        <img src="{{product_image}}" class="img">
                     </div>
                     <div class="col-md-10">
-                        <h4>{{title}}</h4>
+                        <h4>{{product_name}}</h4>
                         <!--- add in link here--->
-                        <p>Author Name, Genre, etc</p>
+                        <p>{{author}}, {{genre}}, etc</p>
                         <p class="price">{{price}}</p>
-                        <p>Amount: {{amount}}</p>
+                        {{!-- <p>Amount: {{amount}}</p> --}}
                     </div>
                 </div>
                 <hr>

@@ -1,15 +1,17 @@
 const express = require("express");
 const router = express.Router();
 // User register URL using HTTP post => /user/register
-const User = require("../models/User");
 const alertMessage = require("../helpers/messenger");
 const bcrypt = require("bcryptjs");
 const passport = require("passport");
-const cartItem = require("../models/CartItem");
-const order = require("../models/Order");
 const ensureAuthenticated = require("../helpers/auth");
 const { v1: uuidv1 } = require("uuid");
-//const orderItem = require("../models/OrderItem");
+
+//Models
+const User = require("../models/User");
+const cartItem = require("../models/CartItem"); //Might need to remove cart item model
+const order = require("../models/Order");
+const orderItem = require("../models/OrderItem");
 
 
 //admin auth 
@@ -162,17 +164,17 @@ router.get("/userPage",ensureAuthenticated, (req, res) => {
 
 router.get("/userRecentOrder", ensureAuthenticated,(req, res) => {
   const title = "Order History";
-  cartItem.findAll({
-    where:{
-      userId: req.user.id,
-    }
-  })
-  // Need to intergrate this later on
-  //console.log(cartItem)
-  .then((cartItem) => {
-    console.log(cartItem)
+  // cartItem.findAll({
+  //   where:{
+  //     userId: req.user.id,
+  //   },
+  // })
+  // // Need to intergrate this later on
+  // //console.log(cartItem)
+  // .then((cartItem) => {
+  //   console.log(cartItem)
     
-  })
+  // })
   console.log("----------------------------these are order items------------------------------")
 //  console.log(req.user)
 //  console.log("===========2")
@@ -184,17 +186,22 @@ router.get("/userRecentOrder", ensureAuthenticated,(req, res) => {
     .findAll({
       where:{
         userId: req.user.id,
-      }
+      },
+      include:[{model:orderItem}]
     })
     .then((order) => {
+
       console.log("========================these is orders=======================")
-      console.log(order)
+      //console.log(order)
+      console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+      console.log(order[0].orderitems)
       //res.render('404')
   //     console.log("======================")
       res.render("user/userRecentOrder1", {
         order: order,
+        orderitems:order.orderitems,
         title,
-        cartItem:cartItem
+        //cartItem:cartItem
         //order:cartItem
       });
     })

@@ -3,6 +3,7 @@ const router = express.Router();
 const Order = require("../models/Order");
 const alertMessage = require("../helpers/messenger");
 const cartItem = require("../models/CartItem");
+const orderItem = require("../models/OrderItem");
 const ensureAuthenticated = require("../helpers/auth");
 
 //Request Function
@@ -184,17 +185,17 @@ router.post("/processCheckout", (req, res) => {
               api.Tracker.retrieve(trackingCode).then((t) => {
                 console.log(t.public_url);
                 let trackingURL = t.public_url;
-                client.messages
-                  .create({
-                    body:
-                      "Thank you for your purchase from the Book Store. Your tracking code is " +
-                      trackingCode +
-                      " and check your delivery here!\n" +
-                      trackingURL,
-                    from: "+12059461964",
-                    to: "+6590251744",
-                  })
-                  .then((message) => console.log(message.sid));
+                // client.messages
+                //   .create({
+                //     body:
+                //       "Thank you for your purchase from the Book Store. Your tracking code is " +
+                //       trackingCode +
+                //       " and check your delivery here!\n" +
+                //       trackingURL,
+                //     from: "+12059461964",
+                //     to: "+6590251744",
+                //   })
+                //   .then((message) => console.log(message.sid));
               });
             });
           });
@@ -238,16 +239,17 @@ router.get("/checkout2",ensureAuthenticated, (req, res) => {
 //view More Details of Order //still uses cart.js for example, will change later on
 router.get("/viewMoreOrder/:id", ensureAuthenticated,(req, res) => {
   const title = "Order Details";
-  CartItem.findAll({
-    userId:req.user.id,
-    //id: req.params.id,
-    //orderId:req.order.id,
-  })
+  // CartItem.findAll({
+  //   userId:req.user.id,
+  //   //id: req.params.id,
+  //   //orderId:req.order.id,
+  // })
   Order.findOne({
     where: {
       userId: req.user.id,
       id: req.params.id,
     },
+    include:[{model:orderItem}]
   }).then((order) => {
     console.log("===========");
     const shippingId = order.shippingId;
@@ -279,6 +281,7 @@ router.get("/viewMoreOrder/:id", ensureAuthenticated,(req, res) => {
         let deliveryStatusResult = "In-transit";
         res.render("user/viewMoreOrder", {
           order: order,
+          orderitems:order.orderitems,
           title,
           deliveryStatusResult,
           trackingURL,
@@ -294,6 +297,7 @@ router.get("/viewMoreOrder/:id", ensureAuthenticated,(req, res) => {
         let deliveryStatusResult = "Out for delivery";
         res.render("user/viewMoreOrder", {
           order: order,
+          orderitems:order.orderitems,
           title,
           deliveryStatusResult,
           trackingURL,
@@ -309,6 +313,7 @@ router.get("/viewMoreOrder/:id", ensureAuthenticated,(req, res) => {
         let deliveryStatusResult = "Delivered";
         res.render("user/viewMoreOrder", {
           order: order,
+          orderitems:order.orderitems,
           title,
           deliveryStatusResult,
           trackingURL,
@@ -324,6 +329,7 @@ router.get("/viewMoreOrder/:id", ensureAuthenticated,(req, res) => {
         let deliveryStatusResult = "Return to sender";
         res.render("user/viewMoreOrder", {
           order: order,
+          orderitems:order.orderitems,
           title,
           deliveryStatusResult,
           trackingURL,
@@ -339,6 +345,7 @@ router.get("/viewMoreOrder/:id", ensureAuthenticated,(req, res) => {
         let deliveryStatusResult = "Failure";
         res.render("user/viewMoreOrder", {
           order: order,
+          orderitems:order.orderitems,
           title,
           deliveryStatusResult,
           trackingURL,
@@ -354,6 +361,7 @@ router.get("/viewMoreOrder/:id", ensureAuthenticated,(req, res) => {
         let deliveryStatusResult = "Unknown";
         res.render("user/viewMoreOrder", {
           order: order,
+          orderitems:order.orderitems,
           title,
           deliveryStatusResult,
           trackingURL,
