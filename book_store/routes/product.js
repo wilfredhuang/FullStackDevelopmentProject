@@ -32,6 +32,7 @@ const client = require('twilio')(accountSid, authToken);
 // const req.session.userCart = {}
 
 router.get('/listProduct', (req, res) => {
+    const title = "Product Listing";
     const navStatusProduct = "active";
     productadmin.findAll({
         order: [
@@ -41,12 +42,14 @@ router.get('/listProduct', (req, res) => {
         .then((productadmin) => {
             res.render('products/listProduct', {
                 productadmin: productadmin,
-                navStatusProduct
+                navStatusProduct,
+                title
             });
         })
 });
 
 router.get('/individualProduct/:id', (req, res) => {
+    const title = "Product Information";
     // Discount.findOne({
     //     where: {
     //         uid: req.params.id
@@ -72,7 +75,8 @@ router.get('/individualProduct/:id', (req, res) => {
     })
         .then((product) => {
             res.render('products/individualProduct', {
-                product
+                product,
+                title
             });
         })
 });
@@ -137,6 +141,7 @@ router.post('/addProductAdmin', (req, res) => {
 });
 
 router.get('/listProductAdmin', (req, res) => {
+    const title = "Product Admin List";
     productadmin.findAll({
         order: [
             ['product_name', 'ASC']
@@ -145,7 +150,8 @@ router.get('/listProductAdmin', (req, res) => {
     })
         .then((productadmin) => {
             res.render('products/listProductAdmin', {
-                productadmin: productadmin
+                productadmin: productadmin,
+                title
             });
         })
 });
@@ -167,6 +173,7 @@ router.get('/delete/:id', (req, res) => {
 });
 
 router.get('/updateProductAdmin/:id', (req, res) => {
+    const title = "Update Product";
     productadmin.findOne({
         where: {
             id: req.params.id
@@ -174,12 +181,14 @@ router.get('/updateProductAdmin/:id', (req, res) => {
     })
         .then((product) => {
             res.render('products/updateProduct', {
-                product
+                product,
+                title
             });
         })
 });
 
 router.get('/detailsProductAdmin/:id', (req, res) => {
+    const title = "Product Details";
     productadmin.findOne({
         where: {
             id: req.params.id
@@ -187,7 +196,8 @@ router.get('/detailsProductAdmin/:id', (req, res) => {
     })
         .then((product) => {
             res.render('products/detailsProduct', {
-                product
+                product,
+                title
             });
         })
 });

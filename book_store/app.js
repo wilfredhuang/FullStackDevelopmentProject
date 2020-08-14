@@ -42,6 +42,7 @@ const options = {
 	key: fs.readFileSync('key.pem'),
 	cert: fs.readFileSync('cert.crt')
   };
+  
 //admin 
 const AdminBroExpress = require('admin-bro-expressjs')
 
@@ -84,7 +85,7 @@ authenticate.localStrategy(passport);
 
 // global.userCart = {};
 // Bring in Handlebars Helpers here
-const {convertUpper, adminCheck, emptyCart, cartQty, formatDate, capitaliseFirstLetter, isSg, checkPromo, convertDiscount, displayCouponType, get_old_subtotal, check_subtotal} = require('./helpers/hbs');
+const {convertUpper, adminCheck, emptyCart, cartQty, formatDate, capitaliseFirstLetter, isSg, checkPromo, convertDiscount, displayCouponType, get_old_subtotal, check_subtotal, retrieveDeliveryStatus} = require('./helpers/hbs');
 
 // creates an express server
 const app = express();
@@ -104,7 +105,8 @@ app.engine('handlebars', exphbs({
 		convertDiscount:convertDiscount,
 		displayCouponType:displayCouponType,
 		get_old_subtotal: get_old_subtotal,
-		check_subtotal: check_subtotal
+		check_subtotal: check_subtotal,
+		retrieveDeliveryStatus:retrieveDeliveryStatus
 	},					
 	handlebars: allowInsecurePrototypeAccess(Handlebars),
 }));
@@ -196,41 +198,41 @@ app.post("/deliveryUpdates", (req, res) => {
 	if (objectWeb == "Event" && descriptionWeb == "tracker.updated"){
 		let deliveryStatus = req.body.result.status_detail;
 		if (deliveryStatus == "delivered"){
-			console.log("this is delivery status")
+			//console.log("this is delivery status")
 			api.Shipment.retrieve(shippingIDWeb).then((s) => {
 				let toAddressWeb = s.to_address
 				console.log(toAddressWeb)
 				let toNumberWeb = "+" + s.to_address.phone;
-				console.log(toNumberWeb)
-				let twilioMessage = "this is delivered"
+				//console.log(toNumberWeb)
+				let twilioMessage = "this is delivered status"
 				console.log(twilioMessage)
-				client.messages
-                  .create({
-                    body:
-					twilioMessage,
-                    from: "+12059461964",
-                    to: toNumberWeb,
-				  })
-				  .then((message) => console.log(message.sid));
+				// client.messages
+                //   .create({
+                //     body:
+				// 	twilioMessage,
+                //     from: "+12059461964",
+                //     to: toNumberWeb,
+				//   })
+				//   .then((message) => console.log(message.sid));
 			});
 		}
 		else {
-			console.log("this is not delivered status")
+			//console.log("this is not delivered status")
 			api.Shipment.retrieve(shippingIDWeb).then((s) => {
 				let toAddressWeb = s.to_address
-				console.log(toAddressWeb)
+				//console.log(toAddressWeb)
 				let toNumberWeb = "+" + s.to_address.phone;
-				console.log(toNumberWeb)
-				let twilioMessage = "this is not delivered"
+				//console.log(toNumberWeb)
+				let twilioMessage = "this is not delivered status"
 				console.log(twilioMessage)
-				client.messages
-                  .create({
-                    body:
-                      twilioMessage,
-                    from: "+12059461964",
-                    to: toNumberWeb,
-				  })
-				  .then((message) => console.log(message.sid));
+				// client.messages
+                //   .create({
+                //     body:
+                //       twilioMessage,
+                //     from: "+12059461964",
+                //     to: toNumberWeb,
+				//   })
+				//   .then((message) => console.log(message.sid));
 			});
 		}
 	}
@@ -249,7 +251,7 @@ app.post("/deliveryUpdates", (req, res) => {
 		console.log("might put other stuff here but let's just put a sms notification only")
 	}
 	console.log("=================") // Call your action on the request here
-	res.status(200).end() // Responding is important
+	//res.status(200).end() // Responding is important
   });
 
 // Use Routes

@@ -173,13 +173,13 @@ router.get("/register", (req, res) => {
   });
 });
 
-//forgetPassword page
-router.get("/forgetPassword", (req, res) => {
-  const title = "Forget Password";
-  res.render("user/forgetPassword", {
-    title,
-  });
-});
+// //forgetPassword page
+// router.get("/forgetPassword", (req, res) => {
+//   const title = "Forget Password";
+//   res.render("user/forgetPassword", {
+//     title,
+//   });
+// });
 
 
 // // Exercise 2 solution

@@ -1,14 +1,18 @@
 const express = require("express");
 const router = express.Router();
 // User register URL using HTTP post => /user/register
-const User = require("../models/User");
 const alertMessage = require("../helpers/messenger");
 const bcrypt = require("bcryptjs");
 const passport = require("passport");
-const cartItem = require("../models/CartItem");
-const order = require("../models/Order");
 const ensureAuthenticated = require("../helpers/auth");
 const { v1: uuidv1 } = require("uuid");
+
+//Models
+const User = require("../models/User");
+const cartItem = require("../models/CartItem"); //Might need to remove cart item model
+const order = require("../models/Order");
+const orderItem = require("../models/OrderItem");
+
 
 //admin auth 
 const ensureAdmin = (req, res, next) => {
@@ -25,6 +29,7 @@ const ensureAdmin = (req, res, next) => {
 //NodeMailer
 const nodemailer = require("nodemailer");
 const jwt = require("jsonwebtoken");
+const { reservationsUrl } = require("twilio/lib/jwt/taskrouter/util");
 const SECRET = "fX7UvuRP55";
 const SECRET_2 = "NZqudk2svw";
 
@@ -86,17 +91,18 @@ router.post("/changepassword/:token", async (req, res) => {
 });
 
 router.get("/changepassword/:token", async (req, res) => {
-  res.render("/user/changepassword");
+  res.render("user/changepassword");
 });
 
-router.post("/forgetpassword"),(req,res)=>{
+router.post("/forgetpassword",(req,res)=>{
   let email = req.body.email
+  console.log(email)
   User.findOne({email: email})
   .then((user) =>{
     if(!user){
       res.redirect('/user/login');
     }else{
-      user.id = theid;
+      theid = user.id;
       jwt.sign(
         {
           user: theid,
@@ -119,7 +125,7 @@ router.post("/forgetpassword"),(req,res)=>{
       res.redirect("/user/login");
     }
   })
-};
+});
 
 router.get("/confirmation/:token", async (req, res) => {
   const token = jwt.verify(req.params.token, SECRET);
@@ -158,23 +164,51 @@ router.get("/userPage",ensureAuthenticated, (req, res) => {
 
 router.get("/userRecentOrder", ensureAuthenticated,(req, res) => {
   const title = "Order History";
-
-  // Need to intergrate this later on
+  // cartItem.findAll({
+  //   where:{
+  //     userId: req.user.id,
+  //   },
+  // })
+  // // Need to intergrate this later on
+  // //console.log(cartItem)
+  // .then((cartItem) => {
+  //   console.log(cartItem)
+    
+  // })
+  console.log("----------------------------these are order items------------------------------")
+//  console.log(req.user)
+//  console.log("===========2")
+//  console.log(req.body)
+//  console.log("===========3")
+//  console.log(req.param)
+//  console.log("===========4")
   order
     .findAll({
-      //where:{
-      //  id: req.params.id,
-      //}
+      where:{
+        userId: req.user.id,
+      },
+      include:[{model:orderItem}]
     })
     .then((order) => {
+
+      console.log("========================these is orders=======================")
+      //console.log(order)
+      console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+      console.log(order[0].orderitems)
+      //res.render('404')
+  //     console.log("======================")
       res.render("user/userRecentOrder1", {
         order: order,
+        orderitems:order.orderitems,
         title,
+        //cartItem:cartItem
+        //order:cartItem
       });
     })
     .catch((err) => console.log(err));
 });
 
+//Need to integrate this later
 router.get("/userCart", (req, res) => {
   const title = "Cart";
   cartItem
@@ -261,7 +295,10 @@ router.get("/userCart", (req, res) => {
 //     })(req, res, next);
 // });
 router.get("/login", (req, res) => {
-  res.render("user/login");
+  const title = "Login";
+  res.render("user/login", {
+    title
+  });
 });
 /*
 router.post("/login", (req, res, next) => {
@@ -286,10 +323,16 @@ router.post('/login', function(req, res, next) {
   })(req, res, next);
 });
 router.get("/admin",ensureAdmin, (req, res) => {
-  res.render("user/adminmenu");
+  const title = "Admin Page";
+  res.render("user/adminmenu" , {
+    title
+  });
 });
 router.get("/register", (req, res) => {
-  res.render("user/register");
+  const title = "Register";
+  res.render("user/register", {
+    title
+  });
 });
 
 router.post("/register", (req, res) => {
@@ -416,12 +459,19 @@ router.post("/userPage/changeinfo",ensureAuthenticated, (req, res) => {
 });
 
 router.get("/userPage/changeinfo",ensureAuthenticated, function (req, res) {
-  res.render("user/changeinfo");
+  const title = "Change Information";
+  res.render("user/changeinfo" , {
+    title
+  });
 });
 
 router.get("/userPage/changeaddress",ensureAuthenticated, function (req, res) {
-  res.render("user/changeaddress");
+  const title = "Change Address";
+  res.render("user/changeaddress", {
+    title
+  });
 });
+
 router.post("/userPage/changeaddress",ensureAuthenticated, (req, res) => {
   errors = [];
   let { PhoneNo, address, address1, city, country, postalCode } = req.body;
@@ -451,5 +501,9 @@ router.post("/userPage/changeaddress",ensureAuthenticated, (req, res) => {
     res.redirect('/user/userpage')
   })
 });
+
+router.get("/forgetPassword",(req,res) => {
+  res.render("user/forgetPassword")
+})
 
 module.exports = router;

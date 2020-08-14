@@ -155,7 +155,9 @@ img {
   letter-spacing: 0.4px;
   border: none;
 }
-
+.tab .navi{
+  background-color: #e7e7e7;
+}
 .tab .inactive-tab{
   background: white;
   opacity: 1;

@@ -15,13 +15,9 @@ const Order = db.define('order',
         addressId:{type: Sequelize.STRING,},
         trackingId:{type: Sequelize.STRING,},
         trackingCode:{type: Sequelize.STRING,},
-        dateStart:{type: Sequelize.DATE,},
-        dateEnd:{type:Sequelize.DATE,},
+        dateStart:{type: Sequelize.DATE,}, //rename this to order date
+        dateEnd:{type:Sequelize.DATE,}, //remove this
         deliveryStatus:{type:Sequelize.STRING,},
-         /** 
-         * 
-         *  might need to add more things over here
-         */
     });
 
 module.exports = Order;
