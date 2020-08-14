@@ -404,7 +404,23 @@ router.post('/goToCart', (req, res) => {
     req.session.full_total_price = 0;
     if (req.session.coupon_type == "OVERALL") {
         console.log("Coupon TYPE IS OVERALL")
+        // Updated by wilfred on 14/08/20 for display purposes
+        req.session.deducted = (0).toFixed(2)
         for (z in req.session.userCart) {
+            // console.log("LE CART IS")
+            console.log(req.session.userCart)
+            // check for any special discount applied, for display only
+            original_price = req.session.userCart[z].Quantity * req.session.userCart[z].Price
+            // Subtotal price is already modified when discount is applied so
+            // we check by comparing original and special price
+            special_price = req.session.userCart[z].SubtotalPrice
+            if (special_price != original_price) {
+                product_discounted_value = (parseFloat(original_price) - parseFloat(special_price)).toFixed(2)
+                req.session.deducted = (parseFloat(req.session.deducted) + parseFloat(product_discounted_value)).toFixed(2)
+                // console.log("PDV is")
+                console.log(product_discounted_value)
+            }
+            // end
             req.session.full_subtotal_price = (parseFloat(req.session.full_subtotal_price) + parseFloat(req.session.userCart[z].SubtotalPrice)).toFixed(2)
             console.log(req.session.full_subtotal_price)
         }
@@ -421,7 +437,23 @@ router.post('/goToCart', (req, res) => {
 
     else if (req.session.coupon_type == "SHIP") {
         console.log("Coupon TYPE IS SHIP")
+        // Updated by wilfred on 14/08/20 for display purposes
+        req.session.deducted = (0).toFixed(2)
         for (z in req.session.userCart) {
+            // console.log("LE CART IS")
+            console.log(req.session.userCart)
+            // check for any special discount applied, for display only
+            original_price = req.session.userCart[z].Quantity * req.session.userCart[z].Price
+            // Subtotal price is already modified when discount is applied so
+            // we check by comparing original and special price
+            special_price = req.session.userCart[z].SubtotalPrice
+            if (special_price != original_price) {
+                product_discounted_value = (parseFloat(original_price) - parseFloat(special_price)).toFixed(2)
+                req.session.deducted = (parseFloat(req.session.deducted) + parseFloat(product_discounted_value)).toFixed(2)
+                // console.log("PDV is")
+                console.log(product_discounted_value)
+            }
+            // end
             req.session.full_subtotal_price = (parseFloat(req.session.full_subtotal_price) + parseFloat(req.session.userCart[z].SubtotalPrice)).toFixed(2)
             console.log(req.session.full_subtotal_price)
         }
@@ -441,7 +473,23 @@ router.post('/goToCart', (req, res) => {
 
     else if (req.session.coupon_type == "SUB") {
         console.log("Coupon TYPE IS SUB")
+        // Updated by wilfred on 14/08/20 for display purposes
+        req.session.deducted = (0).toFixed(2)
         for (z in req.session.userCart) {
+            // console.log("LE CART IS")
+            console.log(req.session.userCart)
+            // check for any special discount applied, for display only
+            original_price = req.session.userCart[z].Quantity * req.session.userCart[z].Price
+            // Subtotal price is already modified when discount is applied so
+            // we check by comparing original and special price
+            special_price = req.session.userCart[z].SubtotalPrice
+            if (special_price != original_price) {
+                product_discounted_value = (parseFloat(original_price) - parseFloat(special_price)).toFixed(2)
+                req.session.deducted = (parseFloat(req.session.deducted) + parseFloat(product_discounted_value)).toFixed(2)
+                // console.log("PDV is")
+                console.log(product_discounted_value)
+            }
+            // end
             req.session.full_subtotal_price = (parseFloat(req.session.full_subtotal_price) + parseFloat(req.session.userCart[z].SubtotalPrice)).toFixed(2)
             console.log(req.session.full_subtotal_price)
         }
@@ -464,7 +512,23 @@ router.post('/goToCart', (req, res) => {
 
     else {
         req.session.discounted_price = (0).toFixed(2);
+        // Updated by wilfred on 14/08/20 for display purposes
+        req.session.deducted = (0).toFixed(2)
         for (z in req.session.userCart) {
+            // console.log("LE CART IS")
+            console.log(req.session.userCart)
+            // check for any special discount applied, for display only
+            original_price = req.session.userCart[z].Quantity * req.session.userCart[z].Price
+            // Subtotal price is already modified when discount is applied so
+            // we check by comparing original and special price
+            special_price = req.session.userCart[z].SubtotalPrice
+            if (special_price != original_price) {
+                product_discounted_value = (parseFloat(original_price) - parseFloat(special_price)).toFixed(2)
+                req.session.deducted = (parseFloat(req.session.deducted) + parseFloat(product_discounted_value)).toFixed(2)
+                // console.log("PDV is")
+                console.log(product_discounted_value)
+            }
+            // end
             req.session.full_subtotal_price = (parseFloat(req.session.full_subtotal_price) + parseFloat(req.session.userCart[z].SubtotalPrice)).toFixed(2)
             console.log(req.session.full_subtotal_price)
         }
@@ -729,95 +793,95 @@ router.get('/cart', (req, res) => {
 // Cart Coupon
 router.post('/applyCoupon', (req, res) => {
     // Check if coupon expired already or not
-        Coupon.findAll({
-            // order: [['id', 'ASC']],
-        })
-            .then((coupons) => {
-                for (c in coupons) {
-                    // Mistake: used 'c.destroy()' instead of 'coupons[c].destroy()'
-                    // let current_time = moment('DD/MM/YYYY, hh:mm:ss a')
-                    let expiry_time = moment(coupons[c].expiry)
-                    let current_time = moment()
-                    // If Coupon expired is public
-                    // if (current_time.isAfter(expiry_time) && req.session.public_coupon.code == coupons[c].expiry.code) {
-                    //     coupons[c].destroy();
-                    //     console.log("Session public coupon is " + req.session.public_coupon)
-                    //     console.log("Destroying session variable")
-                    //     req.session.public_coupon = null;
-                    //     console.log("Now Session public coupon is " + req.session.public_coupon)
-                    //     res.locals.public_coupon = null;
-                    //     req.session.save();
-                    // }
+    Coupon.findAll({
+        // order: [['id', 'ASC']],
+    })
+        .then((coupons) => {
+            for (c in coupons) {
+                // Mistake: used 'c.destroy()' instead of 'coupons[c].destroy()'
+                // let current_time = moment('DD/MM/YYYY, hh:mm:ss a')
+                let expiry_time = moment(coupons[c].expiry)
+                let current_time = moment()
+                // If Coupon expired is public
+                // if (current_time.isAfter(expiry_time) && req.session.public_coupon.code == coupons[c].expiry.code) {
+                //     coupons[c].destroy();
+                //     console.log("Session public coupon is " + req.session.public_coupon)
+                //     console.log("Destroying session variable")
+                //     req.session.public_coupon = null;
+                //     console.log("Now Session public coupon is " + req.session.public_coupon)
+                //     res.locals.public_coupon = null;
+                //     req.session.save();
+                // }
 
-                    if (current_time.isAfter(expiry_time)) {
-                        // Check if there is an existing public coupon
-                        if (req.session.public_coupon != null) {
-                            if (coupons[c].code == req.session.public_coupon.code) {
-                                console.log("Setting session var to NULL")
-                                req.session.public_coupon = null;
-                            }
+                if (current_time.isAfter(expiry_time)) {
+                    // Check if there is an existing public coupon
+                    if (req.session.public_coupon != null) {
+                        if (coupons[c].code == req.session.public_coupon.code) {
+                            console.log("Setting session var to NULL")
+                            req.session.public_coupon = null;
                         }
-                        console.log("Destroying Coupon Code " + coupons[c].code)
-                        coupons[c].destroy();
-                        req.session.save();
-                        console.log("Public Coupon is now " + req.session.public_coupon + " should be NULL")
                     }
-                    else {
-                        console.log(current_time.format('DD/MM/YYYY, hh:mm:ss a'))
-                        console.log(expiry_time.format('DD/MM/YYYY, hh:mm:ss a'))
-                        console.log("Current Time is " + current_time)
-                        console.log("Expiry Time is " + coupons[c].expiry)
-                        console.log("Expiry Time is  " + expiry_time)
-                    }
+                    console.log("Destroying Coupon Code " + coupons[c].code)
+                    coupons[c].destroy();
+                    req.session.save();
+                    console.log("Public Coupon is now " + req.session.public_coupon + " should be NULL")
                 }
+                else {
+                    console.log(current_time.format('DD/MM/YYYY, hh:mm:ss a'))
+                    console.log(expiry_time.format('DD/MM/YYYY, hh:mm:ss a'))
+                    console.log("Current Time is " + current_time)
+                    console.log("Expiry Time is " + coupons[c].expiry)
+                    console.log("Expiry Time is  " + expiry_time)
+                }
+            }
 
+        })
+
+        .then(() => {
+            Coupon.findOne({
+                where: { code: req.body.coupon }
             })
 
-            .then(() => {
-                Coupon.findOne({
-                    where: { code: req.body.coupon }
+                .then((coupon) => {
+                    console.log(coupon.code)
+                    req.session.coupon_type = coupon.type
+                    alertMessage(res, 'success', 'code ' + req.body.coupon + ' applied', 'fas fa-exclamation-circle', true)
+                    if (req.session.coupon_type == "OVERALL") {
+                        req.session.discount = coupon.discount;
+                        req.session.discount_limit = coupon.limit;
+                        alertMessage(res, 'success', `${(coupon.discount * 100)}% off your total order (save up to $${coupon.limit})`, 'fas fa-exclamation-circle', true)
+                    }
+                    else if (req.session.coupon_type == "SHIP") {
+                        req.shipping_discount = coupon.discount
+                        req.session.req.shipping_discount_limit = coupon.limit
+                        alertMessage(res, 'success', `${(coupon.discount * 100)}% off your total shipping fee (save up to $${coupon.limit})`, 'fas fa-exclamation-circle', true)
+                    }
+
+                    else if (req.session.coupon_type == "SUB") {
+                        req.session.sub_discount = coupon.discount
+                        req.session.discount_limit = coupon.limit
+                        alertMessage(res, 'success', `${(coupon.discount * 100)}% off your subtotal (excluding shipping) (save up to $${coupon.limit})`, 'fas fa-exclamation-circle', true)
+                    }
+
+                    // discount = coupon.discount;
+                    // discount_limit = coupon.limit;
+                    // line below allows us to redirect to another POST request to handle cart update
+                    res.redirect(307, 'goToCart')
+                    // res.redirect("cart")
                 })
 
-                    .then((coupon) => {
-                        console.log(coupon.code)
-                        req.session.coupon_type = coupon.type
-                        alertMessage(res, 'success', 'code ' + req.body.coupon + ' applied', 'fas fa-exclamation-circle', true)
-                        if (req.session.coupon_type == "OVERALL") {
-                            req.session.discount = coupon.discount;
-                            req.session.discount_limit = coupon.limit;
-                            alertMessage(res, 'success', `${(coupon.discount * 100)}% off your total order (save up to $${coupon.limit})`, 'fas fa-exclamation-circle', true)
-                        }
-                        else if (req.session.coupon_type == "SHIP") {
-                            req.shipping_discount = coupon.discount
-                            req.session.req.shipping_discount_limit = coupon.limit
-                            alertMessage(res, 'success', `${(coupon.discount * 100)}% off your total shipping fee (save up to $${coupon.limit})`, 'fas fa-exclamation-circle', true)
-                        }
+                .catch(() => {
+                    alertMessage(res, 'danger', 'code ' + req.body.coupon + ' is invalid', 'fas fa-exclamation-circle', true)
+                    res.redirect("cart")
+                })
 
-                        else if (req.session.coupon_type == "SUB") {
-                            req.session.sub_discount = coupon.discount
-                            req.session.discount_limit = coupon.limit
-                            alertMessage(res, 'success', `${(coupon.discount * 100)}% off your subtotal (excluding shipping) (save up to $${coupon.limit})`, 'fas fa-exclamation-circle', true)
-                        }
-
-                        // discount = coupon.discount;
-                        // discount_limit = coupon.limit;
-                        // line below allows us to redirect to another POST request to handle cart update
-                        res.redirect(307, 'goToCart')
-                        // res.redirect("cart")
-                    })
-
-                    .catch(() => {
-                        alertMessage(res, 'danger', 'code ' + req.body.coupon + ' is invalid', 'fas fa-exclamation-circle', true)
-                        res.redirect("cart")
-                    })
-
-            })
+        })
 
 
-            .catch(() => {
-                alertMessage(res, 'danger', 'No coupons are available at the moment', 'fas fa-exclamation-circle', true)
-                res.redirect("cart")
-            })
+        .catch(() => {
+            alertMessage(res, 'danger', 'No coupons are available at the moment', 'fas fa-exclamation-circle', true)
+            res.redirect("cart")
+        })
 });
 
 
@@ -983,18 +1047,18 @@ router.get('/paynow', (req, res) => {
 router.post('/paynow', (req, res) => {
 
     Pending_Order.create({
-        fullName: req.session.recipientName, phoneNumber: req.session.recipientPhoneNo, address: req.session.address, address1:req.session.address1,
-        city:req.session.city, countryShipment: req.session.countryShipment, postalCode: req.session.postalCode, deliverFee:0, totalPrice:req.session.full_total_price
+        fullName: req.session.recipientName, phoneNumber: req.session.recipientPhoneNo, address: req.session.address, address1: req.session.address1,
+        city: req.session.city, countryShipment: req.session.countryShipment, postalCode: req.session.postalCode, deliverFee: 0, totalPrice: req.session.full_total_price
     })
 
     // This block of code below will send a message
     client.messages
-    .create({
-        body: 'You made an order with BookStore, your order will be confirmed shortly by the administrator',
-        from: '+14242066417',
-        to: '+6587558054'
-    })
-    .then(message => console.log(message.sid));
+        .create({
+            body: 'You made an order with BookStore, your order will be confirmed shortly by the administrator',
+            from: '+14242066417',
+            to: '+6587558054'
+        })
+        .then(message => console.log(message.sid));
 
     // req.session.recipientName = req.body.fullName
     // req.session.recipientPhoneNo = req.body.phoneNumber
