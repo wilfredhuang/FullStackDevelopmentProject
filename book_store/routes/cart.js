@@ -32,6 +32,7 @@ const CartItem = require("../models/CartItem");
 //Email Template
 //const Email = require('email-templates');
 
+//From here onwards...
 router.get("/checkout", ensureAuthenticated,(req, res) => {
   const title = "Check Out";
   cartItem.findAll({}).then((cartItem) => {
@@ -78,6 +79,8 @@ router.get("/removeItem/:id", (req, res) => {
     })
     .catch((err) => console.log(err)); // To catch no cartItem ID
 });
+//to here, remove these.
+
 
 //Post user's address info to EasyPost API
 router.post("/processCheckout", (req, res) => {
