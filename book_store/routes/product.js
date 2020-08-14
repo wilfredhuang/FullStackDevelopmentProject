@@ -943,31 +943,46 @@ router.post('/goToPayNow', (req, res) => {
 })
 
 router.get('/stripepayment', async (req, res) => {
-    stripe.customers.retrieve(
-        'cus_Hky6LViahDgEcl',
-        function (err, customer) {
-            // asynchronously called
-            console.log(err)
-            console.log("CUSTOMER IS " + customer)
-        }
-    );
+    // Function below will take in customer's stripeID (if it exists)
 
-    const customer = await stripe.customers.create({
-        name: req.user.name,
-        email: req.user.email,
-        phone: req.user.PhoneNo,
-        shipping: {
-            address: {
-                line1: req.user.address,
-                line2: req.user.address1,
-                city: req.user.city,
-                country: req.user.country,
-                postal_code: req.user.postalCode
-            }, name: "Insert shipping name", phone: req.user.PhoneNo
-        }
-    });
-    console.log("CUSTOMER NAME IS " + customer.name)
-    console.log(customer)
+    console.log("USER STRIPE ID IS " + req.user.stripeID)
+    console.log("USER ISADMIN IS " + req.user.isadmin)
+    if (req.user.stripeID != null) {
+        stripe.customers.retrieve(
+            req.user.stripeID,
+            function (err, customer) {
+                // asynchronously called
+                console.log(err)
+                console.log("CUSTOMER IS " + customer)
+            }
+        );
+    }
+
+    else {
+        // Create a stripe customer
+        const customer = await stripe.customers.create({
+            name: req.user.name,
+            email: req.user.email,
+            phone: req.user.PhoneNo,
+            shipping: {
+                address: {
+                    line1: req.user.address,
+                    line2: req.user.address1,
+                    city: req.user.city,
+                    country: req.user.country,
+                    postal_code: req.user.postalCode
+                }, name: req.user.name, phone: req.user.PhoneNo
+            }
+        });
+        console.log("CUST ID IS + " + customer.id)
+        console.log(req.user.stripeID)
+        console.log(req.user.random)
+        const current_user = await User.findOne({where: {id:req.user.id}})
+        console.log(current_user)
+        current_user.stripeID = customer.id
+        current_user.save()
+    }
+
     title = "Stripe Payment"
     console.log("Full total price is " + req.session.full_total_price);
     const paymentIntent = stripe.paymentIntents.create({
