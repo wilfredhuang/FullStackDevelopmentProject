@@ -46,7 +46,7 @@ module.exports = {
   },
 
   convertUpper: function (value) {
-    return value.name.toUpperCase();
+    return value.toUpperCase();
   },
 
   emptyCart: function (userCart) {
@@ -76,29 +76,23 @@ module.exports = {
   checkPromo: function (public_coupon_session_obj) {
     if (public_coupon_session_obj == null) {
       return false;
-    }
-
-    else {
+    } else {
       return true;
     }
   },
 
   convertDiscount: function (discount) {
-    let converted_discount = discount * 100
-    return converted_discount
+    let converted_discount = discount * 100;
+    return converted_discount;
   },
 
   displayCouponType: function (coupon_type) {
     if (coupon_type == "OVERALL") {
-      return "total order"
-    }
-
-    else if (coupon_type == "SHIP") {
-      return "shipping fee"
-    }
-
-    else if (coupon_type == "SUB") {
-      return "subtotal (excluding shipping charge)"
+      return "total order";
+    } else if (coupon_type == "SHIP") {
+      return "shipping fee";
+    } else if (coupon_type == "SUB") {
+      return "subtotal (excluding shipping charge)";
     }
   },
 
@@ -111,13 +105,26 @@ module.exports = {
     }
   },
 
-retrieveDeliveryStatus: function (shipmentID) {
-  api.Shipment.retrieve(shipmentID).then((s) => {
-    let deliveryStatus = s.status;
-    //let shipmentID = deliveryStatus
-    //console.log(s.status);
-    //console.log(deliveryStatus);
-    return deliveryStatus;
-  });
-},
+  retrieveDeliveryStatus: function () {
+    api.Tracker.retrieve("trk_f10a3961f7c4419184aca1dabc09e4f8")
+      .then((s) => {
+        let deliveryStatus = s.status;
+        //   //let shipmentID = deliveryStatus
+        //   //console.log(s.status);
+        //   //console.log(deliveryStatus);
+        //   console.log("this is hello2");
+        //   return shipmentID;
+        console.log(deliveryStatus);
+        //return "hello"
+        return deliveryStatus;
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+
+    //console.log(shipmentID)
+    //console.log("hello")
+    //return "hello2";
+    //return "this is hello"
+  },
 };
