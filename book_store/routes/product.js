@@ -5,6 +5,7 @@ const product = require('../models/Product');
 const productadmin = require('../models/ProductAdmin');
 const cartItem = require('../models/CartItem');
 const order = require('../models/Order');
+const order_item = require('../models/OrderItem');
 const User = require('../models/User');
 const Pending_Order = require('../models/Pending_Orders');
 
@@ -1010,7 +1011,7 @@ router.get('/stripepayment', async (req, res) => {
         })
 })
 
-router.post('/stripepayment', (req, res) => {
+router.post('/stripepayment', async (req, res) => {
     // create order
     // order.create({
     //     fullName, phoneNumber, address, address1, city, country, postalCode
@@ -1021,7 +1022,27 @@ router.post('/stripepayment', (req, res) => {
     //     console.log(req.session.userCart)
     // }
 
+    const new_order = await order.create({
+        fullName: req.session.recipientName, phoneNumber: req.session.recipientPhoneNo, address: req.session.address, address1: req.session.address1,
+        city: req.session.city, country: req.session.countryShipment, postalCode: req.session.postalCode, deliverFee: 0, totalPrice: req.session.full_total_price,  userId:req.user.id
+    })
 
+    for (oi in req.session.userCart) {
+        let id = req.session.userCart[oi].ID;
+        let product_name = req.session.userCart[oi].Name;
+        let author = req.session.userCart[oi].Author;
+        let publisher = req.session.userCart[oi].Publisher;
+        let genre = req.session.userCart[oi].Genre;
+        let price = req.session.userCart[oi].SubtotalPrice;
+        let stock = req.session.userCart[oi].Quantity;
+        let details = "";
+        let weight = req.session.userCart[oi].SubtotalWeight;
+        let product_image = req.session.userCart[oi].Image;
+        let orderId = new_order.id
+        const new_order_item = await order_item.create({
+            id, product_name, author, publisher, genre, price, stock, details, weight, product_image, orderId
+        })
+    }
     // Empty the cart
     req.session.userCart = {};
     req.session.coupon_type = null;
