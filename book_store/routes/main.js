@@ -33,7 +33,7 @@ router.get("/", (req, res) => {
     req.session.sub_discount_limit = 0;
     req.session.sub_discounted_price = 0;
     req.session.full_total_price = 0;
-    req.session.deducted = 0;
+    req.session.deducted = (0).toFixed(2);
     // ssn = req.session.userCart;
   }
   // at website startup, when no ssn var set, find if a public coupon(if exists) 
