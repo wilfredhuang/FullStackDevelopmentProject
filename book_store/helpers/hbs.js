@@ -127,4 +127,34 @@ module.exports = {
     //return "hello2";
     //return "this is hello"
   },
-};
+  get_old_subtotal: function (qty, price, new_sub) {
+    og_subtotal = (qty * price).toFixed(2)
+    if (og_subtotal != new_sub ) {
+      return og_subtotal
+    }
+
+    else {
+      return
+    }
+  },
+
+  check_subtotal: function(og_subtotal, new_subtotal) {
+    if (og_subtotal == new_subtotal) {
+      return false;
+    }
+
+    else if (!isNaN(og_subtotal)) {
+      return true;
+    }
+  },
+
+  retrieveDeliveryStatus: function (shipmentID) {
+    api.Shipment.retrieve(shipmentID).then((s) => {
+      let deliveryStatus = s.status;
+      //let shipmentID = deliveryStatus
+      //console.log(s.status);
+      //console.log(deliveryStatus);
+      return deliveryStatus;
+    });
+  }
+}
