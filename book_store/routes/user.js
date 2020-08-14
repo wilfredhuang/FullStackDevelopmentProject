@@ -288,7 +288,10 @@ router.get("/userCart", (req, res) => {
 //     })(req, res, next);
 // });
 router.get("/login", (req, res) => {
-  res.render("user/login");
+  const title = "Login";
+  res.render("user/login", {
+    title
+  });
 });
 /*
 router.post("/login", (req, res, next) => {
@@ -313,10 +316,16 @@ router.post('/login', function(req, res, next) {
   })(req, res, next);
 });
 router.get("/admin",ensureAdmin, (req, res) => {
-  res.render("user/adminmenu");
+  const title = "Admin Page";
+  res.render("user/adminmenu" , {
+    title
+  });
 });
 router.get("/register", (req, res) => {
-  res.render("user/register");
+  const title = "Register";
+  res.render("user/register", {
+    title
+  });
 });
 
 router.post("/register", (req, res) => {
@@ -443,12 +452,19 @@ router.post("/userPage/changeinfo",ensureAuthenticated, (req, res) => {
 });
 
 router.get("/userPage/changeinfo",ensureAuthenticated, function (req, res) {
-  res.render("user/changeinfo");
+  const title = "Change Information";
+  res.render("user/changeinfo" , {
+    title
+  });
 });
 
 router.get("/userPage/changeaddress",ensureAuthenticated, function (req, res) {
-  res.render("user/changeaddress");
+  const title = "Change Address";
+  res.render("user/changeaddress", {
+    title
+  });
 });
+
 router.post("/userPage/changeaddress",ensureAuthenticated, (req, res) => {
   errors = [];
   let { PhoneNo, address, address1, city, country, postalCode } = req.body;
