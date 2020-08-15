@@ -747,7 +747,7 @@ router.get('/deleteCartItem/:id', async (req, res) => {
     }
     console.log(req.session.userCart)
     console.log(req.session.full_subtotal_price)
-    alertMessage(res, 'success', req.params.id + ' is successfully deleted', 'fas fa-sign-in-alt', true)
+    alertMessage(res, 'success', "An item has been removed from the cart", 'fas fa-sign-in-alt', true)
     res.redirect(307, '/product/cart');
 });
 
