@@ -69,7 +69,7 @@
 		{{>_navbar}}
 	</div>
 	{{#if (checkPromo public_coupon)}}
-		{{>_coupon_promo}}
+	{{>_coupon_promo}}
 	{{else}}
 	{{/if}}
 	<div class="container">
@@ -84,7 +84,7 @@
 		<button onclick="topFunction()" id="myBtn" title="Go to top"><svg width="1em" height="1em" viewBox="0 0 16 16"
 				class="bi bi-chevron-up" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
 				<path fill-rule="evenodd"
-					d="M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z"/>
+					d="M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z" />
 			</svg></button>
 	</div>
 	{{>_footer}}
@@ -117,10 +117,8 @@
 	<script>
 		function submitUserForm() {
 			var response = grecaptcha.getResponse();
-			//const captcha = document.querySelector("#g-recaptcha-response").value;
 			console.log(response)
 			if (response.length == 0) {
-				//document.getElementById('g-recaptcha-error').innerHTML = captcha;
 				document.getElementById('g-recaptcha-error').innerHTML = '<p style="color:red;">Please complete the recaptcha</p>';
 				return false;
 			}

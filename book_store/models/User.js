@@ -20,7 +20,8 @@ const User = db.define('user', {
     address1 :{type:Sequelize.STRING},
     city: {type:Sequelize.STRING},
     country: {type:Sequelize.STRING},
-    postalCode:{type:Sequelize.STRING}
+    postalCode:{type:Sequelize.STRING},
+    stripeID:{type:Sequelize.STRING}
 });
 
 module.exports = User; 

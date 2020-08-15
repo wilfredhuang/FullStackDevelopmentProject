@@ -14,8 +14,8 @@
     </div>
 </div>
 
-{{#if discounts}}
 <div class="container" id="discount_form">
+    {{#if discounts}}
     <div class="row mt-2">
         <div class="col-lg-1">
             <p><strong>ID</strong></p>
@@ -63,15 +63,13 @@
         </div>
     </div>
     {{/each}}
-</div>
-{{else}}
-<div class="container">
-    <p> Seems like got no discounts at this time</p>
+    {{else}}
+        <p> Seems like got no discounts at this time</p>
 </div>
 {{/if}}
 
-{{#if coupons}}
 <div class="container" id="coupon_form">
+    {{#if coupons}}
     <div class="row mt-2">
         <div class="col-lg-1">
             <p><strong>ID</strong></p>
@@ -131,10 +129,8 @@
         </div>
     </div>
     {{/each}}
-</div>
-{{else}}
-<div class="container">
-    <p> Seems like got no coupons at this time</p>
+    {{else}}
+        <p> Seems like got no coupons at this time</p>
 </div>
 {{/if}}
 <script>

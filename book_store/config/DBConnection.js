@@ -4,6 +4,7 @@ const cartItem = require('../models/CartItem');
 const order = require('../models/Order'); 
 const ProductAdmin = require('../models/ProductAdmin')
 const Discount = require('../models/Discount');
+const orderItem = require('../models/OrderItem');
 
 // If drop is true, all existing tables are dropped and recreated 
 const setUpDB = (drop) => {
@@ -17,9 +18,16 @@ const setUpDB = (drop) => {
             in video.             */
 
             //user.hasMany
-            //order.hasMany(cartItem);
-
             //Priority work by Hasan 31/7/2020
+            //user.hasMany(cartItem);
+            
+            user.hasMany(order);
+            order.belongsTo(user);
+            order.hasMany(orderItem);
+            orderItem.belongsTo(order);
+
+            //order.hasMany(cartItem);
+            //cartItem.belongsTo(order);
             //user.hasMany(order)
             // Discount.belongsTo(ProductAdmin,{
             //     foreignKey: {

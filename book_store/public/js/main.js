@@ -1,142 +1,22 @@
-// testing ground
+// Testing ground
+// const EasyPost = require("@easypost/api");
+// const apiKey = "EZTK29b55ab4ee7a437890e19551520f5dd0uaJjPiW9XsVqXYFNVI0kog";
+// const api = new EasyPost(apiKey);
 
-const EasyPost = require("@easypost/api");
+// const datepicker = document.getElementById('datepicker');
 
-const apiKey = "EZTK29b55ab4ee7a437890e19551520f5dd0uaJjPiW9XsVqXYFNVI0kog";
+// function pickadate() {
+//   datepicker.value = moment(new
+//     Date(data.Released)).format('DD/MM/YYYY');
+// }
 
-const api = new EasyPost(apiKey);
-
-const datepicker = document.getElementById('datepicker');
-
-function pickadate() {
-  datepicker.value = moment(new
-    Date(data.Released)).format('DD/MM/YYYY');
-}
-
-// set addresses
-
-const toAddress = new api.Address({
-  name: "Dr. Steve Brule",
-  street1: "179 N Harbor Dr",
-  city: "Redondo Beach",
-  state: "CA",
-  zip: "90277",
-  country: "US",
-  phone: "310-808-5243",
-});
-
-api.Shipment.retrieve('shp_ac606b3af8c54782b5f7f05f15061368').then((s)=> console.log(s.status));
-
-
-//Test retrive information
-
-//const webhook = new api.Webhook({ url: 'http://example.com' });
-
-//webhook.save().then(console.log);
-
-//api.Address.retrieve('adr_a829cf7045d140eb95c917b01f1b2ae8').then(address => {
-//console.log(address.id);
-//}).catch(console.log);
-// console.log("=========")
-// api.Shipment.retrieve('shp_e0f451a768394ab68621772b79c166db').then((s) => {
-//   console.log(s.tracker.created_at)
-//   console.log(s.tracker.updated_at)
-
+// const request = require('request');
+// request('http://www.google.com', function (error, response, body) {
+//   console.error('error:', error); // Print the error if one occurred
+//   console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
+//   console.log('body:', body); // Print the HTML for the Google homepage.
 // });
 
-//api.Address.retrieve('adr_a829cf7045d140eb95c917b01f1b2ae8').then(console.log);
-
-//api.Tracker.retrieve('trk_afeda88a6f934290b7dcb4bf1e2445b9').then(console.log);
-/*api.Tracker.retrieve('EZ1000000001').then(tracker => {
-  console.log(tracker.id);
-}).catch(console.log);
-*/
-/*
-const tracker = new api.Tracker({
-  tracking_code: 'EZ2000000002',
-  carrier: 'USPS',
-});
-
-tracker.save().then(console.log);
-*/
-
-/*
-toAddress.save().then((addr) => {
-  // verifiableAddress is updated, and also passed into
-  // the promise resolve.
-  console.log(addr.street1);
-  // 417 Montgomery Street
-
-  console.log(addr.verifications);/*
-  /*
-  { delivery:
-   { success: true,
-     errors: [],
-       } }
-     */
-//});
-/*
-const fromAddress = new api.Address({
-  name: "EasyPost",
-  street1: "118 2nd Street",
-  street2: "4th Floor",
-  city: "San Francisco",
-  state: "CA",
-  zip: "94105",
-  phone: "415-123-4567",
-});
-
-fromAddress.save().then(console.log);
-*/
-/* es5 with promises: 
-fromAddress.save().then((addr) => {
-  console.log(addr.id);
-}); */
-
-/*
-const parcel = new api.Parcel({
-  length: 9,
-  width: 6,
-  height: 2,
-  weight: 10,
-});
-
-parcel.save().then(console.log);
-const shipment = new api.Shipment({
-  to_address: toAddress,
-  from_address: fromAddress,
-  parcel: parcel,
-});
-
-shipment.save().then(console.log);
-
-// If you already have a saved shipment, or a shipment initialized
-// with an id:
-
-shipment.buy(shipment.lowestRate(["USPS"], ["First"])).then(console.log);
-
-// or
-
-shipment.buy("{RATE_ID}").then(console.log);
-
-// If you do not have a saved shipment yet, you must save it first:
-shipment
-  .save()
-  .then((s) =>
-    s.buy(shipment.lowestRate(["USPS"], ["First"])).then(console.log)
-  );
-*/
-
-//api.Shipment.retrieve('shp_ac606b3af8c54782b5f7f05f15061368').then(console.log);
-
-//  api.Shipment.retrieve('shp_ac606b3af8c54782b5f7f05f15061368').then(s => {
-//    s.refund().then(() => console.log(s));
-//  });
-
-
-const request = require('request');
-request('http://www.google.com', function (error, response, body) {
-  console.error('error:', error); // Print the error if one occurred
-  console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
-  console.log('body:', body); // Print the HTML for the Google homepage.
-});
+const printer = require("@thiagoelg/node-printer")
+util = require('util');
+console.log("installed printers:\n"+util.inspect(printer.getPrinters(), {colors:true, depth:10}));
