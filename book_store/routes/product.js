@@ -1224,6 +1224,10 @@ router.get('/paynow', (req, res) => {
 
 router.post('/paynow', async (req, res) => {
 
+    let the_date = moment().format("D MMM YYYY");
+    let dateStart = the_date.toString();
+    console.log("dateStart is " + dateStart)
+
     // Create a unconfirmed order
     const new_pending_order = await Pending_Order.create({
         fullName: req.session.recipientName, 
@@ -1236,6 +1240,7 @@ router.post('/paynow', async (req, res) => {
         deliverFee: 0, 
         subtotalPrice:req.session.full_subtotal_price, 
         totalPrice: req.session.full_total_price,
+        dateStart: dateStart,
         userId: req.user.id
     })        .catch((err)=> {
         console.log("Cannot create pending order")
@@ -1265,13 +1270,13 @@ router.post('/paynow', async (req, res) => {
     }
 
     // This block of code below will send a message
-    // client.messages
-    //     .create({
-    //         body: 'You made an order with BookStore via payNow/payLah!, you will be notified again when your order is confirmed',
-    //         from: '+14242066417',
-    //         to: '+6587558054'
-    //     })
-    //     .then(message => console.log(message.sid));
+    client.messages
+        .create({
+            body: 'You made an order with BookStore via payNow/payLah!, you will be notified again when your order is confirmed',
+            from: '+14242066417',
+            to: '+6587558054'
+        })
+        .then(message => console.log(message.sid));
 
     // req.session.recipientName = req.body.fullName
     // req.session.recipientPhoneNo = req.body.phoneNumber
@@ -1293,6 +1298,7 @@ router.post('/paynow', async (req, res) => {
     req.session.sub_discount = 0;
     req.session.sub_discount_limit = 0;
     req.session.sub_discounted_price = 0;
+    req.session.full_subtotal_price = 0;
     req.session.full_total_price = 0;
     req.session.deducted = 0;
     alertMessage(res, 'success', 'Order placed, the administrator will shortly confirm your payment', 'fas fa-exclamation-circle', true)

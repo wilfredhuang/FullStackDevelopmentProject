@@ -16,7 +16,8 @@ const Pending_Order = db.define('pending_order',
         // addressId:{type: Sequelize.STRING,},
         // trackingId:{type: Sequelize.STRING,},
         // trackingCode:{type: Sequelize.STRING,},
-        // dateStart:{type: Sequelize.DATE,}, //rename this to order date
+        // temporarily set as string for now
+        dateStart:{type: Sequelize.STRING} //rename this to order date
         // dateEnd:{type:Sequelize.DATE,}, //remove this
         // deliveryStatus:{type:Sequelize.STRING,},
     });
