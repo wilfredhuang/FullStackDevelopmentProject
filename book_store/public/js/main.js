@@ -18,5 +18,24 @@
 // });
 
 const printer = require("@thiagoelg/node-printer")
+//,    filename = process.argv[2] || __filename;
 util = require('util');
-console.log("installed printers:\n"+util.inspect(printer.getPrinters(), {colors:true, depth:10}));
+
+console.log('platform:', process.platform);
+//console.log('try to print file: ' + filename);
+//console.log("installed printers:\n"+util.inspect(printer.getPrinters(), {colors:true, depth:10}));
+//console.log(printer.getPrinter("HP1B1B2A (HP ENVY 7640 series)"))
+// console.log(printer.getPrinterDriverOptions("HP1B1B2A (HP ENVY 7640 series)"))
+//console.log(printer.getSupportedPrintFormats())
+//console.log('default printer name: ' + (printer.getDefaultPrinterName() || 'is not defined on your computer'));
+
+// printer.printDirect({data:"https://easypost-files.s3-us-west-2.amazonaws.com/files/postage_label/20200722/8c6fc542dea042a6bd1a66fefa53c84b.png" // or simple String: "some text"
+// 	, printer:"HP1B1B2A (HP ENVY 7640 series)" // printer name, if missing then will print to default printer
+// 	, type: 'RAW' // type: RAW, TEXT, PDF, JPEG, .. depends on platform
+// 	, success:function(jobID){
+// 		console.log("sent to printer with ID: "+jobID);
+// 	}
+// 	, error:function(err){console.log(err);}
+// });
+//  console.log(printer.getJob("HP1B1B2A (HP ENVY 7640 series)", 4))
+console.log(printer.getPrinter("HP1B1B2A (HP ENVY 7640 series)"))

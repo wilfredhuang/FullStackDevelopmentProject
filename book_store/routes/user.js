@@ -9,7 +9,6 @@ const { v1: uuidv1 } = require("uuid");
 
 //Models
 const User = require("../models/User");
-const cartItem = require("../models/CartItem"); //Might need to remove cart item model
 const order = require("../models/Order");
 const orderItem = require("../models/OrderItem");
 
@@ -81,6 +80,10 @@ let transporter = nodemailer.createTransport({
   tls: {
     rejectUnauthorized: false,
   },
+});
+
+router.get("/forgetPassword", (req, res) => {
+  res.render("user/forgetPassword");
 });
 
 router.post("/changepassword/:token", async (req, res) => {
@@ -192,15 +195,6 @@ router.get("/orderHistoryAdmin", ensureAuthenticated, (req, res) => {
 
 router.get("/userRecentOrder", ensureAuthenticated, (req, res) => {
   const title = "Order History";
-  console.log(
-    "----------------------------these are order items------------------------------"
-  );
-  //  console.log(req.user)
-  //  console.log("===========2")
-  //  console.log(req.body)
-  //  console.log("===========3")
-  //  console.log(req.param)
-  //  console.log("===========4")
   order
     .findAll({
       where: {
@@ -460,8 +454,5 @@ router.post("/userPage/changeaddress", ensureAuthenticated, (req, res) => {
   });
 });
 
-router.get("/forgetPassword", (req, res) => {
-  res.render("user/forgetPassword");
-});
 
 module.exports = router;
