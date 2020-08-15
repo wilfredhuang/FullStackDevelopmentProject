@@ -17,10 +17,6 @@ const api = new EasyPost(apiKey);
 //   console.log('body:', body); // Print the HTML for the Google homepage.
 // });
 
-// const printer = require("@thiagoelg/node-printer")
-// //,    filename = process.argv[2] || __filename;
-// util = require('util');
-
 // console.log('platform:', process.platform);
 //console.log('try to print file: ' + filename);
 //console.log("installed printers:\n"+util.inspect(printer.getPrinters(), {colors:true, depth:10}));
@@ -45,19 +41,93 @@ const api = new EasyPost(apiKey);
 //   });
 // api.Shipment.retrieve('shp_2065671e75a448dd9aa505ff3eb58ee1').then(console.log);
 
-var PrintNodeClient = require("PrintNode-NodeJS");
-var client = new PrintNodeClient({ api_key: "DGjrFiPUgRwFrGqlSEJjGntiRj-DHjoqOxXeRX7RV-o", default_printer_id: 69642287 });
+// var PrintNodeClient = require("PrintNode-NodeJS");
+// var client = new PrintNodeClient({ api_key: "DGjrFiPUgRwFrGqlSEJjGntiRj-DHjoqOxXeRX7RV-o", default_printer_id: 69642287 });
 //client.whoAmI().then(console.log);
 //client.fetchComputers().then(console.log)
 //client.fetchPrinters().then(console.log)
- //client.fetchPrinters(69642287).then(console.log);
+//client.fetchPrinters(69642287).then(console.log);
 // client.fetchPrintJob().then(console.log);
 // Create a print job
 
-var options = {
-    title: "Printing example 1",
-    source: "PrintNode-NodeJS", // defaults to this
-    content: "https://easypost-files.s3-us-west-2.amazonaws.com/files/postage_label/20200815/bbf6eec2a93a475bbcd841777d0dc837.pdf",
-    contentType: "pdf_uri"
-  };
-  client.createPrintJob(options).then(console.log); // returns printjob id only
+// var options = {
+//     title: "Printing example 1",
+//     source: "PrintNode-NodeJS", // defaults to this
+//     content: "https://easypost-files.s3-us-west-2.amazonaws.com/files/postage_label/20200815/bbf6eec2a93a475bbcd841777d0dc837.pdf",
+//     contentType: "pdf_uri"
+//   };
+//   client.createPrintJob(options).then(console.log); // returns printjob id only
+
+//const printer = require("@thiagoelg/node-printer"),
+// //,    filename = process.argv[2] || __filename;
+// util = require('util');
+// imagemagick, // will be loaded later with proper error.
+//     fs = require('fs'),
+//     filename = process.argv[2],
+//     printername = process.argv[2];
+
+// if(process.platform !== 'win32') {
+//     throw 'This application can be run only on win32 as a demo of print PDF image'
+// }
+
+// if(!filename) {
+//     throw 'PDF file name is missing. Please use the following params: <filename> [printername]'
+// }
+
+// try {
+//     imagemagick = require('imagemagick-native');
+// } catch(e) {
+//     throw 'please install imagemagick-native: `npm install imagemagick-native`'
+// }
+
+// var data = fs.readFileSync(filename);
+
+// console.log('data: ' + data.toString().substr(0, 20));
+
+// //console.log(imagemagick.identify({srcData: data}));
+
+// // First convert PDF into
+// imagemagick.convert({
+//     srcData: data,
+//     srcFormat: 'PDF',
+//     format: 'EMF',
+// }, function(err, buffer) {
+//     if (err) {
+//         throw 'something went wrong on converting to EMF: ' + err;
+//     }
+
+//     // Now we have EMF file, send it to printer as EMF format
+//     printer.printDirect({
+//         data: buffer,
+//         type: 'EMF',
+//         success: function(id) {
+//             console.log('printed with id ' + id);
+//         },
+//         error: function(err) {
+//             console.error('error on printing: ' + err);
+//         }
+//     })
+// })
+
+// const request = require("request");
+// //https://api.printnode.com/whoami/?DGjrFiPUgRwFrGqlSEJjGntiRj-DHjoqOxXeRX7RV-o:
+// request("https://api.printnode.com/whoami", (err, response, body) => {
+//     body = JSON.parse(body);
+//     console.log(body) })
+
+function authenticate(authData) {
+  console.log(authData);
+}
+
+function error(err) {
+  console.error(err);
+}
+
+var ws = new PrintNode.WebSocket(
+  { apiKey: "insert apikey here" },
+  authenticate,
+  error
+);
+ws.subscribe("authenticate", function (authData) {
+  console.log(authData);
+});
