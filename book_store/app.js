@@ -77,7 +77,7 @@ const FlashMessenger = require('flash-messenger');
 // Bring in database connection 
 const vidjotDB = require('./config/DBConnection');
 // Connects to MySQL database 
-vidjotDB.setUpDB(false); // To set up database with new tables set (true)
+vidjotDB.setUpDB(true); // To set up database with new tables set (true)
 
 // Passport Config - P4A2
 const authenticate = require('./config/passport'); 
@@ -86,7 +86,7 @@ authenticate.localStrategy(passport);
 // global.userCart = {};
 // Bring in Handlebars Helpers here
 const {convertUpper, adminCheck, emptyCart, cartQty, formatDate, capitaliseFirstLetter, isSg, checkPromo, convertDiscount, displayCouponType, get_old_subtotal, check_subtotal, retrieveDeliveryStatus} = require('./helpers/hbs');
-const {times} = require('./helpers/for_loop');
+const {when} = require('./helpers/for_loop');
 
 // creates an express server
 const app = express();
@@ -108,7 +108,7 @@ app.engine('handlebars', exphbs({
 		get_old_subtotal: get_old_subtotal,
 		check_subtotal: check_subtotal,
 		retrieveDeliveryStatus:retrieveDeliveryStatus,
-		times:times,
+		when: when,
 	},					
 	handlebars: allowInsecurePrototypeAccess(Handlebars),
 }));
