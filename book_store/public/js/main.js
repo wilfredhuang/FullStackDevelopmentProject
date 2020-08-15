@@ -53,6 +53,7 @@ var client = new PrintNodeClient({ api_key: "DGjrFiPUgRwFrGqlSEJjGntiRj-DHjoqOxX
  //client.fetchPrinters(69642287).then(console.log);
 // client.fetchPrintJob().then(console.log);
 // Create a print job
+
 var options = {
     title: "Printing example 1",
     source: "PrintNode-NodeJS", // defaults to this
