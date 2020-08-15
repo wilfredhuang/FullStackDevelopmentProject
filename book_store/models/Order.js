@@ -9,6 +9,7 @@ const Order = db.define('order',
         city: {type: Sequelize.STRING,},
         country:{type: Sequelize.STRING,},
         postalCode: {type: Sequelize.STRING,},
+        //add subtotal here
         deliverFee:{type: Sequelize.FLOAT,},
         totalPrice:{type: Sequelize.FLOAT,},    
         shippingId:{type:Sequelize.STRING},

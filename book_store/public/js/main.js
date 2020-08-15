@@ -1,7 +1,7 @@
 // Testing ground
-const EasyPost = require("@easypost/api");
-const apiKey = "EZTK29b55ab4ee7a437890e19551520f5dd0uaJjPiW9XsVqXYFNVI0kog";
-const api = new EasyPost(apiKey);
+// const EasyPost = require("@easypost/api");
+// const apiKey = "EZTK29b55ab4ee7a437890e19551520f5dd0uaJjPiW9XsVqXYFNVI0kog";
+// const api = new EasyPost(apiKey);
 
 // const datepicker = document.getElementById('datepicker');
 
@@ -16,3 +16,7 @@ const api = new EasyPost(apiKey);
 //   console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
 //   console.log('body:', body); // Print the HTML for the Google homepage.
 // });
+
+const printer = require("@thiagoelg/node-printer")
+util = require('util');
+console.log("installed printers:\n"+util.inspect(printer.getPrinters(), {colors:true, depth:10}));
