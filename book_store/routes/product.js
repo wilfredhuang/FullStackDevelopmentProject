@@ -1316,7 +1316,9 @@ router.post('/paynow', async (req, res) => {
 // Admin Side
 
 router.get('/discountmenu', (req, res) => {
+    title = "Discount & Coupon Menu"
     res.render('checkout/discountmenu', {
+        title
     })
 })
 
@@ -1340,7 +1342,8 @@ router.get('/viewPendingOrders', async (req, res) => {
         // console.log(pending_order[0].Pending_OrderItem);
         // console.log(pending_order[0].PendingOrderItems);
         res.render('checkout/viewPendingOrders', {
-            PendingOrders: pending_order
+            PendingOrders: pending_order,
+            title
             // Don't need this below, wont work when rendering
             // PendingOrderItems: pending_order.pending_orderitems
         })
@@ -1551,6 +1554,7 @@ router.get('/createCoupon', (req, res) => {
     // if (!req.session.public_coupon) {
     //     req.session.public_coupon = "NULL";
     // }
+    title = "Create Coupon"
     let currentDate = moment(req.body.currentDate, "DD/MM/YYYY");
     // Get current time of server
     // hh or HH = 24 hr format, h / H = 12 hr format, a = PM/AM
@@ -1559,6 +1563,7 @@ router.get('/createCoupon', (req, res) => {
     let errors;
 
     res.render('checkout/createCoupon', {
+        title,
         currentTime,
         errors
     })
