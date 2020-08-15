@@ -109,25 +109,121 @@ const api = new EasyPost(apiKey);
 //     })
 // })
 
-// const request = require("request");
-// //https://api.printnode.com/whoami/?DGjrFiPUgRwFrGqlSEJjGntiRj-DHjoqOxXeRX7RV-o:
-// request("https://api.printnode.com/whoami", (err, response, body) => {
-//     body = JSON.parse(body);
-//     console.log(body) })
+const request = require("request");
+//https://api.printnode.com/whoami/?DGjrFiPUgRwFrGqlSEJjGntiRj-DHjoqOxXeRX7RV-o:
 
-function authenticate(authData) {
-  console.log(authData);
-}
 
-function error(err) {
-  console.error(err);
-}
+//computer id:317176
+//printer id:69642287
+const options = {
+  url: 'https://api.printnode.com/printjobs',
+  //url: 'https://api.printnode.com/computers/317176/printers/69642287',
+  json:true,
+  headers: {
+    'Authorization': 'Basic REdqckZpUFVnUndGckdxbFNFSmpHbnRpUmotREhqb3FPeFhlUlg3UlYtbw==',
+  },
+  method:'POST',
+  // printerId:'69642287',
+  // title:'first title',
+  // contentType:'pdf_uri',
+  // content:'https://easypost-files.s3-us-west-2.amazonaws.com/files/postage_label/20200815/bbf6eec2a93a475bbcd841777d0dc837.pdf',
+  // source:'Comes from EasyPost API'
+  body:{
+    'printerId': '69642287',
+    'title':'first title',
+    'contentType':'pdf_uri',
+    'content':'https://easypost-files.s3-us-west-2.amazonaws.com/files/postage_label/20200815/bbf6eec2a93a475bbcd841777d0dc837.pdf',
+    'source':'Comes from EasyPost API'
+  }
+};
+//base 64 format
+//REdqckZpUFVnUndGckdxbFNFSmpHbnRpUmotREhqb3FPeFhlUlg3UlYtbw==
 
-var ws = new PrintNode.WebSocket(
-  { apiKey: "insert apikey here" },
-  authenticate,
-  error
-);
-ws.subscribe("authenticate", function (authData) {
-  console.log(authData);
-});
+//request.setRequestHeader('Authorization', 'DGjrFiPUgRwFrGqlSEJjGntiRj-DHjoqOxXeRX7RV-o')
+request(options, (err, response, body) => {
+  console.error('error:', err); // Print the error if one occurred
+  console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
+  //console.log('body:', JSON.parse(body));
+  //let result = JSON.parse(body)
+  //console.log(result)
+  // console.log("====")
+   console.log(body)// Print the HTML for the Google homepage.
+})
+// const fetch = require("node-fetch")
+// request("https://api.printnode.com/whoami", {
+//   headers: {
+//     Authorization: "DGjrFiPUgRwFrGqlSEJjGntiRj-DHjoqOxXeRX7RV-o"
+//   }
+// }).then(console.log)
+
+
+// function authenticate(authData) {
+//   console.log(authData);
+// }
+
+// function error(err) {
+//   console.error(err);
+// }
+
+// var ws = new PrintNode.WebSocket(
+//   { apiKey: "insert apikey here" },
+//   authenticate,
+//   error
+// );
+// ws.subscribe("authenticate", function (authData) {
+//   console.log(authData);
+// });
+
+// var printer = require("@thiagoelg/node-printer"),
+//   imagemagick, // will be loaded later with proper error.
+//   fs = require("fs"),
+//   filename = "https://easypost-files.s3-us-west-2.amazonaws.com/files/postage_label/20200815/bbf6eec2a93a475bbcd841777d0dc837.pdf",
+//   printername = process.argv[2];
+
+// if (process.platform !== "win32") {
+//   throw "This application can be run only on win32 as a demo of print PDF image";
+// }
+
+// if (!filename) {
+//   throw "PDF file name is missing. Please use the following params: <filename> [printername]";
+// }
+
+// try {
+//   imagemagick = require("imagemagick-native");
+// } catch (e) {
+//   throw "please install imagemagick-native: `npm install imagemagick-native`";
+// }
+
+// var data = fs.readFileSync(filename);
+
+// console.log("data: " + data.toString().substr(0, 20));
+
+// //console.log(imagemagick.identify({srcData: data}));
+
+// // First convert PDF into
+// imagemagick.convert(
+//   {
+//     srcData: data,
+//     srcFormat: "PDF",
+//     format: "EMF",
+//   },
+//   function (err, buffer) {
+//     if (err) {
+//       throw "something went wrong on converting to EMF: " + err;
+//     }
+
+//     // Now we have EMF file, send it to printer as EMF format
+//     printer.printDirect({
+//       data: buffer,
+//       type: "EMF",
+//       success: function (id) {
+//         console.log("printed with id " + id);
+//       },
+//       error: function (err) {
+//         console.error("error on printing: " + err);
+//       },
+//     });
+//   }
+// );
+
+// console.log(printer.setJob())
