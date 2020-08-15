@@ -33,52 +33,52 @@ const CartItem = require("../models/CartItem");
 //const Email = require('email-templates');
 
 //From here onwards...
-router.get("/checkout", ensureAuthenticated,(req, res) => {
-  const title = "Check Out";
-  cartItem.findAll({}).then((cartItem) => {
-    res.render("delivery/checkOut", {
-      title,
-      cartItem: cartItem,
-    });
-  });
-});
+// router.get("/checkout", ensureAuthenticated,(req, res) => {
+//   const title = "Check Out";
+//   cartItem.findAll({}).then((cartItem) => {
+//     res.render("delivery/checkOut", {
+//       title,
+//       cartItem: cartItem,
+//     });
+//   });
+// });
 
-router.post("/addToCart", (req, res) => {
-  let title = "7 DAY SELF PUBLISH HOW TO WRITE A BOOK";
-  let price = 3.37;
-  let amount = 1;
-  cartItem
-    .create({
-      title,
-      price,
-      amount,
-    })
-    .then((cartItem) => {
-      res.redirect("/product/listproduct");
-    })
-    .catch((err) => console.log(err));
-});
+// router.post("/addToCart", (req, res) => {
+//   let title = "7 DAY SELF PUBLISH HOW TO WRITE A BOOK";
+//   let price = 3.37;
+//   let amount = 1;
+//   cartItem
+//     .create({
+//       title,
+//       price,
+//       amount,
+//     })
+//     .then((cartItem) => {
+//       res.redirect("/product/listproduct");
+//     })
+//     .catch((err) => console.log(err));
+// });
 
-router.get("/removeItem/:id", (req, res) => {
-  cartItem
-    .findOne({
-      where: {
-        id: req.params.id,
-      },
-    })
-    .then((cartItem) => {
-      cartItem
-        .destroy({
-          where: {
-            id: req.params.id,
-          },
-        })
-        .then((cartItem) => {
-          res.redirect("/user/userCart");
-        });
-    })
-    .catch((err) => console.log(err)); // To catch no cartItem ID
-});
+// router.get("/removeItem/:id", (req, res) => {
+//   cartItem
+//     .findOne({
+//       where: {
+//         id: req.params.id,
+//       },
+//     })
+//     .then((cartItem) => {
+//       cartItem
+//         .destroy({
+//           where: {
+//             id: req.params.id,
+//           },
+//         })
+//         .then((cartItem) => {
+//           res.redirect("/user/userCart");
+//         });
+//     })
+//     .catch((err) => console.log(err)); // To catch no cartItem ID
+// });
 //to here, remove these.
 
 
