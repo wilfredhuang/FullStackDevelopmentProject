@@ -5,6 +5,7 @@ const product = require('../models/Product');
 const productadmin = require('../models/ProductAdmin');
 const cartItem = require('../models/CartItem');
 const order = require('../models/Order');
+const order_item = require('../models/OrderItem');
 const User = require('../models/User');
 const Pending_Order = require('../models/Pending_Orders');
 
@@ -953,31 +954,46 @@ router.post('/goToPayNow', (req, res) => {
 })
 
 router.get('/stripepayment', async (req, res) => {
-    stripe.customers.retrieve(
-        'cus_Hky6LViahDgEcl',
-        function (err, customer) {
-            // asynchronously called
-            console.log(err)
-            console.log("CUSTOMER IS " + customer)
-        }
-    );
+    // Function below will take in customer's stripeID (if it exists)
 
-    const customer = await stripe.customers.create({
-        name: req.user.name,
-        email: req.user.email,
-        phone: req.user.PhoneNo,
-        shipping: {
-            address: {
-                line1: req.user.address,
-                line2: req.user.address1,
-                city: req.user.city,
-                country: req.user.country,
-                postal_code: req.user.postalCode
-            }, name: "Insert shipping name", phone: req.user.PhoneNo
-        }
-    });
-    console.log("CUSTOMER NAME IS " + customer.name)
-    console.log(customer)
+    console.log("USER STRIPE ID IS " + req.user.stripeID)
+    console.log("USER ISADMIN IS " + req.user.isadmin)
+    if (req.user.stripeID != null) {
+        stripe.customers.retrieve(
+            req.user.stripeID,
+            function (err, customer) {
+                // asynchronously called
+                console.log(err)
+                console.log("CUSTOMER IS " + customer)
+            }
+        );
+    }
+
+    else {
+        // Create a stripe customer
+        const customer = await stripe.customers.create({
+            name: req.user.name,
+            email: req.user.email,
+            phone: req.user.PhoneNo,
+            shipping: {
+                address: {
+                    line1: req.user.address,
+                    line2: req.user.address1,
+                    city: req.user.city,
+                    country: req.user.country,
+                    postal_code: req.user.postalCode
+                }, name: req.user.name, phone: req.user.PhoneNo
+            }
+        });
+        console.log("CUST ID IS + " + customer.id)
+        console.log(req.user.stripeID)
+        console.log(req.user.random)
+        const current_user = await User.findOne({where: {id:req.user.id}})
+        console.log(current_user)
+        current_user.stripeID = customer.id
+        current_user.save()
+    }
+
     title = "Stripe Payment"
     console.log("Full total price is " + req.session.full_total_price);
     const paymentIntent = stripe.paymentIntents.create({
@@ -995,7 +1011,7 @@ router.get('/stripepayment', async (req, res) => {
         })
 })
 
-router.post('/stripepayment', (req, res) => {
+router.post('/stripepayment', async (req, res) => {
     // create order
     // order.create({
     //     fullName, phoneNumber, address, address1, city, country, postalCode
@@ -1006,7 +1022,27 @@ router.post('/stripepayment', (req, res) => {
     //     console.log(req.session.userCart)
     // }
 
+    const new_order = await order.create({
+        fullName: req.session.recipientName, phoneNumber: req.session.recipientPhoneNo, address: req.session.address, address1: req.session.address1,
+        city: req.session.city, country: req.session.countryShipment, postalCode: req.session.postalCode, deliverFee: 0, totalPrice: req.session.full_total_price,  userId:req.user.id
+    })
 
+    for (oi in req.session.userCart) {
+        let id = req.session.userCart[oi].ID;
+        let product_name = req.session.userCart[oi].Name;
+        let author = req.session.userCart[oi].Author;
+        let publisher = req.session.userCart[oi].Publisher;
+        let genre = req.session.userCart[oi].Genre;
+        let price = req.session.userCart[oi].SubtotalPrice;
+        let stock = req.session.userCart[oi].Quantity;
+        let details = "";
+        let weight = req.session.userCart[oi].SubtotalWeight;
+        let product_image = req.session.userCart[oi].Image;
+        let orderId = new_order.id
+        const new_order_item = await order_item.create({
+            id, product_name, author, publisher, genre, price, stock, details, weight, product_image, orderId
+        })
+    }
     // Empty the cart
     req.session.userCart = {};
     req.session.coupon_type = null;
