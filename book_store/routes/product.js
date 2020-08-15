@@ -5,7 +5,6 @@ const moment = require('moment');
 //Models
 const product = require('../models/Product');
 const productadmin = require('../models/ProductAdmin');
-const cartItem = require('../models/CartItem');
 const order = require('../models/Order');
 const order_item = require('../models/OrderItem');
 const User = require('../models/User');

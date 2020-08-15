@@ -9,7 +9,6 @@ const { v1: uuidv1 } = require("uuid");
 
 //Models
 const User = require("../models/User");
-const cartItem = require("../models/CartItem"); //Might need to remove cart item model
 const order = require("../models/Order");
 const orderItem = require("../models/OrderItem");
 
