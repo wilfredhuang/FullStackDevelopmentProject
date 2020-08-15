@@ -15,6 +15,11 @@ const alertMessage = require('../helpers/messenger');
 const Coupon = require('../models/coupon');
 const Discount = require('../models/Discount');
 
+//EasyPost API
+const EasyPost = require("@easypost/api");
+const apiKey = "EZTK29b55ab4ee7a437890e19551520f5dd0uaJjPiW9XsVqXYFNVI0kog";
+const api = new EasyPost(apiKey);
+
 // Stripe Payment - secret key
 const stripe = require('stripe')('sk_test_ns9DyHTray5Wihniw93C2ANH00IMJTVjKw', {
     apiVersion: '2020-03-02',
@@ -1013,53 +1018,189 @@ router.get('/stripepayment', async (req, res) => {
 })
 
 router.post('/stripepayment', async (req, res) => {
-    // create order
-    // order.create({
-    //     fullName, phoneNumber, address, address1, city, country, postalCode
-    // })
-    // for (i in req.session.userCart) {
-    //     delete req.session.userCart[i]
-    //     console.log("User Cart should be empty now")
-    //     console.log(req.session.userCart)
-    // }
+    var total_weight_oz = (0).toFixed(2);
 
-    const new_order = await order.create({
-        fullName: req.session.recipientName, phoneNumber: req.session.recipientPhoneNo, address: req.session.address, address1: req.session.address1,
-        city: req.session.city, country: req.session.countryShipment, postalCode: req.session.postalCode, deliverFee: 0, totalPrice: req.session.full_total_price,  userId:req.user.id
+    // Here's the start of the delivery API
+    const parcel = new api.Parcel({
+        predefined_package: "Parcel",
+        weight: 10, //change number according to weight of total books
+    });
+
+    parcel.save();
+
+    const fromAddress = new api.Address({
+        //default address of company
+        name: "Bookstore",
+        street1: "118 2nd Street",
+        street2: "4th Floor",
+        city: "San Francisco",
+        state: "CA",
+        country: "US",
+        zip: "94105",
+        phone: "415-123-4567",
+        email: "example@example.com",
+      });
+      //fromAddress.save().then(console.log);
+
+    const toAddress = new api.Address({
+        verify: ["delivery"],
+        /*name: fullName,
+        company: "-",
+        street1: address,
+        city: city,
+        state: "-",
+        phone: phoneNumber,
+        country: country,
+        zip: postalCode,*/
+        //example code cos too lazy to type down
+        name: "George Costanza",
+        company: "Vandelay Industries",
+        street1: "1 E 161st St.",
+        phone: "+6590257144",
+        city: "Bronx",
+        state: "NY",
+        //zip: "10451", //Actual zipcode
+        zip: "12412352551",
+    });
+    toAddress
+    .save()
+    .then((addr) => {
+      //console.log(addr);
+      //console.log(addr.verifications)
+      let checkAddress = addr.verifications.delivery.success;
+      //console.log(addr.verifications.delivery.errors[0])
+      if (checkAddress == true) {
+        const shipment = new api.Shipment({
+          to_address: toAddress,
+          from_address: fromAddress,
+          parcel: parcel,
+        });
+        //shipment.save()//.then(console.log);
+        shipment.save().then((s) => {
+          s.buy(shipment.lowestRate(["USPS"], ["First"])).then((t) => {
+            console.log("=============");
+            console.log(t.id);
+            let fullName = req.session.recipientName;
+            let phoneNumber = req.session.recipientPhoneNo; 
+            let address = req.session.address;
+            let address1 = req.session.address1;
+            let city = req.session.city;
+            let country = req.session.countryShipment;
+            let postalCode = req.session.postalCode;
+            let deliverFee = 0;
+            let subtotalPrice = req.session.full_subtotal_price;
+            let totalPrice = req.session.full_total_price;
+            let shippingId = t.id;
+            let addressId = t.to_address.id;
+            let trackingId = t.tracker.id;
+            let trackingCode = t.tracker.tracking_code;
+            let dateStart = t.created_at;
+            let dateEnd = t.tracker.est_delivery_date;
+            let deliveryStatus = t.tracker.status;
+            let userId = req.user.id;
+            order.create({
+                  fullName,
+                  phoneNumber,
+                  address,
+                  address1,
+                  city,
+                  country,
+                  postalCode,
+                  deliverFee,
+                  subtotalPrice,
+                  totalPrice,
+                  shippingId,
+                  addressId,
+                  trackingId,
+                  trackingCode,
+                  dateStart,
+                  dateEnd,
+                  deliveryStatus,
+                  userId,
+              })
+              
+              .then((order) => {
+                  for (oi in req.session.userCart) {
+                      let id = req.session.userCart[oi].ID;
+                      let product_name = req.session.userCart[oi].Name;
+                      let author = req.session.userCart[oi].Author;
+                      let publisher = req.session.userCart[oi].Publisher;
+                      let genre = req.session.userCart[oi].Genre;
+                      let price = req.session.userCart[oi].SubtotalPrice;
+                      let stock = req.session.userCart[oi].Quantity;
+                      let details = "";
+                      let weight = req.session.userCart[oi].SubtotalWeight;
+                      let product_image = req.session.userCart[oi].Image;
+                      let orderId = order.id
+                      total_weight_oz = (parseFloat(total_weight_oz) + parseFloat(weight)).toFixed(2)
+                      const new_order_item = order_item.create({
+                          id, product_name, author, publisher, genre, price, stock, details, weight, product_image, orderId
+                      })
+                  }
+                  console.log(order);
+                  res.redirect("/delivery/checkout2");
+                  let trackingCode = order.dataValues.trackingCode;
+                  api.Tracker.retrieve(trackingCode).then((t) => {
+                      console.log(t.public_url);
+                      let trackingURL = t.public_url;
+                      // client.messages
+                      //   .create({
+                      //     body:
+                      //       "Thank you for your purchase from the Book Store. Your tracking code is " +
+                      //       trackingCode +
+                      //       " and check your delivery here!\n" +
+                      //       trackingURL,
+                      //     from: "+12059461964",
+                      //     to: "+6590251744",
+                      //   })
+                      //   .then((message) => console.log(message.sid));
+                    
+                    
+
+                    // Empty the cart
+                      req.session.userCart = {};
+                      req.session.coupon_type = null;
+                      req.session.discount = 0;
+                      req.session.discount_limit = 0;
+                      req.session.discounted_price = (0).toFixed(2);
+                      req.session.shipping_discount = 0;
+                      req.session.shipping_discount_limit = 0;
+                      req.session.shipping_discounted_price = 0;
+                      req.session.sub_discount = 0;
+                      req.session.sub_discount_limit = 0;
+                      req.session.sub_discounted_price = 0;
+                      req.session.full_subtotal_price = 0;
+                      req.session.full_total_price = 0;
+                      req.session.deducted = 0;
+                      req.session.save();
+                  });
+              });
+          });
+        });
+            
+            console.log("its true");
+            //res.redirect("/delivery/checkout2");
+        } else {
+            console.log("its false");
+            alertMessage(
+                res,
+                "danger",
+                "Please enter a valid address",
+                "fas faexclamation-circle",
+                true
+            );
+            res.redirect("/delivery/checkout");
+        }
+        //console.log(addr.verifications.errors);
     })
+        .catch((e) => {
+            console.log(e); //check errors
+        });
 
-    for (oi in req.session.userCart) {
-        let id = req.session.userCart[oi].ID;
-        let product_name = req.session.userCart[oi].Name;
-        let author = req.session.userCart[oi].Author;
-        let publisher = req.session.userCart[oi].Publisher;
-        let genre = req.session.userCart[oi].Genre;
-        let price = req.session.userCart[oi].SubtotalPrice;
-        let stock = req.session.userCart[oi].Quantity;
-        let details = "";
-        let weight = req.session.userCart[oi].SubtotalWeight;
-        let product_image = req.session.userCart[oi].Image;
-        let orderId = new_order.id
-        const new_order_item = await order_item.create({
-            id, product_name, author, publisher, genre, price, stock, details, weight, product_image, orderId
-        })
-    }
-    // Empty the cart
-    req.session.userCart = {};
-    req.session.coupon_type = null;
-    req.session.discount = 0;
-    req.session.discount_limit = 0;
-    req.session.discounted_price = (0).toFixed(2);
-    req.session.shipping_discount = 0;
-    req.session.shipping_discount_limit = 0;
-    req.session.shipping_discounted_price = 0;
-    req.session.sub_discount = 0;
-    req.session.sub_discount_limit = 0;
-    req.session.sub_discounted_price = 0;
-    req.session.full_total_price = 0;
-    req.session.deducted = 0;
+    // End of delivery api
+
     alertMessage(res, 'success', 'Order placed', 'fas fa-exclamation-circle', true)
-    res.redirect("/delivery/checkout2");
+    // res.redirect("/delivery/checkout2");
 
 })
 
