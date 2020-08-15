@@ -1265,13 +1265,13 @@ router.post('/paynow', async (req, res) => {
     }
 
     // This block of code below will send a message
-    client.messages
-        .create({
-            body: 'You made an order with BookStore via payNow/payLah!, you will be notified again when your order is confirmed',
-            from: '+14242066417',
-            to: '+6587558054'
-        })
-        .then(message => console.log(message.sid));
+    // client.messages
+    //     .create({
+    //         body: 'You made an order with BookStore via payNow/payLah!, you will be notified again when your order is confirmed',
+    //         from: '+14242066417',
+    //         to: '+6587558054'
+    //     })
+    //     .then(message => console.log(message.sid));
 
     // req.session.recipientName = req.body.fullName
     // req.session.recipientPhoneNo = req.body.phoneNumber
@@ -1307,28 +1307,227 @@ router.get('/viewPendingOrders', async (req, res) => {
     // let PendingOrderItems = await Pending_OrderItem.findAll({})
     // let PendingOrderItems = PendingOrders.PendingOrderItems
 
+    const title = "View Pending Orders";
+
     Pending_Order
     .findAll({
       where:{
       },
       include:[{model:Pending_OrderItem}]
     }).then((pending_order)=> {
+        // console.log("TESTING")
+        // console.log(pending_order[6]);
+        // console.log("TESTING AGAIN")
+        // console.log(pending_order[6].pending_orderitems)
+        // console.log(pending_order[0].Pending_OrderItem);
+        // console.log(pending_order[0].PendingOrderItems);
         res.render('checkout/viewPendingOrders', {
-            PendingOrders: pending_order,
-            PendingOrderItems: pending_order.PendingOrderItems
+            PendingOrders: pending_order
+            // Don't need this below, wont work when rendering
+            // PendingOrderItems: pending_order.pending_orderitems
         })
     })
 
     // console.log("PENDING ORDER ITEMS ARE " + PendingOrders.Pending_OrderItem)
 }),
 
-router.get('/viewPendingOrders/:id', async(req, res) => {
+router.get('/ConfirmPOrder/:id', async(req, res) => {
+    const PO = await Pending_Order.findOne({where: {id: req.params.id}})
+    const POI = await Pending_OrderItem.findAll({where: {pendingOrderId: PO.id}})
 
+
+    const parcel = new api.Parcel({
+        predefined_package: "Parcel",
+        weight: 10, //change number according to weight of total books
+    });
+
+    parcel.save();
+
+    const fromAddress = new api.Address({
+        //default address of company
+        name: "Bookstore",
+        street1: "118 2nd Street",
+        street2: "4th Floor",
+        city: "San Francisco",
+        state: "CA",
+        country: "US",
+        zip: "94105",
+        phone: "415-123-4567",
+        email: "example@example.com",
+      });
+      //fromAddress.save().then(console.log);
+
+    const toAddress = new api.Address({
+        verify: ["delivery"],
+        /*name: fullName,
+        company: "-",
+        street1: address,
+        city: city,
+        state: "-",
+        phone: phoneNumber,
+        country: country,
+        zip: postalCode,*/
+        //example code cos too lazy to type down
+        name: "George Costanza",
+        company: "Vandelay Industries",
+        street1: "1 E 161st St.",
+        phone: "+6590257144",
+        city: "Bronx",
+        state: "NY",
+        //zip: "10451", //Actual zipcode
+        zip: "12412352551",
+    });
+    toAddress
+    .save()
+    .then((addr) => {
+      //console.log(addr);
+      //console.log(addr.verifications)
+      let checkAddress = addr.verifications.delivery.success;
+      //console.log(addr.verifications.delivery.errors[0])
+      if (checkAddress == true) {
+        const shipment = new api.Shipment({
+          to_address: toAddress,
+          from_address: fromAddress,
+          parcel: parcel,
+        });
+        //shipment.save()//.then(console.log);
+        shipment.save().then((s) => {
+          s.buy(shipment.lowestRate(["USPS"], ["First"])).then((t) => {
+            console.log("=============");
+            console.log(t.id);
+            let fullName = PO.id;
+            let phoneNumber = PO.phoneNumber; 
+            let address = PO.address;
+            let address1 = PO.address1;
+            let city = PO.city;
+            let country = PO.country;
+            let postalCode = PO.postalCode;
+            let deliverFee = PO.deliverFee;
+            let subtotalPrice = PO.subtotalPrice;
+            let totalPrice = PO.totalPrice;
+            let shippingId = t.id;
+            let addressId = t.to_address.id;
+            let trackingId = t.tracker.id;
+            let trackingCode = t.tracker.tracking_code;
+            let dateStart = t.created_at;
+            let dateEnd = t.tracker.est_delivery_date;
+            let deliveryStatus = t.tracker.status;
+            let userId = PO.userId;
+            order.create({
+                  fullName,
+                  phoneNumber,
+                  address,
+                  address1,
+                  city,
+                  country,
+                  postalCode,
+                  deliverFee,
+                  subtotalPrice,
+                  totalPrice,
+                  shippingId,
+                  addressId,
+                  trackingId,
+                  trackingCode,
+                  dateStart,
+                  dateEnd,
+                  deliveryStatus,
+                  userId,
+              })
+              
+              .then((order) => {
+                  for (oi in POI) {
+                    //   let id = req.session.userCart[oi].ID;
+                      let product_name = POI[oi].product_name;
+                      let author = POI[oi].author;
+                      let publisher = POI[oi].publisher;
+                      let genre = POI[oi].genre;
+                      let price = POI[oi].price;
+                      let stock = POI[oi].stock;
+                      let details = "";
+                      let weight = POI[oi].weight;
+                      let product_image = POI[oi].product_image;
+                      let orderId = order.id
+                      order_item.create({
+                          product_name, author, publisher, genre, price, stock, details, weight, product_image, orderId
+                      })
+                  }
+                  console.log(order);
+                  // Delete pending orders and pois since order confirmed already
+                  PO.destroy();
+                  for (i in POI) {
+                      console.log(`Deleting Product ${i}`)
+                      POI[i].destroy();
+                  }
+                  alertMessage(res, 'success', `Confirmed Order ${order.id} which belongs to user of id ${order.userId}`, 'fas fa-exclamation-circle', true)
+                  res.redirect('/product/viewPendingOrders');
+                  let trackingCode = order.dataValues.trackingCode;
+                  api.Tracker.retrieve(trackingCode).then((t) => {
+                      console.log(t.public_url);
+                      let trackingURL = t.public_url;
+                      client.messages
+                        .create({
+                          body:
+                            "Your order has been confirmed!" +
+                            "Thank you for your purchase from the Book Store. Your tracking code is " +
+                            trackingCode +
+                            " and check your delivery here!\n" +
+                            trackingURL,
+                          from: "+14242066417",
+                          to: order.phoneNumber,
+                        })
+                        .then((message) => console.log(message.sid));
+                  });
+              });
+          });
+        });
+            
+            console.log("its true");
+            //res.redirect("/delivery/checkout2");
+        } else {
+            console.log("its false");
+            alertMessage(
+                res,
+                "danger",
+                "Please enter a valid address",
+                "fas faexclamation-circle",
+                true
+            );
+            res.redirect('/product/viewPendingOrders');
+        }
+        //console.log(addr.verifications.errors);
+    })
+        .catch((e) => {
+            console.log(e); //check errors
+        });
 })
 
-router.post('/viewPendingOrders', (req, res) => {
-    res.redirect('viewPendingOrders')
+router.get('/DeletePOrder/:id', async (req, res) => {
+    // Code commented out below does work... but doesn't remove pending order items associated with it when a PO is deleted
+    // Pending_Order.findOne({where: {id: req.params.id}, include:[{model:Pending_OrderItem}]})
+    // .then((po)=> {
+    //     po.destroy();
+    // })
+
+    const PO = await Pending_Order.findOne({where: {id: req.params.id}})
+    const POI = await Pending_OrderItem.findAll({where: {pendingOrderId: PO.id}})
+    // console.log("POI IS")
+    // console.log(POI[0].destroy())
+    client.messages
+    .create({
+        body:"From BookStore: We are sorry to inform you that your order has cancelled by the administrator due to lack of payment",
+        from: "+14242066417",
+        to: PO.phoneNumber,
+    })
+    .then((message) => console.log(message.sid));
+    alertMessage(res, 'success', `Pending Order with ID ${PO.id} Deleted`, 'fas fa-exclamation-circle', true)
+    PO.destroy();
+    for (i in POI) {
+        console.log(`Deleting Product ${i}`)
+        POI[i].destroy();
+    }
+    res.redirect('/product/viewPendingOrders')
 })
+
 
 router.get('/createCoupon', (req, res) => {
     // if (!req.session.public_coupon) {
