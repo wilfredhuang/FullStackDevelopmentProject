@@ -2,7 +2,7 @@
     <div class="container">
         <a class="breadcrumb-item" href="/">Home</a>
         <a class="breadcrumb-item" href="/user/userPage">User Page</a>
-        <a class="breadcrumb-item" href="/user/userRecentOrder">Order History</a>
+        <a class="breadcrumb-item" href="/user/orderHistory">Order History</a>
         <span class="breadcrumb-item active">Delivery Information</span>
     </div>
 </div>
@@ -21,6 +21,7 @@
                 <br>
                 <p>Check <a href="{{trackingURL}}">here</a> for more delivery information.</p>
                 <br>
+                <hr>
                 {{#if orderitems}}
                 {{#each orderitems}}
                 <div class="row">
@@ -30,8 +31,8 @@
                     <div class="col-md-10">
                         <h4>{{product_name}}</h4>
                         <!--- add in link here--->
-                        <p>{{author}}, {{genre}}, etc</p>
-                        <p class="price">{{price}}</p>
+                        <p>{{author}} | {{genre}}</p>
+                        <p class="price">${{price}}</p>
                         {{!-- <p>Amount: {{amount}}</p> --}}
                     </div>
                 </div>
@@ -45,6 +46,8 @@
                 {{/if}}
             </div>
             <div class="col-md-4">
+                <a href="/delivery/displayLabelUrl/{{order.shippingId}}">da</a>
+                {{order.shippingId}}
                 {{#if order}}
                 <div class="right-sidebar">
                     <h3>Delivery Address</h3>
@@ -77,9 +80,9 @@
                     <hr>
                     <div class="row">
                         <div class="col">
-                            <p>Subtotal: </p>
+                            <p>Subtotal: ${{order.subtotalPrice}}</p>
                             <p>Delivery Fee: Free</p>
-                            <p>Total: {{order.totalPrice}}</p>
+                            <p>Total: ${{order.totalPrice}}</p>
                         </div>
                     </div>
                 </div>

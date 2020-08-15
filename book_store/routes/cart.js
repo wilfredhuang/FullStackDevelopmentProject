@@ -6,7 +6,7 @@ const orderItem = require("../models/OrderItem");
 const ensureAuthenticated = require("../helpers/auth");
 
 //Request Function
-const request = require('request');
+const request = require("request");
 
 //EasyPost API
 const EasyPost = require("@easypost/api");
@@ -22,14 +22,13 @@ const client = require("twilio")(accountSid, authToken);
 const secretKey = "6Le367IZAAAAAJ042sFATGXzwqHsO6N3f38W4G81";
 
 //QR Code
-var QRCode = require('qrcode')
+var QRCode = require("qrcode");
 
 //NodeMailer
-const nodemailer = require('nodemailer');
+const nodemailer = require("nodemailer");
 
 //Email Template
 //const Email = require('email-templates');
-
 
 //Post user's address info to EasyPost API
 // router.post("/processCheckout", (req, res) => {
@@ -172,7 +171,6 @@ const nodemailer = require('nodemailer');
 //     });
 // });
 
-
 //after checkout page
 // router.get("/checkout2",ensureAuthenticated, (req, res) => {
 //   const title = "Thank You";
@@ -183,19 +181,21 @@ const nodemailer = require('nodemailer');
 // });
 
 //view More Details of Order //still uses cart.js for example, will change later on
-router.get("/viewMoreOrder/:id", ensureAuthenticated,(req, res) => {
+router.get("/viewMoreOrder/:id", ensureAuthenticated, (req, res) => {
   const title = "Order Details";
   // CartItem.findAll({
   //   userId:req.user.id,
   //   //id: req.params.id,
   //   //orderId:req.order.id,
   // })
+  console.log("helllo");
+  console.log(req.params.id);
   Order.findOne({
     where: {
       userId: req.user.id,
       id: req.params.id,
     },
-    include:[{model:orderItem}]
+    include: [{ model: orderItem }],
   }).then((order) => {
     console.log("===========");
     const shippingId = order.shippingId;
@@ -205,7 +205,7 @@ router.get("/viewMoreOrder/:id", ensureAuthenticated,(req, res) => {
       console.log(s.tracker.updated_at);
       const deliveryStatus = s.tracker.status;
       const trackingURL = s.tracker.public_url;
-      if (deliveryStatus == "pre_transit"){
+      if (deliveryStatus == "pre_transit") {
         let progressPercentage = 25;
         let progressColour = "bg-info";
         let progressColourText = "text-info";
@@ -217,105 +217,113 @@ router.get("/viewMoreOrder/:id", ensureAuthenticated,(req, res) => {
           trackingURL,
           progressPercentage,
           progressColour,
-          progressColourText
+          progressColourText,
         });
-      }
-      else if (deliveryStatus == "in_transit"){
+      } else if (deliveryStatus == "in_transit") {
         let progressPercentage = 50;
         let progressColour = "bg-info";
         let progressColourText = "text-info";
         let deliveryStatusResult = "In-transit";
         res.render("user/viewMoreOrder", {
           order: order,
-          orderitems:order.orderitems,
+          orderitems: order.orderitems,
           title,
           deliveryStatusResult,
           trackingURL,
           progressPercentage,
           progressColour,
-          progressColourText
+          progressColourText,
         });
-      }
-      else if (deliveryStatus == "out_for_delivery"){
+      } else if (deliveryStatus == "out_for_delivery") {
         let progressPercentage = 75;
         let progressColour = "bg-info";
         let progressColourText = "text-info";
         let deliveryStatusResult = "Out for delivery";
         res.render("user/viewMoreOrder", {
           order: order,
-          orderitems:order.orderitems,
+          orderitems: order.orderitems,
           title,
           deliveryStatusResult,
           trackingURL,
           progressPercentage,
           progressColour,
-          progressColourText
+          progressColourText,
         });
-      }
-      else if (deliveryStatus == "delivered"){
+      } else if (deliveryStatus == "delivered") {
         let progressPercentage = 100;
         let progressColour = "bg-success";
         let progressColourText = "text-success";
         let deliveryStatusResult = "Delivered";
         res.render("user/viewMoreOrder", {
           order: order,
-          orderitems:order.orderitems,
+          orderitems: order.orderitems,
           title,
           deliveryStatusResult,
           trackingURL,
           progressPercentage,
           progressColour,
-          progressColourText
+          progressColourText,
         });
-      }
-      else if (deliveryStatus == "return_to_sender"){
+      } else if (deliveryStatus == "return_to_sender") {
         let progressPercentage = 0;
         let progressColour = "bg-info";
         let progressColourText = "text-info";
         let deliveryStatusResult = "Return to sender";
         res.render("user/viewMoreOrder", {
           order: order,
-          orderitems:order.orderitems,
+          orderitems: order.orderitems,
           title,
           deliveryStatusResult,
           trackingURL,
           progressPercentage,
           progressColour,
-          progressColourText
+          progressColourText,
         });
-      }
-      else if (deliveryStatus == "failure"){
+      } else if (deliveryStatus == "failure") {
         let progressPercentage = 100;
         let progressColour = "bg-danger";
         let progressColourText = "text-danger";
         let deliveryStatusResult = "Failure";
         res.render("user/viewMoreOrder", {
           order: order,
-          orderitems:order.orderitems,
+          orderitems: order.orderitems,
           title,
           deliveryStatusResult,
           trackingURL,
           progressPercentage,
           progressColour,
-          progressColourText
+          progressColourText,
         });
-      }
-      else{
+      } else {
         let progressPercentage = 0;
         let progressColour = "bg-dark";
         let progressColourText = "text-dark";
         let deliveryStatusResult = "Unknown";
         res.render("user/viewMoreOrder", {
           order: order,
-          orderitems:order.orderitems,
+          orderitems: order.orderitems,
           title,
           deliveryStatusResult,
           trackingURL,
           progressPercentage,
           progressColour,
-          progressColourText
+          progressColourText,
         });
       }
+    });
+  });
+});
+
+router.get("/displayLabelUrl/:id", (req, res) => {
+  console.log(req.params.id);
+  let shippingId = req.params.id;
+  api.Shipment.retrieve(shippingId).then((s) => {
+    s.convertLabelFormat("PDF").then((sr) => {
+      let postageLabelUrlPNG = sr.postage_label.label_url;
+      let postageLabelUrlPDF = sr.postage_label.label_pdf_url;
+      console.log(postageLabelUrlPNG);
+      console.log(postageLabelUrlPDF);
+      res.redirect(postageLabelUrlPDF);
     });
   });
 });

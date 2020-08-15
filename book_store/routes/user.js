@@ -193,7 +193,8 @@ router.get("/orderHistoryAdmin", ensureAuthenticated, (req, res) => {
     });
 });
 
-router.get("/userRecentOrder", ensureAuthenticated, (req, res) => {
+
+router.get("/orderHistory", ensureAuthenticated, (req, res) => {
   const title = "Order History";
   order
     .findAll({
@@ -206,12 +207,12 @@ router.get("/userRecentOrder", ensureAuthenticated, (req, res) => {
       console.log(
         "========================these is orders======================="
       );
-      //console.log(order)
+      console.log(order[0])
       console.log(
         "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
       );
       console.log(order[0].orderitems);
-      res.render("user/userRecentOrder1", {
+      res.render("user/orderHistoryPageUser", {
         order: order,
         orderitems: order.orderitems,
         title
