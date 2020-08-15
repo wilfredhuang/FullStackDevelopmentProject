@@ -1145,7 +1145,7 @@ router.post('/stripepayment', async (req, res) => {
                       })
                   }
                   console.log(order);
-                  res.redirect("/delivery/checkout2");
+                  res.redirect("/product/stripetxn_end");
                   let trackingCode = order.dataValues.trackingCode;
                   api.Tracker.retrieve(trackingCode).then((t) => {
                       console.log(t.public_url);
@@ -1179,6 +1179,7 @@ router.post('/stripepayment', async (req, res) => {
                       req.session.full_subtotal_price = 0;
                       req.session.full_total_price = 0;
                       req.session.deducted = 0;
+                      req.session.coupon_type = null;
                       req.session.save();
                   });
               });
@@ -1308,9 +1309,24 @@ router.post('/paynow', async (req, res) => {
     req.session.full_subtotal_price = 0;
     req.session.full_total_price = 0;
     req.session.deducted = 0;
+    req.session.coupon_type = null;
     alertMessage(res, 'success', 'Order placed, the administrator will shortly confirm your payment', 'fas fa-exclamation-circle', true)
-    res.redirect("/delivery/checkout2");
+    res.redirect("/product/paynowtxn_end");
 
+})
+
+router.get('/stripetxn_end', (req, res) => {
+    title = "Thank you!"
+    res.render('checkout/thankYouStripe', {
+        title
+    })
+})
+
+router.get('/paynowtxn_end', (req, res) => {
+    title = "Thank you!"
+    res.render('checkout/thankYouPayNow', {
+        title
+    })
 })
 
 // Admin Side
