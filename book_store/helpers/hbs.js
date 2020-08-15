@@ -33,7 +33,7 @@ module.exports = {
   },
 
   adminCheck: function (value) {
-    if (value != null && value.name == "admin") {
+    if (value != null && value.isadmin == true) {
       console.log("Admin Account Detected");
       return true;
     } else if (value != null) {

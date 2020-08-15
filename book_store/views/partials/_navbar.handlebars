@@ -34,7 +34,14 @@
                         <li class="navbar-item {{navStatusFAQ}}">
                             <a href="/faq" class="nav-link">FAQ</a>
                         </li>
-                        {{#if user}}
+                        {{#if (adminCheck user)}}
+                        <li class="navbar-item">
+                            <a href="/user/admin" class="nav-link">Admin Page</a>
+                        </li>
+                        <li class="navbar-item">
+                            <a href="/user/logout" class="nav-link">Logout</a>
+                        </li>
+                        {{else if user}}
                         <li class="navbar-item">
                             <a href="/user/userpage" class="nav-link">User Page</a>
                         </li>
