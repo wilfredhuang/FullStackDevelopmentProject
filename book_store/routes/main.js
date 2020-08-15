@@ -1,6 +1,5 @@
 const express = require("express");
 const router = express.Router();
-const cartItem = require("../models/CartItem");
 const alertMessage = require("../helpers/messenger");
 const Coupon = require('../models/coupon');
 const moment = require('moment');
