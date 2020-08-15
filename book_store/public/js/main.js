@@ -10,13 +10,6 @@ const api = new EasyPost(apiKey);
 //     Date(data.Released)).format('DD/MM/YYYY');
 // }
 
-// const request = require('request');
-// request('http://www.google.com', function (error, response, body) {
-//   console.error('error:', error); // Print the error if one occurred
-//   console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
-//   console.log('body:', body); // Print the HTML for the Google homepage.
-// });
-
 // console.log('platform:', process.platform);
 //console.log('try to print file: ' + filename);
 //console.log("installed printers:\n"+util.inspect(printer.getPrinters(), {colors:true, depth:10}));
@@ -156,74 +149,3 @@ request(options, (err, response, body) => {
 //   }
 // }).then(console.log)
 
-
-// function authenticate(authData) {
-//   console.log(authData);
-// }
-
-// function error(err) {
-//   console.error(err);
-// }
-
-// var ws = new PrintNode.WebSocket(
-//   { apiKey: "insert apikey here" },
-//   authenticate,
-//   error
-// );
-// ws.subscribe("authenticate", function (authData) {
-//   console.log(authData);
-// });
-
-// var printer = require("@thiagoelg/node-printer"),
-//   imagemagick, // will be loaded later with proper error.
-//   fs = require("fs"),
-//   filename = "https://easypost-files.s3-us-west-2.amazonaws.com/files/postage_label/20200815/bbf6eec2a93a475bbcd841777d0dc837.pdf",
-//   printername = process.argv[2];
-
-// if (process.platform !== "win32") {
-//   throw "This application can be run only on win32 as a demo of print PDF image";
-// }
-
-// if (!filename) {
-//   throw "PDF file name is missing. Please use the following params: <filename> [printername]";
-// }
-
-// try {
-//   imagemagick = require("imagemagick-native");
-// } catch (e) {
-//   throw "please install imagemagick-native: `npm install imagemagick-native`";
-// }
-
-// var data = fs.readFileSync(filename);
-
-// console.log("data: " + data.toString().substr(0, 20));
-
-// //console.log(imagemagick.identify({srcData: data}));
-
-// // First convert PDF into
-// imagemagick.convert(
-//   {
-//     srcData: data,
-//     srcFormat: "PDF",
-//     format: "EMF",
-//   },
-//   function (err, buffer) {
-//     if (err) {
-//       throw "something went wrong on converting to EMF: " + err;
-//     }
-
-//     // Now we have EMF file, send it to printer as EMF format
-//     printer.printDirect({
-//       data: buffer,
-//       type: "EMF",
-//       success: function (id) {
-//         console.log("printed with id " + id);
-//       },
-//       error: function (err) {
-//         console.error("error on printing: " + err);
-//       },
-//     });
-//   }
-// );
-
-// console.log(printer.setJob())
