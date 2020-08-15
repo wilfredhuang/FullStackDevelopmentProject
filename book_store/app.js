@@ -76,7 +76,7 @@ const FlashMessenger = require('flash-messenger');
 // Bring in database connection 
 const vidjotDB = require('./config/DBConnection');
 // Connects to MySQL database 
-vidjotDB.setUpDB(true); // To set up database with new tables set (true)
+vidjotDB.setUpDB(false); // To set up database with new tables set (true)
 
 // Passport Config - P4A2
 const authenticate = require('./config/passport'); 
