@@ -87,7 +87,7 @@ authenticate.localStrategy(passport);
 
 // global.userCart = {};
 // Bring in Handlebars Helpers here
-const {convertUpper, adminCheck, emptyCart, cartQty, formatDate, capitaliseFirstLetter, isSg, checkPromo, convertDiscount, displayCouponType, get_old_subtotal, check_subtotal, retrieveDeliveryStatus} = require('./helpers/hbs');
+const {convertUpper, adminCheck, emptyCart, cartQty, formatDate, capitaliseFirstLetter, isSg, checkPromo, convertDiscount, displayCouponType, get_old_subtotal, check_subtotal, check_for_discount_msg, retrieveDeliveryStatus} = require('./helpers/hbs');
 const {when} = require('./helpers/for_loop');
 
 // creates an express server
@@ -109,6 +109,7 @@ app.engine('handlebars', exphbs({
 		displayCouponType:displayCouponType,
 		get_old_subtotal: get_old_subtotal,
 		check_subtotal: check_subtotal,
+		check_for_discount_msg: check_for_discount_msg,
 		retrieveDeliveryStatus:retrieveDeliveryStatus,
 		when: when,
 	},					

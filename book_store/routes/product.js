@@ -56,7 +56,7 @@ router.get('/listProduct', (req, res) => {
         })
 });
 
-router.get('/individualProduct/:id', (req, res) => {
+router.get('/individualProduct/:id', async (req, res) => {
     const title = "Product Information";
     // Discount.findOne({
     //     where: {
@@ -76,6 +76,10 @@ router.get('/individualProduct/:id', (req, res) => {
     //             });
     //         })
     // })
+    const disc = await Discount.findOne({
+        where: {target_id: req.params.id}
+    })
+
     productadmin.findOne({
         where: {
             id: req.params.id
@@ -84,7 +88,8 @@ router.get('/individualProduct/:id', (req, res) => {
         .then((product) => {
             res.render('products/individualProduct', {
                 product,
-                title
+                title,
+                disc
             });
         })
 });

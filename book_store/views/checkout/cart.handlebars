@@ -93,8 +93,12 @@
             <div class="col-3">
                 <p> Subtotal Price </p>
             </div>
-            <div class="col-3">
+            <!-- This div below is the old version which check for any discounted subtotal and will change display -->
+            {{!-- <div class="col-3">
                 <p>&nbsp;${{full_subtotal_price}} {{#if (check_subtotal full_og_subtotal_price full_subtotal_price)}} <del> {{full_og_subtotal_price}} </del> {{/if}} </p>
+            </div> --}}
+            <div class="col-3">
+                <p>&nbsp;${{full_og_subtotal_price}} </p>
             </div>
         </div>
         <div class="card-body d-flex flex-row row">

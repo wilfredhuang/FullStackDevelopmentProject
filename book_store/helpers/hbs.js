@@ -148,6 +148,14 @@ module.exports = {
     }
   },
 
+  check_for_discount_msg: function(msg){
+    if (msg == null || undefined) {
+      msg = ""
+    }
+
+    return msg
+  },
+
   retrieveDeliveryStatus: function (shipmentID) {
     api.Shipment.retrieve(shipmentID).then((s) => {
       let deliveryStatus = s.status;
