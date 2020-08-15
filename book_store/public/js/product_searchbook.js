@@ -46,10 +46,7 @@ function getBook() {
         });
 }
 
-
 //AIzaSyA6Q9oqGie8vr5XgkvlTkhFvufujR2UPOk
-
-
 
 function search() {
   // Declare variables

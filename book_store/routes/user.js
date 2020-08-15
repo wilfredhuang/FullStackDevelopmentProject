@@ -1,32 +1,42 @@
 const express = require("express");
 const router = express.Router();
 // User register URL using HTTP post => /user/register
-const User = require("../models/User");
 const alertMessage = require("../helpers/messenger");
 const bcrypt = require("bcryptjs");
 const passport = require("passport");
-const cartItem = require("../models/CartItem");
-const order = require("../models/Order");
 const ensureAuthenticated = require("../helpers/auth");
 const { v1: uuidv1 } = require("uuid");
 const request = require('request');
 const secretKey = "6Le367IZAAAAAJ042sFATGXzwqHsO6N3f38W4G81";
 
-//admin auth 
+//Models
+const User = require("../models/User");
+const order = require("../models/Order");
+const orderItem = require("../models/OrderItem");
+
+//admin auth
 const ensureAdmin = (req, res, next) => {
-  if(req.isAuthenticated() ) { // If user is authenticated
-      console.log(req.user.confirmed);
-      if (req.user.isadmin == true){
-              return next(); // Calling next() to proceed to the next statement
-          }
+  if (req.isAuthenticated()) {
+    // If user is authenticated
+    console.log(req.user.confirmed);
+    if (req.user.isadmin == true) {
+      return next(); // Calling next() to proceed to the next statement
+    }
   }
-      // If not authenticated, show alert message and redirect to ‘/’
-  alertMessage(res, 'danger', 'Access Denied', 'fas fa-exclamation-circle', true);
-  res.redirect('/');
+  // If not authenticated, show alert message and redirect to ‘/’
+  alertMessage(
+    res,
+    "danger",
+    "Access Denied",
+    "fas fa-exclamation-circle",
+    true
+  );
+  res.redirect("/");
 };
 //NodeMailer
 const nodemailer = require("nodemailer");
 const jwt = require("jsonwebtoken");
+const { reservationsUrl } = require("twilio/lib/jwt/taskrouter/util");
 const SECRET = "fX7UvuRP55";
 const SECRET_2 = "NZqudk2svw";
 
@@ -209,17 +219,17 @@ router.get(
   })
 );
 
-router.get("/userPage",ensureAuthenticated, (req, res) => {
+router.get("/userPage", ensureAuthenticated, (req, res) => {
   const title = "User Information";
-  if(req.user.facebookId != null){
-    res.render('user/facebookuserpage', {
+  if (req.user.facebookId != null) {
+    res.render("user/facebookuserpage", {
       title,
     });
-  }else{
-  res.render("user/userpage", {
-    title,
-  });
-}
+  } else {
+    res.render("user/userpage", {
+      title,
+    });
+  }
 });
 
 router.get("/userRecentOrder", ensureAuthenticated,(req, res) => {
@@ -267,27 +277,41 @@ router.get("/userCart", (req, res) => {
 });
 
 router.get("/login", (req, res) => {
-  res.render("user/login");
+  const title = "Login";
+  res.render("user/login", {
+    title,
+  });
 });
 
-router.post('/login', function(req, res, next) {
-  passport.authenticate('local', function(err, user, info) {
-    if (err) { return next(err); }
-    if (!user) { return res.redirect('/login'); }
-    req.logIn(user, function(err) {
-      if (err) { return next(err);}
-      else if (user.isadmin == true){
-        return res.redirect('/user/admin');
+router.post("/login", function (req, res, next) {
+  passport.authenticate("local", function (err, user, info) {
+    if (err) {
+      return next(err);
+    }
+    if (!user) {
+      return res.redirect("/login");
+    }
+    req.logIn(user, function (err) {
+      if (err) {
+        return next(err);
+      } else if (user.isadmin == true) {
+        return res.redirect("/user/admin");
       }
-      return res.redirect('/');
+      return res.redirect("/");
     });
   })(req, res, next);
 });
-router.get("/admin",ensureAdmin, (req, res) => {
-  res.render("user/adminmenu");
+router.get("/admin", ensureAdmin, (req, res) => {
+  const title = "Admin Page";
+  res.render("user/adminmenu", {
+    title,
+  });
 });
 router.get("/register", (req, res) => {
-  res.render("user/register");
+  const title = "Register";
+  res.render("user/register", {
+    title,
+  });
 });
 
 router.post("/register", (req, res) => {
@@ -412,12 +436,18 @@ router.post("/userPage/changeinfo",ensureAuthenticated, (req, res) => {
 });
   
 
-router.get("/userPage/changeinfo",ensureAuthenticated, function (req, res) {
-  res.render("user/changeinfo");
+router.get("/userPage/changeinfo", ensureAuthenticated, function (req, res) {
+  const title = "Change Information";
+  res.render("user/changeinfo", {
+    title,
+  });
 });
 
-router.get("/userPage/changeaddress",ensureAuthenticated, function (req, res) {
-  res.render("user/changeaddress");
+router.get("/userPage/changeaddress", ensureAuthenticated, function (req, res) {
+  const title = "Change Address";
+  res.render("user/changeaddress", {
+    title,
+  });
 });
 router.post("/userPage/changeaddress",ensureAuthenticated, (req, res) => {
   let errors = [];
@@ -443,9 +473,15 @@ router.post("/userPage/changeaddress",ensureAuthenticated, (req, res) => {
     if (postalCode != '') {
       user.update({ postalCode: req.body.postalCode});
     }
-    alertMessage(res,"success","information has been updated","fas fa-sign-in-alt",true);
-    res.redirect('/user/userpage')
-  })
+    alertMessage(
+      res,
+      "success",
+      "information has been updated",
+      "fas fa-sign-in-alt",
+      true
+    );
+    res.redirect("/user/userpage");
+  });
 });
 
 module.exports = router;
