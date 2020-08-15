@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const moment = require('moment');
+
+//Models
 const product = require('../models/Product');
 const productadmin = require('../models/ProductAdmin');
 const cartItem = require('../models/CartItem');
@@ -312,7 +314,6 @@ router.get('/listproduct/:id', async (req, res, next) => {
 
 
 // Add to Cart - individual page
-
 router.post('/individualProduct/:id', async (req, res, next) => {
     // 'Add to Cart' button passes value of product id to server
     // queries product id with database
