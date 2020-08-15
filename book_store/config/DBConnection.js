@@ -5,6 +5,8 @@ const order = require('../models/Order');
 const ProductAdmin = require('../models/ProductAdmin')
 const Discount = require('../models/Discount');
 const orderItem = require('../models/OrderItem');
+const pending_order = require('../models/Pending_Orders');
+const pending_orderItem = require('../models/Pending_OrderItem');
 
 // If drop is true, all existing tables are dropped and recreated 
 const setUpDB = (drop) => {
@@ -25,6 +27,10 @@ const setUpDB = (drop) => {
             order.belongsTo(user);
             order.hasMany(orderItem);
             orderItem.belongsTo(order);
+            user.hasMany(pending_order);
+            pending_order.belongsTo(user);
+            pending_order.hasMany(pending_orderItem);
+            pending_orderItem.belongsTo(pending_order);
 
             //order.hasMany(cartItem);
             //cartItem.belongsTo(order);

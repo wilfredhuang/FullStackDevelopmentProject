@@ -8,6 +8,7 @@ const order = require('../models/Order');
 const order_item = require('../models/OrderItem');
 const User = require('../models/User');
 const Pending_Order = require('../models/Pending_Orders');
+const Pending_OrderItem = require('../models/Pending_OrderItem');
 
 const alertMessage = require('../helpers/messenger');
 const Coupon = require('../models/coupon');
@@ -1120,7 +1121,7 @@ router.post('/stripepayment', async (req, res) => {
               
               .then((order) => {
                   for (oi in req.session.userCart) {
-                      let id = req.session.userCart[oi].ID;
+                    //   let id = req.session.userCart[oi].ID;
                       let product_name = req.session.userCart[oi].Name;
                       let author = req.session.userCart[oi].Author;
                       let publisher = req.session.userCart[oi].Publisher;
@@ -1133,7 +1134,7 @@ router.post('/stripepayment', async (req, res) => {
                       let orderId = order.id
                       total_weight_oz = (parseFloat(total_weight_oz) + parseFloat(weight)).toFixed(2)
                       const new_order_item = order_item.create({
-                          id, product_name, author, publisher, genre, price, stock, details, weight, product_image, orderId
+                          product_name, author, publisher, genre, price, stock, details, weight, product_image, orderId
                       })
                   }
                   console.log(order);
@@ -1221,17 +1222,52 @@ router.get('/paynow', (req, res) => {
         });
 });
 
-router.post('/paynow', (req, res) => {
+router.post('/paynow', async (req, res) => {
 
-    Pending_Order.create({
-        fullName: req.session.recipientName, phoneNumber: req.session.recipientPhoneNo, address: req.session.address, address1: req.session.address1,
-        city: req.session.city, countryShipment: req.session.countryShipment, postalCode: req.session.postalCode, deliverFee: 0, totalPrice: req.session.full_total_price
+    // Create a unconfirmed order
+    const new_pending_order = await Pending_Order.create({
+        fullName: req.session.recipientName, 
+        phoneNumber: req.session.recipientPhoneNo, 
+        address: req.session.address, 
+        address1: req.session.address1,
+        city: req.session.city, 
+        country: req.session.countryShipment, 
+        postalCode: req.session.postalCode,
+        deliverFee: 0, 
+        subtotalPrice:req.session.full_subtotal_price, 
+        totalPrice: req.session.full_total_price,
+        userId: req.user.id
+    })        .catch((err)=> {
+        console.log("Cannot create pending order")
+        console.log(err)
     })
+
+    // Store unconfirmed order's order items
+    for (oi in req.session.userCart) {
+        let product_name = req.session.userCart[oi].Name;
+        let author = req.session.userCart[oi].Author;
+        let publisher = req.session.userCart[oi].Publisher;
+        let genre = req.session.userCart[oi].Genre;
+        let price = req.session.userCart[oi].SubtotalPrice;
+        let stock = req.session.userCart[oi].Quantity;
+        let details = "";
+        let weight = req.session.userCart[oi].SubtotalWeight;
+        let product_image = req.session.userCart[oi].Image;
+        let PorderId = new_pending_order.id;
+        const new_poi  = await Pending_OrderItem.create({
+            product_name, author, publisher, genre, price, stock, details, weight, product_image, pendingOrderId: PorderId
+        })
+
+        .catch((err)=> {
+            console.log("Cannot create pending order item")
+            console.log(err)
+        })
+    }
 
     // This block of code below will send a message
     client.messages
         .create({
-            body: 'You made an order with BookStore, your order will be confirmed shortly by the administrator',
+            body: 'You made an order with BookStore via payNow/payLah!, you will be notified again when your order is confirmed',
             from: '+14242066417',
             to: '+6587558054'
         })
@@ -1265,6 +1301,34 @@ router.post('/paynow', (req, res) => {
 })
 
 // Admin Side
+
+router.get('/viewPendingOrders', async (req, res) => {
+    // let PendingOrders = await Pending_Order.findAll({include: Pending_OrderItem});
+    // let PendingOrderItems = await Pending_OrderItem.findAll({})
+    // let PendingOrderItems = PendingOrders.PendingOrderItems
+
+    Pending_Order
+    .findAll({
+      where:{
+      },
+      include:[{model:Pending_OrderItem}]
+    }).then((pending_order)=> {
+        res.render('checkout/viewPendingOrders', {
+            PendingOrders: pending_order,
+            PendingOrderItems: pending_order.PendingOrderItems
+        })
+    })
+
+    // console.log("PENDING ORDER ITEMS ARE " + PendingOrders.Pending_OrderItem)
+}),
+
+router.get('/viewPendingOrders/:id', async(req, res) => {
+
+})
+
+router.post('/viewPendingOrders', (req, res) => {
+    res.redirect('viewPendingOrders')
+})
 
 router.get('/createCoupon', (req, res) => {
     // if (!req.session.public_coupon) {

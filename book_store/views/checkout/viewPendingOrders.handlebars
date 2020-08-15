@@ -1,0 +1,26 @@
+{{!-- <div class="container">
+    {{#if PendingOrders}}
+    {{#each PendingOrders}}
+    {{id}}
+    {{fullName}}
+    {{phoneNumber}}
+    {{#each PendingOrderItems}}
+    <p> Each pending item </p>
+    {{id}}
+    {{product_name}}
+    {{price}}
+    {{pendingOrderId}}
+    {{/each}}
+    {{/each}}
+    {{else}}
+    <p> No pending orders at the moment. </p>
+    {{/if}}
+</div> --}}
+<div class="container">
+    {{#each PendingOrders }}
+    <p> Foo </p>
+    {{#each PendingOrderItems}}
+    <p> Bar </p>
+    {{/each}}
+    {{/each}}
+</div>
