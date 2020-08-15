@@ -138,10 +138,11 @@ router.post('/addProductAdmin', (req, res) => {
     let price = req.body.price;
     let stock = req.body.stock;
     let details = req.body.details;
+    let rating = req.body.rating;
     let weight = req.body.weight;
     let product_image = req.body.product_image;
     productadmin.create({
-        product_name, author, publisher, genre, price, stock, details, weight, product_image,
+        product_name, author, publisher, genre, price, stock, details, weight, product_image,rating,
     }).then((product) => {
         res.redirect('/product/listProductAdmin')
     })
@@ -152,7 +153,7 @@ router.get('/listProductAdmin', (req, res) => {
     const title = "Product Admin List";
     productadmin.findAll({
         order: [
-            ['product_name', 'ASC']
+            ['id', 'ASC']
         ],
         raw: true
     })
@@ -219,9 +220,10 @@ router.put('/updateProductAdmin/:id', (req, res) => {
     let stock = req.body.stock;
     let details = req.body.details;
     let weight = req.body.weight;
+    let rating = req.body.rating;
     let product_image = req.body.product_image;
     productadmin.update({
-        product_name, author, publisher, genre, price, stock, details, weight, product_image,
+        product_name, author, publisher, genre, price, stock, details, weight, product_image,rating,
     }, {
         where: {
             id: req.params.id
