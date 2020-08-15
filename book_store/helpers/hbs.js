@@ -98,7 +98,7 @@ module.exports = {
 
   isSg: function (country_var) {
     console.log(`The user country is ${country_var}`);
-    if (country_var == "Singapore") {
+    if (country_var == "SG") {
       return true;
     } else {
       return false;

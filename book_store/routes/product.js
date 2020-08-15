@@ -1310,6 +1310,11 @@ router.post('/paynow', async (req, res) => {
 
 // Admin Side
 
+router.get('/discountmenu', (req, res) => {
+    res.render('checkout/discountmenu', {
+    })
+})
+
 router.get('/viewPendingOrders', async (req, res) => {
     // let PendingOrders = await Pending_Order.findAll({include: Pending_OrderItem});
     // let PendingOrderItems = await Pending_OrderItem.findAll({})

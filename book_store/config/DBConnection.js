@@ -1,6 +1,5 @@
 const mySQLDB = require('./DBConfig');
 const user = require('../models/User');
-const cartItem = require('../models/CartItem');
 const order = require('../models/Order'); 
 const ProductAdmin = require('../models/ProductAdmin')
 const Discount = require('../models/Discount');

@@ -392,6 +392,21 @@ router.post("/register", (req, res) => {
 });
 
 router.get("/logout", function (req, res) {
+  // Empty the cart
+  req.session.userCart = {};
+  req.session.coupon_type = null;
+  req.session.discount = 0;
+  req.session.discount_limit = 0;
+  req.session.discounted_price = (0).toFixed(2);
+  req.session.shipping_discount = 0;
+  req.session.shipping_discount_limit = 0;
+  req.session.shipping_discounted_price = 0;
+  req.session.sub_discount = 0;
+  req.session.sub_discount_limit = 0;
+  req.session.sub_discounted_price = 0;
+  req.session.full_subtotal_price = 0;
+  req.session.full_total_price = 0;
+  req.session.deducted = 0;
   req.logout();
   res.redirect("/");
 });
