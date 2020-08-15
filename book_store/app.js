@@ -85,6 +85,7 @@ authenticate.localStrategy(passport);
 // global.userCart = {};
 // Bring in Handlebars Helpers here
 const {convertUpper, adminCheck, emptyCart, cartQty, formatDate, capitaliseFirstLetter, isSg, checkPromo, convertDiscount, displayCouponType, get_old_subtotal, check_subtotal} = require('./helpers/hbs');
+const {times} = require('./helpers/for_loop');
 
 // creates an express server
 const app = express();
@@ -104,7 +105,8 @@ app.engine('handlebars', exphbs({
 		convertDiscount:convertDiscount,
 		displayCouponType:displayCouponType,
 		get_old_subtotal: get_old_subtotal,
-		check_subtotal: check_subtotal
+		check_subtotal: check_subtotal,
+		times:times,
 	},					
 	handlebars: allowInsecurePrototypeAccess(Handlebars),
 }));
