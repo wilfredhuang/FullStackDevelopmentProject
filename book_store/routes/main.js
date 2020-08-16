@@ -9,6 +9,8 @@ const productadmin = require('../models/ProductAdmin');
 router.get("/", (req, res) => {
   const title = "Bookstore Home Page";
   const navStatusHome = "active";
+
+
   // check if logged in or not
   if (req.user) {
     console.log("LOGGED IN");
@@ -68,11 +70,19 @@ router.get("/", (req, res) => {
   }
 
   console.log(req.session);
+  productadmin.findAll({
+    order: [
+      ['rating', 'DESC']
+    ]
+  })
+.then((productadmin)=>
   res.render("index", {
     // renders views/index.handlebars
     title,
     navStatusHome,
-  });
+    productadmin: productadmin,
+  })
+)
 });
 
 router.get("/index", (req, res) => {

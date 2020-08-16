@@ -5,9 +5,10 @@ const ensureAuthenticated = (req, res, next) => {
         if (req.user.confirmed == true){
                 return next(); // Calling next() to proceed to the next statement
             }
-        else if(req.user.confirmed === null){
+        else if(req.user.confirmed == false){
             return next();
-        }else{
+        }
+        else{
         alertMessage(res, 'danger', 'Access Denied', 'fas fa-exclamation-circle', true);
         res.redirect('/');
         }
@@ -16,4 +17,6 @@ const ensureAuthenticated = (req, res, next) => {
     alertMessage(res, 'danger', 'Access Denied', 'fas fa-exclamation-circle', true);
     res.redirect('/');
 };
+
+// Don't put {} at the ends of each side, doesn't work anymore(?)
 module.exports = ensureAuthenticated;

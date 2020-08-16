@@ -191,33 +191,52 @@ app.use(FlashMessenger.middleware);
 
 // Global variables
 app.use(function (req, res, next) {
-  res.locals.success_msg = req.flash("success_msg");
-  res.locals.error_msg = req.flash("error_msg");
-  res.locals.error = req.flash("error");
-  res.locals.user = req.user || null;
-  res.locals.UC = req.session.userCart;
-  res.locals.billingAddress = req.session.billingAddress;
-  res.locals.countryShipment = req.session.countryShipment;
-  res.locals.coupon_type = req.session.coupon_type;
-  res.locals.discount = req.session.discount;
-  res.locals.discount_limit = req.session.discount_limit;
-  res.locals.discounted_price = req.session.discounted_price;
-  res.locals.shipping_discount = req.session.shipping_discount;
-  res.locals.shipping_discount_limit = req.session.shipping_discount_limit;
-  res.locals.shipping_discounted_price = req.session.shipping_discounted_price;
-  res.locals.sub_discount = req.session.sub_discount;
-  res.locals.sub_discount_limit = req.session.sub_discount_limit;
-  res.locals.sub_discounted_price = req.session.sub_discounted_price;
-  res.locals.full_subtotal_price = req.session.full_subtotal_price;
-  res.locals.full_total_price = req.session.full_total_price;
-  res.locals.shipping_fee = req.session.shipping_fee;
-  res.locals.public_coupon = req.session.public_coupon;
-  res.locals.deducted = req.session.deducted;
-  res.locals.full_og_subtotal_price = (
-    parseFloat(req.session.full_subtotal_price) +
-    parseFloat(req.session.deducted)
-  ).toFixed(2);
-  next();
+	res.locals.success_msg = req.flash('success_msg');
+	res.locals.error_msg = req.flash('error_msg');
+	res.locals.error = req.flash('error');
+	res.locals.user = req.user || null;
+	res.locals.UC = req.session.userCart;
+	res.locals.billingAddress = req.session.billingAddress;
+	res.locals.countryShipment = req.session.countryShipment;
+	res.locals.coupon_type = req.session.coupon_type;
+	res.locals.discount = req.session.discount;
+	res.locals.discount_limit = req.session.discount_limit;
+	res.locals.discounted_price = req.session.discounted_price;
+	res.locals.shipping_discount = req.session.shipping_discount;
+	res.locals.shipping_discount_limit = req.session.shipping_discount_limit;
+	res.locals.shipping_discounted_price = req.session.shipping_discounted_price;
+	res.locals.sub_discount = req.session.sub_discount;
+	res.locals.sub_discount_limit = req.session.sub_discount_limit;
+	res.locals.sub_discounted_price = req.session.sub_discounted_price;
+	res.locals.full_subtotal_price = req.session.full_subtotal_price;
+	res.locals.full_total_price = req.session.full_total_price;
+	res.locals.shipping_fee = req.session.shipping_fee;
+	res.locals.public_coupon = req.session.public_coupon; 
+	res.locals.deducted = req.session.deducted;
+	// Fixed this 16/08/20, cause if you use SUB coupon, the subtotal would display like
+	// e.g i use a coupon with 50% off and $20 limit with a $60 order on 3 identical items with a discount of buy 3 save 10%
+	// it would calculate like this first, 60-6 = 54, 54-20, the subtotal would be like 34 the previous time with discount 6 and 
+	// coupon 20.00
+	res.locals.full_og_subtotal_price = (0).toFixed(2)
+	for (i in req.session.userCart) {
+		res.locals.full_og_subtotal_price = (parseFloat(res.locals.full_og_subtotal_price) + parseFloat(req.session.userCart[i].SubtotalPrice)).toFixed(2)
+	}
+	//  Update 16 Aug, To fix another display issue, in the case of when we have 1 item that costs $10
+	// and SUB / OVERALL coupons with same rate and limit of 10% and $10 respectively
+	// Have to calculate the full_og_subtotal_price differently based on coupon type to match
+	// The calculated amounts
+	if (req.session.coupon_type == "OVERALL") {
+		res.locals.full_og_subtotal_price = (parseFloat(req.session.full_subtotal_price) + parseFloat(req.session.deducted)).toFixed(2);
+	}
+
+	else {
+		res.locals.full_og_subtotal_price = (parseFloat(req.session.full_subtotal_price) + parseFloat(req.session.deducted) + parseFloat(req.session.discounted_price)).toFixed(2);
+	}
+	// Use when 'OVERALL' coupon applied
+	// res.locals.full_og_subtotal_price = (parseFloat(req.session.full_subtotal_price) + parseFloat(req.session.deducted)).toFixed(2);
+	// Use when 'SUB' coupon applied.
+	// res.locals.full_og_subtotal_price = (parseFloat(req.session.full_subtotal_price) + parseFloat(req.session.deducted) + parseFloat(req.session.discounted_price)).toFixed(2);
+	next();
 });
 
 //SMS Notification - in progress by Hasan

@@ -35,6 +35,11 @@ const accountSid = 'AC583c7d4bc97864b67d16d8430ad9da88';
 const authToken = 'e46e5a7f50ee56da9999d8feefe82ee9';
 const client = require('twilio')(accountSid, authToken);
 
+// Authentications
+const ensureAuthenticated = require('../helpers/auth');
+const ensureAdminAuthenticated = require('../helpers/adminauth');
+const checkCart = require('../helpers/cart');
+
 // variables below for coupon feature, dont change - wilfred
 // switched req.session.userCart to global variable @app.js
 // const req.session.userCart = {}
@@ -312,9 +317,23 @@ router.get('/listproduct/:id', async (req, res, next) => {
     if (check == false) {
         console.log("Adding New Cart Item")
         let qty = 1
-        req.session.userCart[[id]] = {
-            "ID": id, "Name": name, "Author": author, "Publisher": publisher, "Genre": genre, "Price": price, "Stock": stock,
-            "Weight": weight, "Image": image, "Quantity": qty, "SubtotalPrice": price, "SubtotalWeight": weight
+        // Updated on 16 Aug, Bug fix for when a item min qty for discount is 1
+        // and it is the first item to be added to cart, but the special price not applied
+        if (disc_object != null ) {
+            console.log("Discount Criteria FOUND for " + product.name)
+            alertMessage(res, 'success', `Special Offer for this product applied`, 'fas fa-exclamation-circle', false)
+            req.session.userCart[[id]] = {
+                "ID": id, "Name": name, "Author": author, "Publisher": publisher, "Genre": genre, "Price": price, "Stock": stock,
+                "Weight": weight, "Image": image, "Quantity": qty, "SubtotalPrice": (price * (1-disc_object.discount_rate)).toFixed(2), "SubtotalWeight": weight
+            }
+        }
+        //
+
+        else {
+            req.session.userCart[[id]] = {
+                "ID": id, "Name": name, "Author": author, "Publisher": publisher, "Genre": genre, "Price": price, "Stock": stock,
+                "Weight": weight, "Image": image, "Quantity": qty, "SubtotalPrice": price, "SubtotalWeight": weight
+            }
         }
         // console.log(req.session.userCart)
     }
@@ -395,13 +414,28 @@ router.post('/individualProduct/:id', async (req, res, next) => {
     if (check == false) {
         console.log("Adding New Cart Item")
         let qty = 1
-        req.session.userCart[[id]] = {
-            "ID": id, "Name": name, "Author": author, "Publisher": publisher, "Genre": genre, "Price": price, "Stock": stock,
-            "Weight": weight, "Image": image, "Quantity": qty, "SubtotalPrice": price, "SubtotalWeight": weight
+        // Updated on 16 Aug, Bug fix for when a item min qty for discount is 1
+        // and it is the first item to be added to cart, but the special price not applied
+        if (disc_object != null ) {
+            console.log("Discount Criteria FOUND for " + product.name)
+            alertMessage(res, 'success', `Special Offer for this product applied`, 'fas fa-exclamation-circle', false)
+            req.session.userCart[[id]] = {
+                "ID": id, "Name": name, "Author": author, "Publisher": publisher, "Genre": genre, "Price": price, "Stock": stock,
+                "Weight": weight, "Image": image, "Quantity": qty, "SubtotalPrice": (price * (1-disc_object.discount_rate)).toFixed(2), "SubtotalWeight": weight
+            }
+        }
+        //
+
+        else {
+            req.session.userCart[[id]] = {
+                "ID": id, "Name": name, "Author": author, "Publisher": publisher, "Genre": genre, "Price": price, "Stock": stock,
+                "Weight": weight, "Image": image, "Quantity": qty, "SubtotalPrice": price, "SubtotalWeight": weight
+            }
         }
         // console.log(req.session.userCart)
     }
-    res.redirect(`/product/individualProduct/${req.params.id}`)
+
+    res.redirect('/product/listproduct')
     console.log("Added to cart");
     console.log(req.session.userCart);
 });
@@ -705,9 +739,9 @@ router.get('/deleteCartItem/:id', async (req, res) => {
             req.session.full_subtotal_price = (parseFloat(req.session.full_subtotal_price) + parseFloat(req.session.userCart[z].SubtotalPrice)).toFixed(2)
             console.log(req.session.full_subtotal_price)
         }
-        req.session.req.shipping_discounted_price = parseFloat(req.session.shipping_fee) * (req.shipping_discount)
-        if (parseFloat(req.session.req.shipping_discounted_price) > parseFloat(req.session.req.shipping_discount_limit)) {
-            req.session.discounted_price = req.session.req.shipping_discount_limit
+        req.session.shipping_discounted_price = parseFloat(req.session.shipping_fee) * (req.shipping_discount)
+        if (parseFloat(req.session.shipping_discounted_price) > parseFloat(req.session.shipping_discount_limit)) {
+            req.session.discounted_price = req.session.shipping_discount_limit
             req.session.shipping_fee = (parseFloat(req.session.shipping_fee) - parseFloat(req.session.discount_limit)).toFixed(2)
             req.session.full_total_price = (parseFloat(req.session.full_subtotal_price) + parseFloat(req.session.shipping_fee)).toFixed(2)
         }
@@ -900,7 +934,7 @@ router.post('/applyCoupon', (req, res) => {
 
 
 // Checkout Form
-router.get('/checkout', (req, res) => {
+router.get('/checkout', checkCart, (req, res) => {
     title = "Checkout"
     if (req.user) {
         let user_name = req.user.name;
@@ -930,7 +964,7 @@ router.get('/checkout', (req, res) => {
 });
 
 
-router.post('/checkout', (req, res) => {
+router.post('/checkout', checkCart, (req, res) => {
     // Old variables
     // let fullName = req.body.fullName
     // let phoneNumber = req.body.phoneNumber
@@ -951,22 +985,22 @@ router.post('/checkout', (req, res) => {
 });
 
 // After checkout form filled, select payment page
-router.get('/selectPayment', (req, res) => {
+router.get('/selectPayment', checkCart, (req, res) => {
     const title = "Select Payment"
     res.render('checkout/selectPayment', {
         title
     })
 })
 
-router.post('/goToStripe', (req, res) => {
+router.post('/goToStripe', checkCart, (req, res) => {
     res.redirect('stripepayment')
 })
 
-router.post('/goToPayNow', (req, res) => {
+router.post('/goToPayNow', checkCart, (req, res) => {
     res.redirect('paynow')
 })
 
-router.get('/stripepayment', async (req, res) => {
+router.get('/stripepayment', checkCart, async (req, res) => {
     // Function below will take in customer's stripeID (if it exists)
 
     console.log("USER STRIPE ID IS " + req.user.stripeID)
@@ -1212,7 +1246,7 @@ router.post('/stripepayment', async (req, res) => {
 
 })
 
-router.get('/paynow', (req, res) => {
+router.get('/paynow', checkCart, (req, res) => {
     title = "PayNow Payment"
     // let payNowString = paynow('proxyType','proxyValue','edit',price,'merchantName','additionalComments')
     let payNowString = paynow('mobile', '87558054', 'no', req.session.full_total_price, 'Test Merchant Name', 'Testing paynow')
@@ -1246,8 +1280,8 @@ router.post('/paynow', async (req, res) => {
         country: req.session.countryShipment, 
         postalCode: req.session.postalCode,
         deliverFee: 0, 
-        subtotalPrice:req.session.full_subtotal_price, 
-        totalPrice: req.session.full_total_price,
+        subtotalPrice:parseFloat(req.session.full_subtotal_price).toFixed(2), 
+        totalPrice: parseFloat(req.session.full_total_price).toFixed(2),
         dateStart: dateStart,
         userId: req.user.id
     })        .catch((err)=> {
@@ -1311,7 +1345,7 @@ router.post('/paynow', async (req, res) => {
     req.session.deducted = 0;
     req.session.coupon_type = null;
     alertMessage(res, 'success', 'Order placed, the administrator will shortly confirm your payment', 'fas fa-exclamation-circle', true)
-    res.redirect("/product/paynowtxn_end");
+    res.redirect("paynowtxn_end");
 
 })
 
@@ -1331,14 +1365,14 @@ router.get('/paynowtxn_end', (req, res) => {
 
 // Admin Side
 
-router.get('/discountmenu', (req, res) => {
+router.get('/discountmenu', ensureAdminAuthenticated, (req, res) => {
     title = "Discount & Coupon Menu"
     res.render('checkout/discountmenu', {
         title
     })
 })
 
-router.get('/viewPendingOrders', async (req, res) => {
+router.get('/viewPendingOrders', ensureAdminAuthenticated, async (req, res) => {
     // let PendingOrders = await Pending_Order.findAll({include: Pending_OrderItem});
     // let PendingOrderItems = await Pending_OrderItem.findAll({})
     // let PendingOrderItems = PendingOrders.PendingOrderItems
@@ -1368,7 +1402,7 @@ router.get('/viewPendingOrders', async (req, res) => {
     // console.log("PENDING ORDER ITEMS ARE " + PendingOrders.Pending_OrderItem)
 }),
 
-router.get('/ConfirmPOrder/:id', async(req, res) => {
+router.get('/ConfirmPOrder/:id', ensureAdminAuthenticated, async(req, res) => {
     const PO = await Pending_Order.findOne({where: {id: req.params.id}})
     const POI = await Pending_OrderItem.findAll({where: {pendingOrderId: PO.id}})
 
@@ -1538,7 +1572,7 @@ router.get('/ConfirmPOrder/:id', async(req, res) => {
         });
 })
 
-router.get('/DeletePOrder/:id', async (req, res) => {
+router.get('/DeletePOrder/:id', ensureAdminAuthenticated, async (req, res) => {
     // Code commented out below does work... but doesn't remove pending order items associated with it when a PO is deleted
     // Pending_Order.findOne({where: {id: req.params.id}, include:[{model:Pending_OrderItem}]})
     // .then((po)=> {
@@ -1566,7 +1600,7 @@ router.get('/DeletePOrder/:id', async (req, res) => {
 })
 
 
-router.get('/createCoupon', (req, res) => {
+router.get('/createCoupon', ensureAdminAuthenticated, (req, res) => {
     // if (!req.session.public_coupon) {
     //     req.session.public_coupon = "NULL";
     // }
@@ -1585,7 +1619,7 @@ router.get('/createCoupon', (req, res) => {
     })
 })
 
-router.post('/createCoupon', (req, res) => {
+router.post('/createCoupon', ensureAdminAuthenticated, (req, res) => {
     // Retrieve the inputs from the create coupon form
     let coupon_code = req.body.coupon_code;
     let coupon_type = req.body.coupon_type;
@@ -1666,7 +1700,7 @@ router.post('/createCoupon', (req, res) => {
 })
 
 // Create Discount Page
-router.get('/createDiscount', async (req, res) => {
+router.get('/createDiscount', ensureAdminAuthenticated, async (req, res) => {
     title = "Create Discount"
     let currentDate = moment(req.body.currentDate, "DD/MM/YYYY");
     let currentTime = moment().format("HH:mm");
@@ -1682,7 +1716,7 @@ router.get('/createDiscount', async (req, res) => {
     })
 })
 
-router.post('/createDiscount', async (req, res) => {
+router.post('/createDiscount', ensureAdminAuthenticated, async (req, res) => {
     // Retrieve the inputs from the create discount form
     let target_id = req.body.target_id;
     let product_discount = req.body.product_discount;
@@ -1739,7 +1773,7 @@ router.post('/createDiscount', async (req, res) => {
 
 // Admin - View Discounts and Coupons and Delete together
 
-router.get('/viewDiscount', async (req, res) => {
+router.get('/viewDiscount', ensureAdminAuthenticated, async (req, res) => {
     let title = "View Discount"
     let discounts = await Discount.findAll({})
     let coupons = await Coupon.findAll({})
@@ -1750,7 +1784,7 @@ router.get('/viewDiscount', async (req, res) => {
     })
 })
 
-router.get('/deleteDiscount/:id', async (req, res) => {
+router.get('/deleteDiscount/:id', ensureAdminAuthenticated, async (req, res) => {
     let target_id = req.params.id;
     let url = "/product/viewDiscount"
     Discount.findOne({
@@ -1774,7 +1808,7 @@ router.get('/deleteDiscount/:id', async (req, res) => {
     res.redirect(url)
 })
 
-router.get('/deleteCoupon/:id', async (req, res) => {
+router.get('/deleteCoupon/:id', ensureAdminAuthenticated, async (req, res) => {
     let id = req.params.id;
     let url = "/product/viewDiscount"
     Coupon.findOne({
