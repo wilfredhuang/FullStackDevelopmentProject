@@ -84,6 +84,7 @@ router.get('/individualProduct/:id', async (req, res) => {
     const disc = await Discount.findOne({
         where: {target_id: req.params.id}
     })
+    
 
     productadmin.findOne({
         where: {
