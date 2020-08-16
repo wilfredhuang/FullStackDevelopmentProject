@@ -8,27 +8,25 @@
 <section class="static about-sec">
     <div class="container">
         <div class="row">
-            <div class="tab col-12 col-md-2">
-                <button class="tab navi">Navigation</button>
-                <a href="/user/userPage">
-                    <button class="inactive-tab">User Page</button>
-                </a>
-                <a href="/user/userPage/changeinfo">
-                    <button class="inactive-tab">Change Info</button>
-                </a>
-                <a href="/user/userPage/changeaddress">
-                    <button class="inactive-tab">Set Address</button>
-                </a>
-                <a href="/user/userRecentOrder">
-                    <button class="active-tab">Order History</button>
-                </a>
-                <a href="/user/userPage/wishlist">
-                    <button class="inactive-tab">Wishlist</button>
-                </a>
+            <div class="col-2 col-md-2">
             </div>
-            <div id="recentOrders" class="col-10">
+            <div id="recentOrders" class="col-md-10">
                 <br>
-                <h2>Order History - Admin</h2>
+                <div class="row">
+                    <div class="col-md-1 col-2">
+                        <div style="border-style: solid; border-width: 1px 1px;border-color:#ccc;border-radius: 5px;"
+                            onclick="window.location.href='https://localhost:5000/user/admin'">
+                            <svg width="1.5em" height="1.5em" viewBox="0 0 16 16" class="bi bi-chevron-left mt-1"
+                                fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd"
+                                    d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z" />
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="col-md-11">
+                        <h2 class="text-left">Order History - Admin</h2>
+                    </div>
+                </div>
                 <br>
                 <form class="form-inline my-2 my-lg-0">
                     <input class="form-control mr-sm-2" id="searchOrderInput" onkeyup="searchOrderFunction()"
@@ -81,8 +79,7 @@
                                     <h5 class="card-title">Product Information</h5>
                                     {{#each orderitems}}
                                     <div class="row">
-                                        <div class="col-md-2"><img class="card-img"
-                                                src="{{product_image}}"
+                                        <div class="col-md-2"><img class="card-img" src="{{product_image}}"
                                                 alt="bookCover"></div>
                                         <div class="col-md-10">
                                             <div class="row">

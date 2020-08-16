@@ -191,23 +191,10 @@ const ensureAdmin = (req, res, next) => {
 //     });
 // });
 
-//after checkout page
-// router.get("/checkout2",ensureAuthenticated, (req, res) => {
-//   const title = "Thank You";
-//   res.render("delivery/thankYou"),
-//     {
-//       title,
-//     };
-// });
 
 //view More Details of Order
 router.get("/viewMoreOrder/:id", ensureAuthenticated, (req, res) => {
   const title = "Order Details";
-  // CartItem.findAll({
-  //   userId:req.user.id,
-  //   //id: req.params.id,
-  //   //orderId:req.order.id,
-  // })
   console.log("helllo");
   console.log(req.params.id);
   Order.findOne({
@@ -510,7 +497,7 @@ router.get("/printLabelPDF/:id", ensureAuthenticated, ensureAdmin, (req, res) =>
         alertMessage(
           res,
           "success",
-          "Printing is in progress",
+          "PrintNode ID: " + body,
           "fas faexclamation-circle",
           true
         );
@@ -531,10 +518,8 @@ router.post("/checkingDelivery", (req, res) => {
   const title = "Shipping Tracking";
   let trackingId = req.body.trackingIdInput;
   //trk_f10a3961f7c4419184aca1dabc09e4f8
-  //console.log(trackingId);
   let siteUrl =
     "https://www.google.com/recaptcha/api/siteverify?secret=your_secret&response=response_string&remoteip=user_ip_address";
-  //let captcha = document.querySelector("#g-recaptcha-response").value
   let captcha = req.body["g-recaptcha-response"]; //get user token value
 
   //checks if captcha response is valid
@@ -562,7 +547,6 @@ router.post("/checkingDelivery", (req, res) => {
         true
       );
       res.redirect("/delivery/checkDelivery");
-      //return res.json({ "success": false, "msg": "Failed captcha" });
     } else {
       api.Tracker.retrieve(trackingId)
         .then((s) => {

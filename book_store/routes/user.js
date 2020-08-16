@@ -49,7 +49,7 @@ router.post("/contactUs", (req, res) => {
   let name = req.body.name;
   let email = req.body.email;
   let message = req.body.message;
-  let emailMessage = `<p>Hello World!</p>`;
+  let emailMessage = `<p>Thank You for contacting us! We will respond back to you shortly.</p>`;
   console.log(name);
   let info = transporter.sendMail({
     from: '"Book Store Support"superlegitemail100percent@gmail.com', // sender address
@@ -119,6 +119,7 @@ router.get("/forgetpassword", (req, res) => {
 
 router.post("/forgetpassword", (req, res) => {
   let captcha = req.body['g-recaptcha-response'] //get user token value
+  console.log(captcha)
 //checks if captcha response is valid
   if (
     captcha === undefined ||
@@ -259,7 +260,6 @@ router.get("/orderHistory", ensureAuthenticated, (req, res) => {
       include: [{ model: orderItem }],
     })
     .then((order) => {
-      console.log("hello")
       console.log(order)
       res.render("user/orderHistoryPageUser", {
         order: order,
