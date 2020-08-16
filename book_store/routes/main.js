@@ -1,10 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const alertMessage = require("../helpers/messenger");
-const Coupon = require('../models/coupon');
-const moment = require('moment');
-const userAuth = require('../helpers/auth');
-const productadmin = require('../models/ProductAdmin');
+const Coupon = require("../models/coupon");
+const moment = require("moment");
+const userAuth = require("../helpers/auth");
 
 router.get("/", (req, res) => {
   const title = "Bookstore Home Page";
@@ -33,7 +32,6 @@ router.get("/", (req, res) => {
     req.session.sub_discounted_price = 0;
     req.session.full_total_price = 0;
     req.session.deducted = (0).toFixed(2);
-    req.session.coupon_type = null;
     // ssn = req.session.userCart;
   }
   // at website startup, when no ssn var set, find if a public coupon(if exists)
@@ -82,30 +80,13 @@ router.get("/index", (req, res) => {
     req.session.userCart = {};
     // ssn = req.session.userCart;
   }
-  count = [5,4,3,2,1]
-  console.log(req.session)
-  productadmin.findAll({
-    order: [
-      ['rating', 'DESC']
-    ]
-  })
-    .then((productadmin) => {
-      res.render('index', {
-        productadmin: productadmin,
-        title,
-        navStatusHome,
-        count
 
-      });
-    })
-
-  //console.log(req.session)
-  //res.render("index", {
+  console.log(req.session);
+  res.render("index", {
     // renders views/index.handlebars
-  //  title,
-  //  navStatusHome
-  //});
-
+    title,
+    navStatusHome,
+  });
 });
 
 router.get("/about", (req, res) => {

@@ -7,7 +7,7 @@
     </div>
 </div>
 <section class="product-sec">
-    <div class="container col-lg-12 col-md-6"
+    <div class="container">
         <h1 class="display-4">Product Details</h1>
         <p>Product ID: {{product.id}}</p>
         <p>Product Name: {{product.product_name}}</p>
@@ -17,7 +17,6 @@
         <p>Price: {{product.price}}</p>
         <p>Stocks: {{product.stock}}</p>
         <p>Weight: {{product.weight}}</p>
-        <p>Rating: {{product.rating}}</p>
         <p>Specific Details: {{product.details}}</p>
         <p>Image: <img src="{{product.product_image}}"></p>
         <td><a href="/product/updateProductAdmin/{{product.id}}" class="btn btn-warning">Update</a></td>

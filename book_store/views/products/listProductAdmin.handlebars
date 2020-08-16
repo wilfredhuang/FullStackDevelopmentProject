@@ -9,7 +9,7 @@
          <section class="product-sec">
 <div class="wrap", style="text-align: center">
    <div class="search">
-      <input type="text" id="myInput" onkeyup="search_admin()" placeholder="Search by name" title="Type in a category">
+      <input type="text" id="myInput" onkeyup="search_admin()" placeholder="Search.." title="Type in a category">
       <button type="submit" class="searchButton">
         <i class="fa fa-search"></i>
      </button>
@@ -38,7 +38,6 @@
                         <th>Author</th>
                         <th>Publisher</th>
                         <th>Genre</th>
-                        <th>Rating</th>
                         <th>Price</th>
                         <th>Stocks</th>
                         <th>Details</th>
@@ -54,7 +53,6 @@
                         <td>{{author}}</td>
                         <td>{{publisher}}</td>
                         <td>{{genre}}</td>
-                        <td>{{rating}}</td>
                         <!--- add in later
                     {% if product.get_genre() == "Children" %}
                         <td>Children</td>

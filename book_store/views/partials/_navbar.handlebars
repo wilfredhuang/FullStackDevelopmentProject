@@ -34,26 +34,7 @@
                         <li class="navbar-item {{navStatusFAQ}}">
                             <a href="/faq" class="nav-link">FAQ</a>
                         </li>
-                        {{#if (adminCheck user)}}
-                        <li class="navbar-item dropdown">
-                            <a href="/user/admin" class="nav-link dropdown-toggle" data-toggle="dropdown">User Page</a>
-                            <div class="dropdown-menu">
-                                <a href="/user/userpage" class="dropdown-item">User Page</a>
-                                <a href="/user/admin" class="dropdown-item">Admin Menu</a>
-                            </div>
-                        </li>
-                        {{!-- <li class="nav-item dropdown">
-                            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" id="navbarDropdownMenuLink"> Admin </a>
-                            <div class="dropdown-menu">
-                                <a href="#" class="dropdown-item">My Account</a>
-                                <a href="/products/cart" class="dropdown-item">Cart</a>
-                                <a href="/admin/createProduct" class="dropdown-item">Create Product</a>
-                            </div>
-					    </li> --}}
-                        <li class="navbar-item">
-                            <a href="/user/logout" class="nav-link">Logout</a>
-                        </li>
-                        {{else if user}}
+                        {{#if user}}
                         <li class="navbar-item">
                             <a href="/user/userpage" class="nav-link">User Page</a>
                         </li>

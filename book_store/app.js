@@ -24,16 +24,13 @@ const client = require("twilio")(accountSid, authToken);
 
 //nodemailer 
 let transporter = nodemailer.createTransport({
-	host: "smtp.googlemail.com",
-	port: 465,
-	secure: true, // true for 465, false for other ports
-	auth: {
-	  user: "superlegitemail100percent@gmail.com", // generated ethereal user
-	  pass: "Passw0rdyes", // generated ethereal password
-	},
-	tls: {
-	  rejectUnauthorized: false,
-	},
+    host: 'mail.gmx.com',
+    port: 587,
+    secure: false, // true for 465, false for other ports
+    auth: {
+        user: 'legitbookstore@gmx.com', // generated ethereal user
+        pass: 'legitbookPass'  // generated ethereal password
+    },
   });
 
 //https
@@ -87,8 +84,7 @@ authenticate.localStrategy(passport);
 
 // global.userCart = {};
 // Bring in Handlebars Helpers here
-const {convertUpper, adminCheck, emptyCart, cartQty, formatDate, capitaliseFirstLetter, isSg, checkPromo, convertDiscount, displayCouponType, get_old_subtotal, check_subtotal, check_for_discount_msg, retrieveDeliveryStatus} = require('./helpers/hbs');
-const {when} = require('./helpers/for_loop');
+const {convertUpper, adminCheck, emptyCart, cartQty, formatDate, capitaliseFirstLetter, isSg, checkPromo, convertDiscount, displayCouponType, get_old_subtotal, check_subtotal, retrieveDeliveryStatus} = require('./helpers/hbs');
 
 // creates an express server
 const app = express();
@@ -109,9 +105,7 @@ app.engine('handlebars', exphbs({
 		displayCouponType:displayCouponType,
 		get_old_subtotal: get_old_subtotal,
 		check_subtotal: check_subtotal,
-		check_for_discount_msg: check_for_discount_msg,
-		retrieveDeliveryStatus:retrieveDeliveryStatus,
-		when: when,
+		retrieveDeliveryStatus:retrieveDeliveryStatus
 	},					
 	handlebars: allowInsecurePrototypeAccess(Handlebars),
 }));
