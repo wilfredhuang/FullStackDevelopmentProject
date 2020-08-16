@@ -436,7 +436,7 @@ router.post('/individualProduct/:id', async (req, res, next) => {
         // console.log(req.session.userCart)
     }
 
-    res.redirect('/product/listproduct')
+    res.redirect(`/product/individualProduct/${req.params.id}`)
     console.log("Added to cart");
     console.log(req.session.userCart);
 });
