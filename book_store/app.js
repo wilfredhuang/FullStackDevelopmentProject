@@ -338,6 +338,11 @@ app.use(function (req, res, next) {
   res.status(404).render("404");
 });
 
+//Renders 500 Page if there is internal server error
+app.use(function (req, res, next) {
+	res.status(500).render("500");
+  });
+
 const port = 5000;
 
 /* changed to https so this is not needed
