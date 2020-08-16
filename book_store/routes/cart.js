@@ -1,9 +1,14 @@
 const express = require("express");
 const router = express.Router();
-const Order = require("../models/Order");
 const alertMessage = require("../helpers/messenger");
+
+//Models
+const Order = require("../models/Order");
 const orderItem = require("../models/OrderItem");
+
+//Authentication
 const ensureAuthenticated = require("../helpers/auth");
+const ensureAdminAuthenticated = require('../helpers/adminauth');
 
 //Request Function
 const request = require("request");
@@ -30,25 +35,6 @@ const nodemailer = require("nodemailer");
 //Email Template
 //const Email = require('email-templates');
 
-//admin auth
-const ensureAdmin = (req, res, next) => {
-  if (req.isAuthenticated()) {
-    // If user is authenticated
-    console.log(req.user.confirmed);
-    if (req.user.isadmin == true) {
-      return next(); // Calling next() to proceed to the next statement
-    }
-  }
-  // If not authenticated, show alert message and redirect to ‘/’
-  alertMessage(
-    res,
-    "danger",
-    "Access Denied",
-    "fas fa-exclamation-circle",
-    true
-  );
-  res.redirect("/");
-};
 
 //Post user's address info to EasyPost API
 // router.post("/processCheckout", (req, res) => {
@@ -325,7 +311,7 @@ router.get("/viewMoreOrder/:id", ensureAuthenticated, (req, res) => {
 router.get(
   "/viewMoreOrderAdmin/:id",
   ensureAuthenticated,
-  ensureAdmin,
+  ensureAdminAuthenticated,
   (req, res) => {
     const title = "Order Details - Admin";
     Order.findOne({
@@ -454,7 +440,7 @@ router.get(
   }
 );
 
-router.get("/displayLabelUrl/:id", ensureAuthenticated, ensureAdmin, (req, res) => {
+router.get("/displayLabelUrl/:id", ensureAuthenticated, ensureAdminAuthenticated, (req, res) => {
   console.log(req.params.id);
   let shippingId = req.params.id;
   api.Shipment.retrieve(shippingId).then((s) => {
@@ -468,7 +454,7 @@ router.get("/displayLabelUrl/:id", ensureAuthenticated, ensureAdmin, (req, res) 
   });
 });
 
-router.get("/printLabelPDF/:id", ensureAuthenticated, ensureAdmin, (req, res) => {
+router.get("/printLabelPDF/:id", ensureAuthenticated, ensureAdminAuthenticated, (req, res) => {
   console.log(req.params.id);
   let shippingId = req.params.id;
   api.Shipment.retrieve(shippingId).then((s) => {

@@ -4,35 +4,19 @@ const router = express.Router();
 const alertMessage = require("../helpers/messenger");
 const bcrypt = require("bcryptjs");
 const passport = require("passport");
-const ensureAuthenticated = require("../helpers/auth");
 const { v1: uuidv1 } = require("uuid");
-const request = require('request');
+const request = require("request");
 const secretKey = "6Le367IZAAAAAJ042sFATGXzwqHsO6N3f38W4G81";
+
+//Authentication
+const ensureAuthenticated = require("../helpers/auth");
+const ensureAdminAuthenticated = require("../helpers/adminauth");
 
 //Models
 const User = require("../models/User");
 const order = require("../models/Order");
 const orderItem = require("../models/OrderItem");
 
-//admin auth
-const ensureAdmin = (req, res, next) => {
-  if (req.isAuthenticated()) {
-    // If user is authenticated
-    console.log(req.user.confirmed);
-    if (req.user.isadmin == true) {
-      return next(); // Calling next() to proceed to the next statement
-    }
-  }
-  // If not authenticated, show alert message and redirect to ‘/’
-  alertMessage(
-    res,
-    "danger",
-    "Access Denied",
-    "fas fa-exclamation-circle",
-    true
-  );
-  res.redirect("/");
-};
 //NodeMailer
 const nodemailer = require("nodemailer");
 const jwt = require("jsonwebtoken");
@@ -86,29 +70,37 @@ router.get("/resetpassword", (req, res) => {
 });
 
 router.post("/resetpassword/", async (req, res) => {
-  if (req.body.password != req.body.password2){
-    errors.push('paswords not the same')
-    res.redirect('/user/changepassword')
+  if (req.body.password != req.body.password2) {
+    errors.push("paswords not the same");
+    res.redirect("/user/changepassword");
   }
   User.findOne({ where: { id: req.user.id } }).then((user) => {
-    bcrypt.genSalt(10, function(err, salt) {
-    bcrypt.hash(req.body.password, salt, function (err, hash) {
-      if (err) return next(err);
-      thepassword = hash;
-      user.update({password :thepassword})
+    bcrypt.genSalt(10, function (err, salt) {
+      bcrypt.hash(req.body.password, salt, function (err, hash) {
+        if (err) return next(err);
+        thepassword = hash;
+        user.update({ password: thepassword });
+      });
     });
+    alertMessage(
+      res,
+      "success",
+      "password changed",
+      "fas fa-sign-in-alt",
+      true
+    );
+    res.redirect("/user/logout");
   });
-  alertMessage(res,"success","password changed","fas fa-sign-in-alt",true);
-  res.redirect("/user/logout")
-});
 });
 
 router.get("/changepassword/:token", async (req, res) => {
   const token = jwt.verify(req.params.token, SECRET_2);
   User.findOne({ where: { id: token.user } }).then((user) => {
-    req.login(user, function(err) {
-      if (err) { return next(err); }
-      return res.redirect('/user/resetpassword');
+    req.login(user, function (err) {
+      if (err) {
+        return next(err);
+      }
+      return res.redirect("/user/resetpassword");
     });
   });
 });
@@ -118,14 +110,10 @@ router.get("/forgetpassword", (req, res) => {
 });
 
 router.post("/forgetpassword", (req, res) => {
-  let captcha = req.body['g-recaptcha-response'] //get user token value
-  console.log(captcha)
-//checks if captcha response is valid
-  if (
-    captcha === undefined ||
-    captcha === "" ||
-    captcha === null
-  ) {
+  let captcha = req.body["g-recaptcha-response"]; //get user token value
+  console.log(captcha);
+  //checks if captcha response is valid
+  if (captcha === undefined || captcha === "" || captcha === null) {
     return res.json({ success: false, msg: "Please select captcha" });
   }
   const verifyURL =
@@ -137,7 +125,7 @@ router.post("/forgetpassword", (req, res) => {
 
   request(verifyURL, (err, response, body) => {
     body = JSON.parse(body);
-    console.log(body)  //retrieves response from google and return its json info
+    console.log(body); //retrieves response from google and return its json info
 
     if (body.success !== undefined && !body.success) {
       alertMessage(
@@ -156,7 +144,7 @@ router.post("/forgetpassword", (req, res) => {
           res.redirect("/user/login");
         } else {
           theid = user.id;
-          console.log(theid)
+          console.log(theid);
           jwt.sign(
             {
               user: theid,
@@ -195,13 +183,7 @@ router.get("/confirmation/:token", async (req, res) => {
     user.update({ confirmed: true });
     console.log("email verified");
   });
-  alertMessage(
-    res,
-    "success",
-    "account confirmed",
-    "fas fa-sign-in-alt",
-    true
-  );
+  alertMessage(res, "success", "account confirmed", "fas fa-sign-in-alt", true);
   res.redirect("https://localhost:5000/user/login");
 });
 
@@ -231,36 +213,40 @@ router.get("/userPage", ensureAuthenticated, (req, res) => {
   }
 });
 
-router.get("/orderHistoryAdmin", ensureAuthenticated, ensureAdmin,(req, res) => {
-  const title = "Order History - Admin";
-  order
-    .findAll({
-      // where: {
-      //   userId: req.user.id, //finds all because user is admin
-      // },
-      include: [{ model: orderItem }],
-    })
-    .then((order) => {
-      res.render("user/orderHistoryPageAdmin", {
-        order: order,
-        orderitems: order.orderitems,
-        title,
+router.get(
+  "/orderHistoryAdmin",
+  ensureAuthenticated,
+  ensureAdminAuthenticated,
+  (req, res) => {
+    const title = "Order History - Admin";
+    order
+      .findAll({
+        // where: {
+        //   userId: req.user.id, //finds all because user is admin
+        // },
+        include: [{ model: orderItem }],
+      })
+      .then((order) => {
+        res.render("user/orderHistoryPageAdmin", {
+          order: order,
+          orderitems: order.orderitems,
+          title,
+        });
       });
-    });
-});
-
+  }
+);
 
 router.get("/orderHistory", ensureAuthenticated, (req, res) => {
   const title = "Order History";
   order
     .findAll({
-      where:{
+      where: {
         userId: req.user.id,
       },
       include: [{ model: orderItem }],
     })
     .then((order) => {
-      console.log(order)
+      console.log(order);
       res.render("user/orderHistoryPageUser", {
         order: order,
         orderitems: order.orderitems,
@@ -269,7 +255,6 @@ router.get("/orderHistory", ensureAuthenticated, (req, res) => {
     })
     .catch((err) => console.log(err));
 });
-
 
 router.get("/login", (req, res) => {
   const title = "Login";
@@ -297,12 +282,13 @@ router.post("/login", function (req, res, next) {
   })(req, res, next);
 });
 
-router.get("/admin", ensureAdmin, (req, res) => {
+router.get("/admin", ensureAdminAuthenticated, (req, res) => {
   const title = "Admin Page";
   res.render("user/adminmenu", {
     title,
   });
 });
+
 router.get("/register", (req, res) => {
   const title = "Register";
   res.render("user/register", {
@@ -351,35 +337,34 @@ router.post("/register", (req, res) => {
               password,
               isadmin: false,
               confirmed: false,
-            })
-              .then((user) => {
-                alertMessage(
-                  res,
-                  "success",
-                  user.name + " added.Please Verify you account",
-                  "fas fa-sign-in-alt",
-                  true
-                );
-                jwt.sign(
-                  {
-                    user: theid,
-                  },
-                  SECRET,
-                  {
-                    expiresIn: "1d",
-                  },
-                  (err, emailToken) => {
-                    const url = `https://localhost:5000/user/confirmation/${emailToken}`;
-                    console.log(url);
-                    transporter.sendMail({
-                      to: req.body.email,
-                      subject: "Confirm Email",
-                      html: `Please click this email to confirm your email: <a href="${url}">${url}</a>`,
-                    });
-                  }
-                )
-                res.redirect("/user/login");
-              })
+            }).then((user) => {
+              alertMessage(
+                res,
+                "success",
+                user.name + " added.Please Verify you account",
+                "fas fa-sign-in-alt",
+                true
+              );
+              jwt.sign(
+                {
+                  user: theid,
+                },
+                SECRET,
+                {
+                  expiresIn: "1d",
+                },
+                (err, emailToken) => {
+                  const url = `https://localhost:5000/user/confirmation/${emailToken}`;
+                  console.log(url);
+                  transporter.sendMail({
+                    to: req.body.email,
+                    subject: "Confirm Email",
+                    html: `Please click this email to confirm your email: <a href="${url}">${url}</a>`,
+                  });
+                }
+              );
+              res.redirect("/user/login");
+            });
           });
         });
       }
@@ -411,41 +396,45 @@ router.get("/userPage", ensureAuthenticated, (req, res) => {
   res.render("user/userPage");
 });
 
-router.post("/userPage/changeinfo",ensureAuthenticated, (req, res) => {
+router.post("/userPage/changeinfo", ensureAuthenticated, (req, res) => {
   let errors = [];
-  let { name,email,password2 } = req.body;
+  let { name, email, password2 } = req.body;
   console.log(req.body);
 
-  bcrypt.compare(req.body.password, req.user.password, function(err, done) {
-    if (done){
-    User.findOne({where:{id: req.user.id}})
-    .then((user) =>{
-      if (name != '') {
-        user.update({name: req.body.name} );
-      }
-      if (email!= '') {
-        user.update({ email: req.body.email } );
-      }
-      if (password2 != '') {
-        bcrypt.genSalt(10, function(err, salt) {
-          bcrypt.hash(req.user.password2, salt, function(err, hash) {
+  bcrypt.compare(req.body.password, req.user.password, function (err, done) {
+    if (done) {
+      User.findOne({ where: { id: req.user.id } }).then((user) => {
+        if (name != "") {
+          user.update({ name: req.body.name });
+        }
+        if (email != "") {
+          user.update({ email: req.body.email });
+        }
+        if (password2 != "") {
+          bcrypt.genSalt(10, function (err, salt) {
+            bcrypt.hash(req.user.password2, salt, function (err, hash) {
               // Store hash in your password DB.
-              user.update({ password: hash});
+              user.update({ password: hash });
+            });
           });
+        }
       });
-      } 
-    })
-    alertMessage(res,"success","information has been updated","fas fa-sign-in-alt",true);
-      res.redirect('/user/userpage/')
-  }
-  if (err){
-    console.log(err)
-    alertMessage(res,"error","error","fas fa-sign-in-alt",true);
-    res.redirect('/user/userpage')
-  }
+      alertMessage(
+        res,
+        "success",
+        "information has been updated",
+        "fas fa-sign-in-alt",
+        true
+      );
+      res.redirect("/user/userpage/");
+    }
+    if (err) {
+      console.log(err);
+      alertMessage(res, "error", "error", "fas fa-sign-in-alt", true);
+      res.redirect("/user/userpage");
+    }
+  });
 });
-});
-  
 
 router.get("/userPage/changeinfo", ensureAuthenticated, function (req, res) {
   const title = "Change Information";
@@ -461,29 +450,28 @@ router.get("/userPage/changeaddress", ensureAuthenticated, function (req, res) {
   });
 });
 
-router.post("/userPage/changeaddress",ensureAuthenticated, (req, res) => {
+router.post("/userPage/changeaddress", ensureAuthenticated, (req, res) => {
   let errors = [];
   let { PhoneNo, address, address1, city, country, postalCode } = req.body;
   console.log(req.body);
-  User.findOne({where:{id: req.user.id}})
-  .then((user) =>{
-    if (PhoneNo != '') {
-      user.update({PhoneNo: req.body.PhoneNo} );
+  User.findOne({ where: { id: req.user.id } }).then((user) => {
+    if (PhoneNo != "") {
+      user.update({ PhoneNo: req.body.PhoneNo });
     }
-    if (address!= '') {
-      user.update({ address: req.body.address } );
+    if (address != "") {
+      user.update({ address: req.body.address });
     }
-    if (address1 != '') {
+    if (address1 != "") {
       user.update({ address1: req.body.address1 });
     }
-    if (city != '') {
-      user.update({ city: req.body.city});
+    if (city != "") {
+      user.update({ city: req.body.city });
     }
-    if (country != '') {
-      user.update({ country: req.body.country});
+    if (country != "") {
+      user.update({ country: req.body.country });
     }
-    if (postalCode != '') {
-      user.update({ postalCode: req.body.postalCode});
+    if (postalCode != "") {
+      user.update({ postalCode: req.body.postalCode });
     }
     alertMessage(
       res,
