@@ -18,7 +18,7 @@
                 <a href="/user/userPage/changeaddress">
                     <button class="inactive-tab">Set Address</button>
                 </a>
-                <a href="/user/userRecentOrder">
+                <a href="/user/orderHistory">
                     <button class="inactive-tab">Order History</button>
                 </a>
                 <a href="/user/userPage/wishlist">
@@ -33,19 +33,20 @@
                     <form method="POST" action="/user/userpage/changeinfo">
                         <div class="col-md-8">
                             <label for="name">Name:</label><br>
-                            <input name="name" placeholder="{{name}}" >
+                            <input class="form-control" name="name" placeholder="{{name}}">
                         </div>
                         <div class="col-md-8">
                             <label for="email">Email:</label><br>
-                            <input name="email" type="email" placeholder="{{email}}" >
+                            <input class="form-control" name="email" type="email" placeholder="{{email}}">
                         </div>
                         <div class="col-md-8">
                             <label for="password">Old password:</label><br>
-                            <input class="form-control" name="password" type="password" placeholder="old password" required>
+                            <input class="form-control" name="password" type="password" placeholder="old password"
+                                required>
                         </div>
                         <div class="col-md-8">
                             <label for="password">New password:</label><br>
-                            <input name="password2" type="password" placeholder="new password">
+                            <input class="form-control" name="password2" type="password" placeholder="new password">
                         </div>
                         <div class="col-lg-8 col-md-12">
                             <button class="btn black" type="submit">Change</button>

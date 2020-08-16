@@ -232,49 +232,46 @@ router.get("/userPage", ensureAuthenticated, (req, res) => {
   }
 });
 
-router.get("/userRecentOrder", ensureAuthenticated,(req, res) => {
-  const title = "Order History";
-  cartItem.findAll({
-    //
-  })
-  // Need to intergrate this later on
-  console.log(cartItem)
+router.get("/orderHistoryAdmin", ensureAuthenticated, ensureAdmin,(req, res) => {
+  const title = "Order History - Admin";
+  order
+    .findAll({
+      // where: {
+      //   userId: req.user.id, //finds all because user is admin
+      // },
+      include: [{ model: orderItem }],
+    })
+    .then((order) => {
+      res.render("user/orderHistoryPageAdmin", {
+        order: order,
+        orderitems: order.orderitems,
+        title,
+      });
+    });
+});
 
+
+router.get("/orderHistory", ensureAuthenticated, (req, res) => {
+  const title = "Order History";
   order
     .findAll({
       where:{
         userId: req.user.id,
-      }
+      },
+      include: [{ model: orderItem }],
     })
     .then((order) => {
+      console.log("hello")
       console.log(order)
-      console.log("======================")
-      res.render("user/userRecentOrder1", {
+      res.render("user/orderHistoryPageUser", {
         order: order,
+        orderitems: order.orderitems,
         title,
-        cartItem:cartItem
-        //order:cartItem
       });
     })
     .catch((err) => console.log(err));
 });
 
-//Need to integrate this later
-router.get("/userCart", (req, res) => {
-  const title = "Cart";
-  cartItem
-    .findAll({
-      //where:{
-      //  userId = req.user.id,
-      //},
-    })
-    .then((cartItem) => {
-      res.render("user/userCart", {
-        cartItem: cartItem,
-        title,
-      });
-    });
-});
 
 router.get("/login", (req, res) => {
   const title = "Login";
@@ -464,6 +461,7 @@ router.get("/userPage/changeaddress", ensureAuthenticated, function (req, res) {
     title,
   });
 });
+
 router.post("/userPage/changeaddress",ensureAuthenticated, (req, res) => {
   let errors = [];
   let { PhoneNo, address, address1, city, country, postalCode } = req.body;
