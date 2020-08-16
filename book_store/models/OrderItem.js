@@ -15,7 +15,7 @@ const OrderItem = db.define('orderitem',
             type: Sequelize.STRING
         },
         price: {
-            type: Sequelize.STRING
+            type: Sequelize.DECIMAL(10,2)
         },
         stock: {
             type: Sequelize.STRING

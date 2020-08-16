@@ -232,49 +232,46 @@ router.get("/userPage", ensureAuthenticated, (req, res) => {
   }
 });
 
-router.get("/userRecentOrder", ensureAuthenticated,(req, res) => {
-  const title = "Order History";
-  cartItem.findAll({
-    //
-  })
-  // Need to intergrate this later on
-  console.log(cartItem)
+router.get("/orderHistoryAdmin", ensureAuthenticated, ensureAdmin,(req, res) => {
+  const title = "Order History - Admin";
+  order
+    .findAll({
+      // where: {
+      //   userId: req.user.id, //finds all because user is admin
+      // },
+      include: [{ model: orderItem }],
+    })
+    .then((order) => {
+      res.render("user/orderHistoryPageAdmin", {
+        order: order,
+        orderitems: order.orderitems,
+        title,
+      });
+    });
+});
 
+
+router.get("/orderHistory", ensureAuthenticated, (req, res) => {
+  const title = "Order History";
   order
     .findAll({
       where:{
         userId: req.user.id,
-      }
+      },
+      include: [{ model: orderItem }],
     })
     .then((order) => {
+      console.log("hello")
       console.log(order)
-      console.log("======================")
-      res.render("user/userRecentOrder1", {
+      res.render("user/orderHistoryPageUser", {
         order: order,
+        orderitems: order.orderitems,
         title,
-        cartItem:cartItem
-        //order:cartItem
       });
     })
     .catch((err) => console.log(err));
 });
 
-//Need to integrate this later
-router.get("/userCart", (req, res) => {
-  const title = "Cart";
-  cartItem
-    .findAll({
-      //where:{
-      //  userId = req.user.id,
-      //},
-    })
-    .then((cartItem) => {
-      res.render("user/userCart", {
-        cartItem: cartItem,
-        title,
-      });
-    });
-});
 
 router.get("/login", (req, res) => {
   const title = "Login";
@@ -392,6 +389,21 @@ router.post("/register", (req, res) => {
 });
 
 router.get("/logout", function (req, res) {
+  // Empty the cart
+  req.session.userCart = {};
+  req.session.coupon_type = null;
+  req.session.discount = 0;
+  req.session.discount_limit = 0;
+  req.session.discounted_price = (0).toFixed(2);
+  req.session.shipping_discount = 0;
+  req.session.shipping_discount_limit = 0;
+  req.session.shipping_discounted_price = 0;
+  req.session.sub_discount = 0;
+  req.session.sub_discount_limit = 0;
+  req.session.sub_discounted_price = 0;
+  req.session.full_subtotal_price = 0;
+  req.session.full_total_price = 0;
+  req.session.deducted = 0;
   req.logout();
   res.redirect("/");
 });
@@ -449,6 +461,7 @@ router.get("/userPage/changeaddress", ensureAuthenticated, function (req, res) {
     title,
   });
 });
+
 router.post("/userPage/changeaddress",ensureAuthenticated, (req, res) => {
   let errors = [];
   let { PhoneNo, address, address1, city, country, postalCode } = req.body;
