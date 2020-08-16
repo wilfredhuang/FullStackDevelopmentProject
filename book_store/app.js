@@ -232,7 +232,7 @@ app.post("/deliveryUpdates", (req, res) => {
   let carrier = "Your carrier is " + req.body.result.carrier;
   console.log(shippingIDWeb);
   order
-    .find({
+    .findOne({
       where: {
         shippingId: shippingIDWeb,
       },
