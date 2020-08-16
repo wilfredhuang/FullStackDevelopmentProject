@@ -9,6 +9,7 @@ const order = require('../models/Order');
 const order_item = require('../models/OrderItem');
 const User = require('../models/User');
 const Pending_Order = require('../models/Pending_Orders');
+const Pending_OrderItem = require('../models/Pending_OrderItem');
 
 const alertMessage = require('../helpers/messenger');
 const Coupon = require('../models/coupon');
@@ -55,7 +56,7 @@ router.get('/listProduct', (req, res) => {
         })
 });
 
-router.get('/individualProduct/:id', (req, res) => {
+router.get('/individualProduct/:id', async (req, res) => {
     const title = "Product Information";
     // Discount.findOne({
     //     where: {
@@ -75,6 +76,10 @@ router.get('/individualProduct/:id', (req, res) => {
     //             });
     //         })
     // })
+    const disc = await Discount.findOne({
+        where: {target_id: req.params.id}
+    })
+
     productadmin.findOne({
         where: {
             id: req.params.id
@@ -83,7 +88,8 @@ router.get('/individualProduct/:id', (req, res) => {
         .then((product) => {
             res.render('products/individualProduct', {
                 product,
-                title
+                title,
+                disc
             });
         })
 });
@@ -137,10 +143,11 @@ router.post('/addProductAdmin', (req, res) => {
     let price = req.body.price;
     let stock = req.body.stock;
     let details = req.body.details;
+    let rating = req.body.rating;
     let weight = req.body.weight;
     let product_image = req.body.product_image;
     productadmin.create({
-        product_name, author, publisher, genre, price, stock, details, weight, product_image,
+        product_name, author, publisher, genre, price, stock, details, weight, product_image,rating,
     }).then((product) => {
         res.redirect('/product/listProductAdmin')
     })
@@ -151,7 +158,7 @@ router.get('/listProductAdmin', (req, res) => {
     const title = "Product Admin List";
     productadmin.findAll({
         order: [
-            ['product_name', 'ASC']
+            ['id', 'ASC']
         ],
         raw: true
     })
@@ -218,9 +225,10 @@ router.put('/updateProductAdmin/:id', (req, res) => {
     let stock = req.body.stock;
     let details = req.body.details;
     let weight = req.body.weight;
+    let rating = req.body.rating;
     let product_image = req.body.product_image;
     productadmin.update({
-        product_name, author, publisher, genre, price, stock, details, weight, product_image,
+        product_name, author, publisher, genre, price, stock, details, weight, product_image,rating,
     }, {
         where: {
             id: req.params.id
@@ -744,7 +752,7 @@ router.get('/deleteCartItem/:id', async (req, res) => {
     }
     console.log(req.session.userCart)
     console.log(req.session.full_subtotal_price)
-    alertMessage(res, 'success', req.params.id + ' is successfully deleted', 'fas fa-sign-in-alt', true)
+    alertMessage(res, 'success', "An item has been removed from the cart", 'fas fa-sign-in-alt', true)
     res.redirect(307, '/product/cart');
 });
 
@@ -1120,7 +1128,7 @@ router.post('/stripepayment', async (req, res) => {
               
               .then((order) => {
                   for (oi in req.session.userCart) {
-                      let id = req.session.userCart[oi].ID;
+                    //   let id = req.session.userCart[oi].ID;
                       let product_name = req.session.userCart[oi].Name;
                       let author = req.session.userCart[oi].Author;
                       let publisher = req.session.userCart[oi].Publisher;
@@ -1133,11 +1141,11 @@ router.post('/stripepayment', async (req, res) => {
                       let orderId = order.id
                       total_weight_oz = (parseFloat(total_weight_oz) + parseFloat(weight)).toFixed(2)
                       const new_order_item = order_item.create({
-                          id, product_name, author, publisher, genre, price, stock, details, weight, product_image, orderId
+                          product_name, author, publisher, genre, price, stock, details, weight, product_image, orderId
                       })
                   }
                   console.log(order);
-                  res.redirect("/delivery/checkout2");
+                  res.redirect("/product/stripetxn_end");
                   let trackingCode = order.dataValues.trackingCode;
                   api.Tracker.retrieve(trackingCode).then((t) => {
                       console.log(t.public_url);
@@ -1171,6 +1179,7 @@ router.post('/stripepayment', async (req, res) => {
                       req.session.full_subtotal_price = 0;
                       req.session.full_total_price = 0;
                       req.session.deducted = 0;
+                      req.session.coupon_type = null;
                       req.session.save();
                   });
               });
@@ -1221,17 +1230,57 @@ router.get('/paynow', (req, res) => {
         });
 });
 
-router.post('/paynow', (req, res) => {
+router.post('/paynow', async (req, res) => {
 
-    Pending_Order.create({
-        fullName: req.session.recipientName, phoneNumber: req.session.recipientPhoneNo, address: req.session.address, address1: req.session.address1,
-        city: req.session.city, countryShipment: req.session.countryShipment, postalCode: req.session.postalCode, deliverFee: 0, totalPrice: req.session.full_total_price
+    let the_date = moment().format("D MMM YYYY");
+    let dateStart = the_date.toString();
+    console.log("dateStart is " + dateStart)
+
+    // Create a unconfirmed order
+    const new_pending_order = await Pending_Order.create({
+        fullName: req.session.recipientName, 
+        phoneNumber: req.session.recipientPhoneNo, 
+        address: req.session.address, 
+        address1: req.session.address1,
+        city: req.session.city, 
+        country: req.session.countryShipment, 
+        postalCode: req.session.postalCode,
+        deliverFee: 0, 
+        subtotalPrice:req.session.full_subtotal_price, 
+        totalPrice: req.session.full_total_price,
+        dateStart: dateStart,
+        userId: req.user.id
+    })        .catch((err)=> {
+        console.log("Cannot create pending order")
+        console.log(err)
     })
+
+    // Store unconfirmed order's order items
+    for (oi in req.session.userCart) {
+        let product_name = req.session.userCart[oi].Name;
+        let author = req.session.userCart[oi].Author;
+        let publisher = req.session.userCart[oi].Publisher;
+        let genre = req.session.userCart[oi].Genre;
+        let price = req.session.userCart[oi].SubtotalPrice;
+        let stock = req.session.userCart[oi].Quantity;
+        let details = "";
+        let weight = req.session.userCart[oi].SubtotalWeight;
+        let product_image = req.session.userCart[oi].Image;
+        let PorderId = new_pending_order.id;
+        const new_poi  = await Pending_OrderItem.create({
+            product_name, author, publisher, genre, price, stock, details, weight, product_image, pendingOrderId: PorderId
+        })
+
+        .catch((err)=> {
+            console.log("Cannot create pending order item")
+            console.log(err)
+        })
+    }
 
     // This block of code below will send a message
     client.messages
         .create({
-            body: 'You made an order with BookStore, your order will be confirmed shortly by the administrator',
+            body: 'You made an order with BookStore via payNow/payLah!, you will be notified again when your order is confirmed',
             from: '+14242066417',
             to: '+6587558054'
         })
@@ -1257,19 +1306,271 @@ router.post('/paynow', (req, res) => {
     req.session.sub_discount = 0;
     req.session.sub_discount_limit = 0;
     req.session.sub_discounted_price = 0;
+    req.session.full_subtotal_price = 0;
     req.session.full_total_price = 0;
     req.session.deducted = 0;
+    req.session.coupon_type = null;
     alertMessage(res, 'success', 'Order placed, the administrator will shortly confirm your payment', 'fas fa-exclamation-circle', true)
-    res.redirect("/delivery/checkout2");
+    res.redirect("/product/paynowtxn_end");
 
 })
 
+router.get('/stripetxn_end', (req, res) => {
+    title = "Thank you!"
+    res.render('checkout/thankYouStripe', {
+        title
+    })
+})
+
+router.get('/paynowtxn_end', (req, res) => {
+    title = "Thank you!"
+    res.render('checkout/thankYouPayNow', {
+        title
+    })
+})
+
 // Admin Side
+
+router.get('/discountmenu', (req, res) => {
+    title = "Discount & Coupon Menu"
+    res.render('checkout/discountmenu', {
+        title
+    })
+})
+
+router.get('/viewPendingOrders', async (req, res) => {
+    // let PendingOrders = await Pending_Order.findAll({include: Pending_OrderItem});
+    // let PendingOrderItems = await Pending_OrderItem.findAll({})
+    // let PendingOrderItems = PendingOrders.PendingOrderItems
+
+    const title = "View Pending Orders";
+
+    Pending_Order
+    .findAll({
+      where:{
+      },
+      include:[{model:Pending_OrderItem}]
+    }).then((pending_order)=> {
+        // console.log("TESTING")
+        // console.log(pending_order[6]);
+        // console.log("TESTING AGAIN")
+        // console.log(pending_order[6].pending_orderitems)
+        // console.log(pending_order[0].Pending_OrderItem);
+        // console.log(pending_order[0].PendingOrderItems);
+        res.render('checkout/viewPendingOrders', {
+            PendingOrders: pending_order,
+            title
+            // Don't need this below, wont work when rendering
+            // PendingOrderItems: pending_order.pending_orderitems
+        })
+    })
+
+    // console.log("PENDING ORDER ITEMS ARE " + PendingOrders.Pending_OrderItem)
+}),
+
+router.get('/ConfirmPOrder/:id', async(req, res) => {
+    const PO = await Pending_Order.findOne({where: {id: req.params.id}})
+    const POI = await Pending_OrderItem.findAll({where: {pendingOrderId: PO.id}})
+
+
+    const parcel = new api.Parcel({
+        predefined_package: "Parcel",
+        weight: 10, //change number according to weight of total books
+    });
+
+    parcel.save();
+
+    const fromAddress = new api.Address({
+        //default address of company
+        name: "Bookstore",
+        street1: "118 2nd Street",
+        street2: "4th Floor",
+        city: "San Francisco",
+        state: "CA",
+        country: "US",
+        zip: "94105",
+        phone: "415-123-4567",
+        email: "example@example.com",
+      });
+      //fromAddress.save().then(console.log);
+
+    const toAddress = new api.Address({
+        verify: ["delivery"],
+        /*name: fullName,
+        company: "-",
+        street1: address,
+        city: city,
+        state: "-",
+        phone: phoneNumber,
+        country: country,
+        zip: postalCode,*/
+        //example code cos too lazy to type down
+        name: "George Costanza",
+        company: "Vandelay Industries",
+        street1: "1 E 161st St.",
+        phone: "+6590257144",
+        city: "Bronx",
+        state: "NY",
+        //zip: "10451", //Actual zipcode
+        zip: "12412352551",
+    });
+    toAddress
+    .save()
+    .then((addr) => {
+      //console.log(addr);
+      //console.log(addr.verifications)
+      let checkAddress = addr.verifications.delivery.success;
+      //console.log(addr.verifications.delivery.errors[0])
+      if (checkAddress == true) {
+        const shipment = new api.Shipment({
+          to_address: toAddress,
+          from_address: fromAddress,
+          parcel: parcel,
+        });
+        //shipment.save()//.then(console.log);
+        shipment.save().then((s) => {
+          s.buy(shipment.lowestRate(["USPS"], ["First"])).then((t) => {
+            console.log("=============");
+            console.log(t.id);
+            let fullName = PO.id;
+            let phoneNumber = PO.phoneNumber; 
+            let address = PO.address;
+            let address1 = PO.address1;
+            let city = PO.city;
+            let country = PO.country;
+            let postalCode = PO.postalCode;
+            let deliverFee = PO.deliverFee;
+            let subtotalPrice = PO.subtotalPrice;
+            let totalPrice = PO.totalPrice;
+            let shippingId = t.id;
+            let addressId = t.to_address.id;
+            let trackingId = t.tracker.id;
+            let trackingCode = t.tracker.tracking_code;
+            let dateStart = t.created_at;
+            let dateEnd = t.tracker.est_delivery_date;
+            let deliveryStatus = t.tracker.status;
+            let userId = PO.userId;
+            order.create({
+                  fullName,
+                  phoneNumber,
+                  address,
+                  address1,
+                  city,
+                  country,
+                  postalCode,
+                  deliverFee,
+                  subtotalPrice,
+                  totalPrice,
+                  shippingId,
+                  addressId,
+                  trackingId,
+                  trackingCode,
+                  dateStart,
+                  dateEnd,
+                  deliveryStatus,
+                  userId,
+              })
+              
+              .then((order) => {
+                  for (oi in POI) {
+                    //   let id = req.session.userCart[oi].ID;
+                      let product_name = POI[oi].product_name;
+                      let author = POI[oi].author;
+                      let publisher = POI[oi].publisher;
+                      let genre = POI[oi].genre;
+                      let price = POI[oi].price;
+                      let stock = POI[oi].stock;
+                      let details = "";
+                      let weight = POI[oi].weight;
+                      let product_image = POI[oi].product_image;
+                      let orderId = order.id
+                      order_item.create({
+                          product_name, author, publisher, genre, price, stock, details, weight, product_image, orderId
+                      })
+                  }
+                  console.log(order);
+                  // Delete pending orders and pois since order confirmed already
+                  PO.destroy();
+                  for (i in POI) {
+                      console.log(`Deleting Product ${i}`)
+                      POI[i].destroy();
+                  }
+                  alertMessage(res, 'success', `Confirmed Order ${order.id} which belongs to user of id ${order.userId}`, 'fas fa-exclamation-circle', true)
+                  res.redirect('/product/viewPendingOrders');
+                  let trackingCode = order.dataValues.trackingCode;
+                  api.Tracker.retrieve(trackingCode).then((t) => {
+                      console.log(t.public_url);
+                      let trackingURL = t.public_url;
+                      client.messages
+                        .create({
+                          body:
+                            "Your order has been confirmed!" +
+                            "Thank you for your purchase from the Book Store. Your tracking code is " +
+                            trackingCode +
+                            " and check your delivery here!\n" +
+                            trackingURL,
+                          from: "+14242066417",
+                          to: order.phoneNumber,
+                        })
+                        .then((message) => console.log(message.sid));
+                  });
+              });
+          });
+        });
+            
+            console.log("its true");
+            //res.redirect("/delivery/checkout2");
+        } else {
+            console.log("its false");
+            alertMessage(
+                res,
+                "danger",
+                "Please enter a valid address",
+                "fas faexclamation-circle",
+                true
+            );
+            res.redirect('/product/viewPendingOrders');
+        }
+        //console.log(addr.verifications.errors);
+    })
+        .catch((e) => {
+            console.log(e); //check errors
+        });
+})
+
+router.get('/DeletePOrder/:id', async (req, res) => {
+    // Code commented out below does work... but doesn't remove pending order items associated with it when a PO is deleted
+    // Pending_Order.findOne({where: {id: req.params.id}, include:[{model:Pending_OrderItem}]})
+    // .then((po)=> {
+    //     po.destroy();
+    // })
+
+    const PO = await Pending_Order.findOne({where: {id: req.params.id}})
+    const POI = await Pending_OrderItem.findAll({where: {pendingOrderId: PO.id}})
+    // console.log("POI IS")
+    // console.log(POI[0].destroy())
+    client.messages
+    .create({
+        body:"From BookStore: We are sorry to inform you that your order has cancelled by the administrator due to lack of payment",
+        from: "+14242066417",
+        to: PO.phoneNumber,
+    })
+    .then((message) => console.log(message.sid));
+    alertMessage(res, 'success', `Pending Order with ID ${PO.id} Deleted`, 'fas fa-exclamation-circle', true)
+    PO.destroy();
+    for (i in POI) {
+        console.log(`Deleting Product ${i}`)
+        POI[i].destroy();
+    }
+    res.redirect('/product/viewPendingOrders')
+})
+
 
 router.get('/createCoupon', (req, res) => {
     // if (!req.session.public_coupon) {
     //     req.session.public_coupon = "NULL";
     // }
+    title = "Create Coupon"
     let currentDate = moment(req.body.currentDate, "DD/MM/YYYY");
     // Get current time of server
     // hh or HH = 24 hr format, h / H = 12 hr format, a = PM/AM
@@ -1278,6 +1579,7 @@ router.get('/createCoupon', (req, res) => {
     let errors;
 
     res.render('checkout/createCoupon', {
+        title,
         currentTime,
         errors
     })

@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
 const db = require('../config/DBConfig');
-const ProductAdmin = db.define('productadmin',
+const Pending_OrderItem = db.define('pending_orderitem',
     {
         product_name: {
             type: Sequelize.STRING
@@ -26,13 +26,10 @@ const ProductAdmin = db.define('productadmin',
         weight: {
             type: Sequelize.STRING
         },
-        rating:{
-            type: Sequelize.STRING
-        },
         product_image: {
             type: Sequelize.STRING
         },
     });
 
 
-module.exports = ProductAdmin;
+module.exports = Pending_OrderItem;
