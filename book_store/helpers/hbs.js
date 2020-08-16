@@ -33,7 +33,7 @@ module.exports = {
   },
 
   adminCheck: function (value) {
-    if (value != null && value.name == "admin") {
+    if (value != null && value.isadmin == true) {
       console.log("Admin Account Detected");
       return true;
     } else if (value != null) {
@@ -98,7 +98,7 @@ module.exports = {
 
   isSg: function (country_var) {
     console.log(`The user country is ${country_var}`);
-    if (country_var == "Singapore") {
+    if (country_var == "SG") {
       return true;
     } else {
       return false;
@@ -146,6 +146,14 @@ module.exports = {
     else if (!isNaN(og_subtotal)) {
       return true;
     }
+  },
+
+  check_for_discount_msg: function(msg){
+    if (msg == null || undefined) {
+      msg = ""
+    }
+
+    return msg
   },
 
   retrieveDeliveryStatus: function (shipmentID) {

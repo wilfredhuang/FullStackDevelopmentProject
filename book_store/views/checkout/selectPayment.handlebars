@@ -1,10 +1,19 @@
+<div class="breadcrumb">
+  <div class="container">
+    <a class="breadcrumb-item" href="/index">Home</a>
+    <a class="breadcrumb-item" href="/product/cart">Cart</a>
+    <a class="breadcrumb-item" href="/product/checkout">Checkout</a>
+    <span class="breadcrumb-item active"> Select Payment</span>
+  </div>
+</div>
+
 <div class="container">
     {{#if (isSg countryShipment)}}
     <h3> Payment </h3>
     <hr>
     <br>
     <p> We accept PayNow payment for Singaporean Residents, 
-    do note that you would have to wait slightly longer for order confirmation</p>
+    do note that there is a short waiting period for order confirmation </p>
     <p> Stripe payment is instantaneous, we highly recommend it</p>
     <br>
     <br>
@@ -20,16 +29,18 @@
     </div>
     {{else}}
     <h3> Payment </h3>
-    <h4> Stripe payment is instantaneous, we highly recommend it</h4>
+    <hr>
+    <br>
+    <p> Stripe payment is instantaneous, we highly recommend it </p>
+    <br>
     <div class="row">
-        <div class="col-lg-3">
-        </div>
         <div class="col-lg-6">
-            <form method="POST" action="/">
+                        <form method="POST" action="/">
             <input type="submit" class="btn btn-default" formaction="/product/goToStripe" value="Stripe"></input>
             </form>
+            {{!-- <button class="btn btn-secondary" disabled> PayNow</button> --}}
         </div>
-            <div class="col-lg-3">
+        <div class="col-lg-6">
         </div>
     </div>
     {{/if}}

@@ -6,6 +6,8 @@ const bcrypt = require("bcryptjs");
 const passport = require("passport");
 const ensureAuthenticated = require("../helpers/auth");
 const { v1: uuidv1 } = require("uuid");
+const request = require('request');
+const secretKey = "6Le367IZAAAAAJ042sFATGXzwqHsO6N3f38W4G81";
 
 //Models
 const User = require("../models/User");
@@ -77,65 +79,113 @@ let transporter = nodemailer.createTransport({
     user: "superlegitemail100percent@gmail.com", // generated ethereal user
     pass: "Passw0rdyes", // generated ethereal password
   },
-  tls: {
-    rejectUnauthorized: false,
-  },
 });
 
-router.get("/forgetPassword", (req, res) => {
-  res.render("user/forgetPassword");
+router.get("/resetpassword", (req, res) => {
+  res.render("user/changePassword");
 });
 
-router.post("/changepassword/:token", async (req, res) => {
-  let passsword = req.body.password;
+router.post("/resetpassword/", async (req, res) => {
+  if (req.body.password != req.body.password2){
+    errors.push('paswords not the same')
+    res.redirect('/user/changepassword')
+  }
+  User.findOne({ where: { id: req.user.id } }).then((user) => {
+    bcrypt.genSalt(10, function(err, salt) {
+    bcrypt.hash(req.body.password, salt, function (err, hash) {
+      if (err) return next(err);
+      thepassword = hash;
+      user.update({password :thepassword})
+    });
+  });
+  alertMessage(res,"success","password changed","fas fa-sign-in-alt",true);
+  res.redirect("/user/logout")
+});
+});
+
+router.get("/changepassword/:token", async (req, res) => {
   const token = jwt.verify(req.params.token, SECRET_2);
   User.findOne({ where: { id: token.user } }).then((user) => {
-    bcrypt.hash(password, salt, function (err, hash) {
-      if (err) return next(err);
-      password = hash;
-      User.update({ password: password });
+    req.login(user, function(err) {
+      if (err) { return next(err); }
+      return res.redirect('/user/resetpassword');
     });
   });
 });
 
-router.get("/changepassword/:token", async (req, res) => {
-  res.render("user/changepassword");
+router.get("/forgetpassword", (req, res) => {
+  res.render("user/forgetPassword");
 });
 
 router.post("/forgetpassword", (req, res) => {
-  let email = req.body.email;
-  console.log(email);
-  User.findOne({ email: email }).then((user) => {
-    if (!user) {
-      res.redirect("/user/login");
-    } else {
-      theid = user.id;
-      jwt.sign(
-        {
-          user: theid,
-        },
-        SECRET_2,
-        {
-          expiresIn: "1d",
-        },
-        (err, passwordToken) => {
-          const url = `https://localhost:5000/user/changepassword/${passwordToken}`;
-          console.log(url);
-          transporter.sendMail({
-            to: req.body.email,
-            subject: "Password Reset ",
-            html: `Please click this link to change you password: <a href="${url}">${url}</a>`,
-          });
-        }
-      );
+
+  let captcha = req.body['g-recaptcha-response'] //get user token value
+//checks if captcha response is valid
+  if (
+    captcha === undefined ||
+    captcha === "" ||
+    captcha === null
+  ) {
+    return res.json({ success: false, msg: "Please select captcha" });
+  }
+
+  const verifyURL =
+    "https://www.google.com/recaptcha/api/siteverify?secret=" +
+    secretKey +
+    "&response=" +
+    captcha;
+  console.log(verifyURL); //this is a url that needs to be verified
+
+  request(verifyURL, (err, response, body) => {
+    body = JSON.parse(body);
+    console.log(body)  //retrieves response from google and return its json info
+
+    if (body.success !== undefined && !body.success) {
       alertMessage(
         res,
-        "success",
-        "please check your email",
-        "fas fa-sign-in-alt",
+        "danger",
+        "Please re-enter the recaptcha",
+        "fas faexclamation-circle",
         true
       );
-      res.redirect("/user/login");
+      res.redirect("/user/forgetpassword");
+    } else {
+      let email = req.body.email;
+      console.log(email);
+      User.findOne({ where: { email: email } }).then((user) => {
+        if (!user) {
+          res.redirect("/user/login");
+        } else {
+          theid = user.id;
+          console.log(theid)
+          jwt.sign(
+            {
+              user: theid,
+            },
+            SECRET_2,
+            {
+              expiresIn: "1d",
+            },
+            (err, passwordToken) => {
+              const url = `https://localhost:5000/user/changepassword/${passwordToken}`;
+              console.log(url);
+              transporter.sendMail({
+                to: req.body.email,
+                subject: "Password Reset ",
+                html: `Please click this link to change you password: <a href="${url}">${url}</a>`,
+              });
+            }
+          );
+          alertMessage(
+            res,
+            "success",
+            "please check your email",
+            "fas fa-sign-in-alt",
+            true
+          );
+          res.redirect("/user/login");
+        }
+      });
     }
   });
 });
@@ -146,6 +196,13 @@ router.get("/confirmation/:token", async (req, res) => {
     user.update({ confirmed: true });
     console.log("email verified");
   });
+  alertMessage(
+    res,
+    "success",
+    "account confirmed",
+    "fas fa-sign-in-alt",
+    true
+  );
   res.redirect("https://localhost:5000/user/login");
 });
 
@@ -198,45 +255,37 @@ router.get("/orderHistory", ensureAuthenticated, (req, res) => {
   const title = "Order History";
   order
     .findAll({
-      where: {
+      where:{
         userId: req.user.id,
-      },
-      include: [{ model: orderItem }],
+      }
     })
     .then((order) => {
-      console.log(
-        "========================these is orders======================="
-      );
-      console.log(order[0])
-      console.log(
-        "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
-      );
       console.log(order[0].orderitems);
       res.render("user/orderHistoryPageUser", {
         order: order,
+        title,
         orderitems: order.orderitems,
-        title
       });
     })
     .catch((err) => console.log(err));
 });
 
 //Need to integrate this later
-router.get("/userCart", (req, res) => {
-  const title = "Cart";
-  cartItem
-    .findAll({
-      //where:{
-      //  userId = req.user.id,
-      //},
-    })
-    .then((cartItem) => {
-      res.render("user/userCart", {
-        cartItem: cartItem,
-        title,
-      });
-    });
-});
+// router.get("/userCart", (req, res) => {
+//   const title = "Cart";
+//   cartItem
+//     .findAll({
+//       //where:{
+//       //  userId = req.user.id,
+//       //},
+//     })
+//     .then((cartItem) => {
+//       res.render("user/userCart", {
+//         cartItem: cartItem,
+//         title,
+//       });
+//     });
+// });
 
 router.get("/login", (req, res) => {
   const title = "Login";
@@ -277,7 +326,7 @@ router.get("/register", (req, res) => {
 });
 
 router.post("/register", (req, res) => {
-  errors = [];
+  let errors = [];
   let { email, name, password, password2 } = req.body;
   if (password !== password2) {
     errors.push({ text: "Passwords do not match" });
@@ -297,7 +346,7 @@ router.post("/register", (req, res) => {
     User.findOne({ where: { email: req.body.email } }).then((user) => {
       if (user) {
         res.render("user/register", {
-          error: user.email + " already registered",
+          errors: user.email + " already registered",
           name,
           email,
           password,
@@ -343,10 +392,9 @@ router.post("/register", (req, res) => {
                       html: `Please click this email to confirm your email: <a href="${url}">${url}</a>`,
                     });
                   }
-                );
+                )
                 res.redirect("/user/login");
               })
-              .catch((err) => console.log(err));
           });
         });
       }
@@ -355,6 +403,21 @@ router.post("/register", (req, res) => {
 });
 
 router.get("/logout", function (req, res) {
+  // Empty the cart
+  req.session.userCart = {};
+  req.session.coupon_type = null;
+  req.session.discount = 0;
+  req.session.discount_limit = 0;
+  req.session.discounted_price = (0).toFixed(2);
+  req.session.shipping_discount = 0;
+  req.session.shipping_discount_limit = 0;
+  req.session.shipping_discounted_price = 0;
+  req.session.sub_discount = 0;
+  req.session.sub_discount_limit = 0;
+  req.session.sub_discounted_price = 0;
+  req.session.full_subtotal_price = 0;
+  req.session.full_total_price = 0;
+  req.session.deducted = 0;
   req.logout();
   res.redirect("/");
 });
@@ -363,49 +426,41 @@ router.get("/userPage", ensureAuthenticated, (req, res) => {
   res.render("user/userPage");
 });
 
-router.post("/userPage/changeinfo", ensureAuthenticated, (req, res) => {
-  errors = [];
-  let { email, name, password, password2 } = req.body;
+router.post("/userPage/changeinfo",ensureAuthenticated, (req, res) => {
+  let errors = [];
+  let { name,email,password2 } = req.body;
   console.log(req.body);
-  User.findOne({ id: req.user.id }).then((user) => {
-    console.log(user);
-    bcrypt.genSalt(10, function (err, salt) {
-      if (err) return next(err);
-      bcrypt.hash(password, salt, function (err, hash) {
-        if (err) return next(err);
-        password = hash;
-        if (password != user.password) {
-          error.push({ text: "Wrong password" });
-        } else {
-          if (name != null) {
-            User.update({ name: name }, { where: { id: req.user.id } });
-          }
-          if (email != null) {
-            User.update({ email: email }, { where: { id: req.user.id } });
-          }
-          if (password2 != null) {
-            bcrypt.hash(password2, salt, function (err, hash) {
-              if (err) return next(err);
-              password2 = hash;
-              User.update(
-                { password: password2 },
-                { where: { id: req.user.id } }
-              );
-            });
-          }
-        }
+
+  bcrypt.compare(req.body.password, req.user.password, function(err, done) {
+    if (done){
+    User.findOne({where:{id: req.user.id}})
+    .then((user) =>{
+      if (name != '') {
+        user.update({name: req.body.name} );
+      }
+      if (email!= '') {
+        user.update({ email: req.body.email } );
+      }
+      if (password2 != '') {
+        bcrypt.genSalt(10, function(err, salt) {
+          bcrypt.hash(req.user.password2, salt, function(err, hash) {
+              // Store hash in your password DB.
+              user.update({ password: hash});
+          });
       });
-    });
-    alertMessage(
-      res,
-      "success",
-      "information has been updated",
-      "fas fa-sign-in-alt",
-      true
-    );
-    res.redirect("/user/userpage");
-  });
+      } 
+    })
+    alertMessage(res,"success","information has been updated","fas fa-sign-in-alt",true);
+      res.redirect('/user/userpage/')
+  }
+  if (err){
+    console.log(err)
+    alertMessage(res,"error","error","fas fa-sign-in-alt",true);
+    res.redirect('/user/userpage')
+  }
 });
+});
+  
 
 router.get("/userPage/changeinfo", ensureAuthenticated, function (req, res) {
   const title = "Change Information";
@@ -420,29 +475,29 @@ router.get("/userPage/changeaddress", ensureAuthenticated, function (req, res) {
     title,
   });
 });
-
-router.post("/userPage/changeaddress", ensureAuthenticated, (req, res) => {
-  errors = [];
+router.post("/userPage/changeaddress",ensureAuthenticated, (req, res) => {
+  let errors = [];
   let { PhoneNo, address, address1, city, country, postalCode } = req.body;
   console.log(req.body);
-  User.findOne({ id: req.user.id }).then((user) => {
-    if (PhoneNo != null) {
-      User.update({ PhoneNo: PhoneNo }, { where: { id: req.user.id } });
+  User.findOne({where:{id: req.user.id}})
+  .then((user) =>{
+    if (PhoneNo != '') {
+      user.update({PhoneNo: req.body.PhoneNo} );
     }
-    if (address != null) {
-      User.update({ address: address }, { where: { id: req.user.id } });
+    if (address!= '') {
+      user.update({ address: req.body.address } );
     }
-    if (address1 != null) {
-      User.update({ address1: address1 }, { where: { id: req.user.id } });
+    if (address1 != '') {
+      user.update({ address1: req.body.address1 });
     }
-    if (city != null) {
-      User.update({ city: city }, { where: { id: req.user.id } });
+    if (city != '') {
+      user.update({ city: req.body.city});
     }
-    if (country != null) {
-      User.update({ country: country }, { where: { id: req.user.id } });
+    if (country != '') {
+      user.update({ country: req.body.country});
     }
-    if (postalCode != null) {
-      User.update({ postalCode: postalCode }, { where: { id: req.user.id } });
+    if (postalCode != '') {
+      user.update({ postalCode: req.body.postalCode});
     }
     alertMessage(
       res,
@@ -454,6 +509,5 @@ router.post("/userPage/changeaddress", ensureAuthenticated, (req, res) => {
     res.redirect("/user/userpage");
   });
 });
-
 
 module.exports = router;

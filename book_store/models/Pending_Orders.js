@@ -10,18 +10,16 @@ const Pending_Order = db.define('pending_order',
         country:{type: Sequelize.STRING,},
         postalCode: {type: Sequelize.STRING,},
         deliverFee:{type: Sequelize.FLOAT,},
+        subtotalPrice:{type: Sequelize.FLOAT},
         totalPrice:{type: Sequelize.FLOAT,},    
-        shippingId:{type:Sequelize.STRING},
-        addressId:{type: Sequelize.STRING,},
-        trackingId:{type: Sequelize.STRING,},
-        trackingCode:{type: Sequelize.STRING,},
-        dateStart:{type: Sequelize.DATE,},
-        dateEnd:{type:Sequelize.DATE,},
-        deliveryStatus:{type:Sequelize.STRING,},
-         /** 
-         * 
-         *  might need to add more things over here
-         */
+        // shippingId:{type:Sequelize.STRING},
+        // addressId:{type: Sequelize.STRING,},
+        // trackingId:{type: Sequelize.STRING,},
+        // trackingCode:{type: Sequelize.STRING,},
+        // temporarily set as string for now
+        dateStart:{type: Sequelize.STRING} //rename this to order date
+        // dateEnd:{type:Sequelize.DATE,}, //remove this
+        // deliveryStatus:{type:Sequelize.STRING,},
     });
 
 module.exports = Pending_Order;
