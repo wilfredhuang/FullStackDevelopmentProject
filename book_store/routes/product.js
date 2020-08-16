@@ -1130,8 +1130,8 @@ router.post('/stripepayment', async (req, res) => {
             let country = req.session.countryShipment;
             let postalCode = req.session.postalCode;
             let deliverFee = 0;
-            let subtotalPrice = (req.session.full_subtotal_price).toFixed(2);
-            let totalPrice = (req.session.full_total_price).toFixed(2);
+            let subtotalPrice = req.session.full_subtotal_price;
+            let totalPrice = req.session.full_total_price;
             let shippingId = t.id;
             let addressId = t.to_address.id;
             let trackingId = t.tracker.id;
@@ -1346,18 +1346,18 @@ router.post('/paynow', async (req, res) => {
     req.session.deducted = 0;
     req.session.coupon_type = null;
     alertMessage(res, 'success', 'Order placed, the administrator will shortly confirm your payment', 'fas fa-exclamation-circle', true)
-    res.redirect("/product/paynowtxn_end");
+    res.redirect("paynowtxn_end");
 
 })
 
-router.get('/stripetxn_end', checkCart, (req, res) => {
+router.get('/stripetxn_end', (req, res) => {
     title = "Thank you!"
     res.render('checkout/thankYouStripe', {
         title
     })
 })
 
-router.get('/paynowtxn_end', checkCart, (req, res) => {
+router.get('/paynowtxn_end', (req, res) => {
     title = "Thank you!"
     res.render('checkout/thankYouPayNow', {
         title
@@ -1475,8 +1475,8 @@ router.get('/ConfirmPOrder/:id', ensureAdminAuthenticated, async(req, res) => {
             let country = PO.country;
             let postalCode = PO.postalCode;
             let deliverFee = PO.deliverFee;
-            let subtotalPrice = (PO.subtotalPrice).toFixed(2);
-            let totalPrice = (PO.totalPrice).toFixed(2);
+            let subtotalPrice = PO.subtotalPrice;
+            let totalPrice = PO.totalPrice;
             let shippingId = t.id;
             let addressId = t.to_address.id;
             let trackingId = t.tracker.id;

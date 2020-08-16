@@ -193,7 +193,20 @@ app.use(function (req, res, next) {
 	for (i in req.session.userCart) {
 		res.locals.full_og_subtotal_price = (parseFloat(res.locals.full_og_subtotal_price) + parseFloat(req.session.userCart[i].SubtotalPrice)).toFixed(2)
 	}
-	res.locals.full_og_subtotal_price = (parseFloat(req.session.full_subtotal_price) + parseFloat(req.session.deducted)).toFixed(2);
+	//  Update 16 Aug, To fix another display issue, in the case of when we have 1 item that costs $10
+	// and SUB / OVERALL coupons with same rate and limit of 10% and $10 respectively
+	// Have to calculate the full_og_subtotal_price differently based on coupon type to match
+	// The calculated amounts
+	if (req.session.coupon_type == "OVERALL") {
+		res.locals.full_og_subtotal_price = (parseFloat(req.session.full_subtotal_price) + parseFloat(req.session.deducted)).toFixed(2);
+	}
+
+	else {
+		res.locals.full_og_subtotal_price = (parseFloat(req.session.full_subtotal_price) + parseFloat(req.session.deducted) + parseFloat(req.session.discounted_price)).toFixed(2);
+	}
+	// Use when 'OVERALL' coupon applied
+	// res.locals.full_og_subtotal_price = (parseFloat(req.session.full_subtotal_price) + parseFloat(req.session.deducted)).toFixed(2);
+	// Use when 'SUB' coupon applied.
 	// res.locals.full_og_subtotal_price = (parseFloat(req.session.full_subtotal_price) + parseFloat(req.session.deducted) + parseFloat(req.session.discounted_price)).toFixed(2);
 	next();
 });
