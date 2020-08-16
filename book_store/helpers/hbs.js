@@ -1,10 +1,5 @@
 const moment = require("moment");
 
-//EasyPost API
-const EasyPost = require("@easypost/api");
-const apiKey = "EZTK29b55ab4ee7a437890e19551520f5dd0uaJjPiW9XsVqXYFNVI0kog";
-const api = new EasyPost(apiKey);
-
 module.exports = {
   formatDate: function (date, targetFormat) {
     if (date == null) {
@@ -128,41 +123,47 @@ module.exports = {
     //return "this is hello"
   },
   get_old_subtotal: function (qty, price, new_sub) {
-    og_subtotal = (qty * price).toFixed(2)
-    if (og_subtotal != new_sub ) {
-      return og_subtotal
-    }
-
-    else {
-      return
+    og_subtotal = (qty * price).toFixed(2);
+    if (og_subtotal != new_sub) {
+      return og_subtotal;
+    } else {
+      return;
     }
   },
 
-  check_subtotal: function(og_subtotal, new_subtotal) {
+  check_subtotal: function (og_subtotal, new_subtotal) {
     if (og_subtotal == new_subtotal) {
       return false;
-    }
-
-    else if (!isNaN(og_subtotal)) {
+    } else if (!isNaN(og_subtotal)) {
       return true;
     }
   },
 
-  check_for_discount_msg: function(msg){
+  check_for_discount_msg: function (msg) {
     if (msg == null || undefined) {
-      msg = ""
+      msg = "";
     }
 
-    return msg
+    return msg;
   },
 
-  retrieveDeliveryStatus: function (shipmentID) {
-    api.Shipment.retrieve(shipmentID).then((s) => {
-      let deliveryStatus = s.status;
-      //let shipmentID = deliveryStatus
-      //console.log(s.status);
-      //console.log(deliveryStatus);
-      return deliveryStatus;
-    });
-  }
-}
+  formatDeliveryStatus: function (deliveryStatus) {
+    if (deliveryStatus == "unknown") {
+      return "Unknown";
+    } else if (deliveryStatus == "pre_transit") {
+      return "Pre-transit";
+    } else if (deliveryStatus == "in_transit") {
+      return "In-transit";
+    } else if (deliveryStatus == "out_for_delivery") {
+      return "Out for delivery";
+    } else if (deliveryStatus == "delivered") {
+      return "Delivered";
+    } else if (deliveryStatus == "return_to_sender") {
+      return "Return to sender";
+    } else if (deliveryStatus == "failure") {
+      return "Failure";
+    } else {
+      return "Unknown";
+    }
+  },
+};
