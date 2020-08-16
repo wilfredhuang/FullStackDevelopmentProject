@@ -1163,7 +1163,7 @@ router.post('/stripepayment', async (req, res) => {
                       //   .then((message) => console.log(message.sid));
                     
                     
-
+                    console.log("hello")
                     // Empty the cart
                       req.session.userCart = {};
                       req.session.coupon_type = null;
