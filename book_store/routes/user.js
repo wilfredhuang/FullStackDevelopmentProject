@@ -257,14 +257,15 @@ router.get("/orderHistory", ensureAuthenticated, (req, res) => {
     .findAll({
       where:{
         userId: req.user.id,
-      }
+      },
+      include: [{ model: orderItem }],
     })
     .then((order) => {
-      console.log(order[0].orderitems);
+      //console.log(order[0].orderitems);
       res.render("user/orderHistoryPageUser", {
         order: order,
-        title,
         orderitems: order.orderitems,
+        title,
       });
     })
     .catch((err) => console.log(err));
