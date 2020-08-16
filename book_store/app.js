@@ -24,6 +24,9 @@ const accountSid = "AC7994551ea296710e5de3b74d7a93056c";
 const authToken = "f5ac6a9439b75395ce54e9783d0f8877";
 const client = require("twilio")(accountSid, authToken);
 
+//Models
+const order = require("../book_store/models/Order");
+
 //nodemailer
 let transporter = nodemailer.createTransport({
   host: "smtp.googlemail.com",
@@ -58,8 +61,10 @@ const stripe = require("stripe")("sk_test_ns9DyHTray5Wihniw93C2ANH00IMJTVjKw", {
 
 // Bcrypt - Encrypt password - P4A1
 const bcrypt = require("bcryptjs"); // added here for debugging, but it's import only used in user.js
+
 // Passport - Setting Authentication - P4A2
 const passport = require("passport");
+
 // const FacebookStrategy = require('passport-facebook').Strategy;
 
 // Load routes
@@ -80,6 +85,7 @@ const FlashMessenger = require("flash-messenger");
 
 // Bring in database connection
 const vidjotDB = require("./config/DBConnection");
+
 // Connects to MySQL database
 vidjotDB.setUpDB(false); // To set up database with new tables set (true)
 
@@ -222,90 +228,112 @@ app.post("/deliveryUpdates", (req, res) => {
   let descriptionWeb = req.body.description;
   console.log(descriptionWeb);
   let shippingIDWeb = req.body.result.shipment_id;
-  console.log(shippingIDWeb);
+  let deliveryStatusResponse = req.body.result.status;
   let carrier = "Your carrier is " + req.body.result.carrier;
-  //checks if event is tracker update
-  if (objectWeb == "Event" && descriptionWeb == "tracker.updated") {
-    let deliveryStatus = req.body.result.status;
-    if (deliveryStatus == "delivered") {
-      let lengthOfTrackingDetails = req.body.result.tracking_details.length;
-      let state =
-        req.body.result.tracking_details[lengthOfTrackingDetails - 1]
-          .tracking_location.state;
-      let city =
-        req.body.result.tracking_details[lengthOfTrackingDetails - 1]
-          .tracking_location.city;
-      api.Shipment.retrieve(shippingIDWeb).then((s) => {
-        let toAddressWeb = s.to_address;
-        console.log(toAddressWeb);
-        console.log(s.to_address.phone);
-        let toNumberWeb = "+" + s.to_address.phone;
-        console.log(toNumberWeb);
-        let twilioMessage =
-          firstMessage + carrier + "." +
-          " Your package has arrived at " +
-          city +
-          ", " +
-          state +
-          ".";
-        console.log(twilioMessage);
-        var promise = client.messages.create({
-          from: "+12059461964",
-          to: "+6590251744", // a Twilio number you own
-          body: twilioMessage,
-        });
-        promise.then(
-          function (sms) {
-            console.log("Message success! SMS SID: " + sms.sid);
-          },
-          function (error) {
-            console.error("Message failed!  Reason: " + error.message);
-          }
+  console.log(shippingIDWeb);
+  order
+    .find({
+      where: {
+        shippingId: shippingIDWeb,
+      },
+    })
+    .then((order) => {
+      //checks if event is tracker update
+      if (objectWeb == "Event" && descriptionWeb == "tracker.updated") {
+        if (deliveryStatusResponse == "delivered") {
+          order.update({
+            deliveryStatus: deliveryStatusResponse,
+          });
+          let lengthOfTrackingDetails = req.body.result.tracking_details.length;
+          let state =
+            req.body.result.tracking_details[lengthOfTrackingDetails - 1]
+              .tracking_location.state;
+          let city =
+            req.body.result.tracking_details[lengthOfTrackingDetails - 1]
+              .tracking_location.city;
+          api.Shipment.retrieve(shippingIDWeb).then((s) => {
+            let toAddressWeb = s.to_address;
+            console.log(toAddressWeb);
+            console.log(s.to_address.phone);
+            let toNumberWeb = "+" + s.to_address.phone;
+            console.log(toNumberWeb);
+            let twilioMessage =
+              firstMessage +
+              carrier +
+              "." +
+              " Your package has arrived at " +
+              city +
+              ", " +
+              state +
+              ".";
+            console.log(twilioMessage);
+            var promise = client.messages.create({
+              from: "+12059461964",
+              to: "+6590251744", // a Twilio number you own
+              body: twilioMessage,
+            });
+            promise.then(
+              function (sms) {
+                console.log("Message success! SMS SID: " + sms.sid);
+              },
+              function (error) {
+                console.error("Message failed!  Reason: " + error.message);
+              }
+            );
+            console.log("received delivery");
+            res.status(200).send("Acknowledged Delivered");
+          });
+        } else {
+          order.update({
+            deliveryStatus: deliveryStatusResponse,
+          });
+          let lengthOfTrackingDetails = req.body.result.tracking_details.length;
+          let state =
+            req.body.result.tracking_details[lengthOfTrackingDetails - 1]
+              .tracking_location.state;
+          let city =
+            req.body.result.tracking_details[lengthOfTrackingDetails - 1]
+              .tracking_location.city;
+          api.Shipment.retrieve(shippingIDWeb).then((s) => {
+            let toAddressWeb = s.to_address;
+            console.log(toAddressWeb);
+            let toNumberWeb = "+" + s.to_address.phone;
+            console.log(toNumberWeb);
+            let twilioMessage =
+              firstMessage +
+              carrier +
+              " Your delivery status is " +
+              deliveryStatusResponse +
+              " and package is currently at " +
+              city +
+              ", " +
+              state +
+              ".";
+            console.log(twilioMessage);
+            var promise = client.messages.create({
+              from: "+12059461964",
+              to: "+6590251744", // a Twilio number you own
+              body: twilioMessage,
+            });
+            promise.then(
+              function (sms) {
+                console.log("Message success! SMS SID: " + sms.sid);
+              },
+              function (error) {
+                console.error("Message failed!  Reason: " + error.message);
+              }
+            );
+            console.log("this is hello");
+            res.status(200).send("Acknowledged Update");
+          });
+        }
+      } else {
+        console.log(
+          "might put other stuff here but let's just put a sms notification only"
         );
-        console.log("received delivery");
-        res.status(200).send("Acknowledged Delivered");
-      });
-    } else {
-      let lengthOfTrackingDetails = req.body.result.tracking_details.length;
-      let state =
-        req.body.result.tracking_details[lengthOfTrackingDetails - 1]
-          .tracking_location.state;
-      let city =
-        req.body.result.tracking_details[lengthOfTrackingDetails - 1]
-          .tracking_location.city;
-      api.Shipment.retrieve(shippingIDWeb).then((s) => {
-        let toAddressWeb = s.to_address;
-        console.log(toAddressWeb);
-        let toNumberWeb = "+" + s.to_address.phone;
-        console.log(toNumberWeb);
-        let twilioMessage =
-          firstMessage + carrier +
-          " Your delivery status is " +
-          deliveryStatus +
-          " and package is currently at " +
-          city +
-          ", " +
-          state +
-          ".";
-        console.log(twilioMessage);
-        var promise = client.messages.create({
-          from: "+12059461964",
-          to: "+6590251744", // a Twilio number you own
-          body: twilioMessage,
-        });
-        promise.then(
-          function (sms) {
-            console.log("Message success! SMS SID: " + sms.sid);
-          },
-          function (error) {
-            console.error("Message failed!  Reason: " + error.message);
-          }
-        );
-        console.log("this is hello");
-        res.status(200).send("Acknowledged Update");
-      });
-    }
-  }
+        res.status(200).send("Acknowledged");
+      }
+    });
   // else if(objectWeb == "Event" && descriptionWeb == "tracker.created"){
   // 	trackingResult = req.body.result
   // 	console.log(trackingResult.length)
@@ -317,12 +345,6 @@ app.post("/deliveryUpdates", (req, res) => {
   // 	}
   // 	console.log("currently shifting sms notification to here")
   // }
-  else {
-    console.log(
-      "might put other stuff here but let's just put a sms notification only"
-    );
-    res.status(200).send("Acknowledged");
-  }
 });
 
 // Use Routes
@@ -340,8 +362,8 @@ app.use(function (req, res, next) {
 
 //Renders 500 Page if there is internal server error
 app.use(function (req, res, next) {
-	res.status(500).render("500");
-  });
+  res.status(500).render("500");
+});
 
 const port = 5000;
 

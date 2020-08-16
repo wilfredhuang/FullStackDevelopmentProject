@@ -1,10 +1,5 @@
 const moment = require("moment");
 
-//EasyPost API
-const EasyPost = require("@easypost/api");
-const apiKey = "EZTK29b55ab4ee7a437890e19551520f5dd0uaJjPiW9XsVqXYFNVI0kog";
-const api = new EasyPost(apiKey);
-
 module.exports = {
   formatDate: function (date, targetFormat) {
     if (date == null) {
