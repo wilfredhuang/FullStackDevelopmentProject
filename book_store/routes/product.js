@@ -320,7 +320,7 @@ router.get('/listproduct/:id', async (req, res, next) => {
         let qty = 1
         // Updated on 16 Aug, Bug fix for when a item min qty for discount is 1
         // and it is the first item to be added to cart, but the special price not applied
-        if (disc_object != null ) {
+        if (disc_object != null && qty == disc_object.min_qty ) {
             console.log("Discount Criteria FOUND for " + product.name)
             alertMessage(res, 'success', `Special Offer for this product applied`, 'fas fa-exclamation-circle', false)
             req.session.userCart[[id]] = {
@@ -417,7 +417,7 @@ router.post('/individualProduct/:id', async (req, res, next) => {
         let qty = 1
         // Updated on 16 Aug, Bug fix for when a item min qty for discount is 1
         // and it is the first item to be added to cart, but the special price not applied
-        if (disc_object != null ) {
+        if (disc_object != null && qty == disc_object.min_qty ) {
             console.log("Discount Criteria FOUND for " + product.name)
             alertMessage(res, 'success', `Special Offer for this product applied`, 'fas fa-exclamation-circle', false)
             req.session.userCart[[id]] = {
