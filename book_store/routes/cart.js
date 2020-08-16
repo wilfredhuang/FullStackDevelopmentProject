@@ -30,6 +30,26 @@ const nodemailer = require("nodemailer");
 //Email Template
 //const Email = require('email-templates');
 
+//admin auth
+const ensureAdmin = (req, res, next) => {
+  if (req.isAuthenticated()) {
+    // If user is authenticated
+    console.log(req.user.confirmed);
+    if (req.user.isadmin == true) {
+      return next(); // Calling next() to proceed to the next statement
+    }
+  }
+  // If not authenticated, show alert message and redirect to ‘/’
+  alertMessage(
+    res,
+    "danger",
+    "Access Denied",
+    "fas fa-exclamation-circle",
+    true
+  );
+  res.redirect("/");
+};
+
 //Post user's address info to EasyPost API
 // router.post("/processCheckout", (req, res) => {
 //   let fullName = req.body.fullName.toString();
@@ -180,7 +200,7 @@ const nodemailer = require("nodemailer");
 //     };
 // });
 
-//view More Details of Order //still uses cart.js for example, will change later on
+//view More Details of Order
 router.get("/viewMoreOrder/:id", ensureAuthenticated, (req, res) => {
   const title = "Order Details";
   // CartItem.findAll({
@@ -212,6 +232,7 @@ router.get("/viewMoreOrder/:id", ensureAuthenticated, (req, res) => {
         let deliveryStatusResult = "Pre-transit";
         res.render("user/viewMoreOrder", {
           order: order,
+          orderitems: order.orderitems,
           title,
           deliveryStatusResult,
           trackingURL,
@@ -314,7 +335,139 @@ router.get("/viewMoreOrder/:id", ensureAuthenticated, (req, res) => {
   });
 });
 
-router.get("/displayLabelUrl/:id", (req, res) => {
+router.get(
+  "/viewMoreOrderAdmin/:id",
+  ensureAuthenticated,
+  ensureAdmin,
+  (req, res) => {
+    const title = "Order Details - Admin";
+    Order.findOne({
+      where: {
+        userId: req.user.id,
+        id: req.params.id,
+      },
+      include: [{ model: orderItem }],
+    }).then((order) => {
+      console.log("===========");
+      const shippingId = order.shippingId;
+      console.log(shippingId);
+      api.Shipment.retrieve(shippingId).then((s) => {
+        console.log(s.tracker.created_at);
+        console.log(s.tracker.updated_at);
+        const deliveryStatus = s.tracker.status;
+        const trackingURL = s.tracker.public_url;
+        if (deliveryStatus == "pre_transit") {
+          let progressPercentage = 25;
+          let progressColour = "bg-info";
+          let progressColourText = "text-info";
+          let deliveryStatusResult = "Pre-transit";
+          res.render("user/viewMoreOrderAdmin", {
+            order: order,
+            orderitems: order.orderitems,
+            title,
+            deliveryStatusResult,
+            trackingURL,
+            progressPercentage,
+            progressColour,
+            progressColourText,
+          });
+        } else if (deliveryStatus == "in_transit") {
+          let progressPercentage = 50;
+          let progressColour = "bg-info";
+          let progressColourText = "text-info";
+          let deliveryStatusResult = "In-transit";
+          res.render("user/viewMoreOrderAdmin", {
+            order: order,
+            orderitems: order.orderitems,
+            title,
+            deliveryStatusResult,
+            trackingURL,
+            progressPercentage,
+            progressColour,
+            progressColourText,
+          });
+        } else if (deliveryStatus == "out_for_delivery") {
+          let progressPercentage = 75;
+          let progressColour = "bg-info";
+          let progressColourText = "text-info";
+          let deliveryStatusResult = "Out for delivery";
+          res.render("user/viewMoreOrderAdmin", {
+            order: order,
+            orderitems: order.orderitems,
+            title,
+            deliveryStatusResult,
+            trackingURL,
+            progressPercentage,
+            progressColour,
+            progressColourText,
+          });
+        } else if (deliveryStatus == "delivered") {
+          let progressPercentage = 100;
+          let progressColour = "bg-success";
+          let progressColourText = "text-success";
+          let deliveryStatusResult = "Delivered";
+          res.render("user/viewMoreOrderAdmin", {
+            order: order,
+            orderitems: order.orderitems,
+            title,
+            deliveryStatusResult,
+            trackingURL,
+            progressPercentage,
+            progressColour,
+            progressColourText,
+          });
+        } else if (deliveryStatus == "return_to_sender") {
+          let progressPercentage = 0;
+          let progressColour = "bg-info";
+          let progressColourText = "text-info";
+          let deliveryStatusResult = "Return to sender";
+          res.render("user/viewMoreOrderAdmin", {
+            order: order,
+            orderitems: order.orderitems,
+            title,
+            deliveryStatusResult,
+            trackingURL,
+            progressPercentage,
+            progressColour,
+            progressColourText,
+          });
+        } else if (deliveryStatus == "failure") {
+          let progressPercentage = 100;
+          let progressColour = "bg-danger";
+          let progressColourText = "text-danger";
+          let deliveryStatusResult = "Failure";
+          res.render("user/viewMoreOrderAdmin", {
+            order: order,
+            orderitems: order.orderitems,
+            title,
+            deliveryStatusResult,
+            trackingURL,
+            progressPercentage,
+            progressColour,
+            progressColourText,
+          });
+        } else {
+          let progressPercentage = 0;
+          let progressColour = "bg-dark";
+          let progressColourText = "text-dark";
+          let deliveryStatusResult = "Unknown";
+          res.render("user/viewMoreOrderAdmin", {
+            order: order,
+            orderitems: order.orderitems,
+            title,
+            deliveryStatusResult,
+            trackingURL,
+            progressPercentage,
+            progressColour,
+            progressColourText,
+          });
+        }
+      });
+    });
+  }
+);
+
+router.get("/displayLabelUrl/:id", ensureAuthenticated, ensureAdmin, (req, res) => {
   console.log(req.params.id);
   let shippingId = req.params.id;
   api.Shipment.retrieve(shippingId).then((s) => {
@@ -324,6 +477,45 @@ router.get("/displayLabelUrl/:id", (req, res) => {
       console.log(postageLabelUrlPNG);
       console.log(postageLabelUrlPDF);
       res.redirect(postageLabelUrlPDF);
+    });
+  });
+});
+
+router.get("/printLabelPDF/:id", ensureAuthenticated, ensureAdmin, (req, res) => {
+  console.log(req.params.id);
+  let shippingId = req.params.id;
+  api.Shipment.retrieve(shippingId).then((s) => {
+    s.convertLabelFormat("PDF").then((sr) => {
+      let postageLabelUrlPDF = sr.postage_label.label_pdf_url;
+      const options = {
+        url: "https://api.printnode.com/printjobs",
+        json: true,
+        headers: {
+          Authorization:
+            "Basic REdqckZpUFVnUndGckdxbFNFSmpHbnRpUmotREhqb3FPeFhlUlg3UlYtbw==",
+        },
+        method: "POST",
+        body: {
+          printerId: "69642287",
+          title: "Order Label",
+          contentType: "pdf_uri",
+          content: postageLabelUrlPDF,
+          source: "Comes from EasyPost API",
+        },
+      };
+      request(options, (err, response, body) => {
+        console.error("error:", err); // Print the error if one occurred
+        console.log("statusCode:", response && response.statusCode); // Print the response status code if a response was received
+        console.log("body:", body);
+        alertMessage(
+          res,
+          "success",
+          "Printing is in progress",
+          "fas faexclamation-circle",
+          true
+        );
+        res.redirect("/user/orderHistoryAdmin");
+      });
     });
   });
 });

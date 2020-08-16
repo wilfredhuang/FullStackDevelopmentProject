@@ -232,7 +232,7 @@ router.get("/userPage", ensureAuthenticated, (req, res) => {
   }
 });
 
-router.get("/orderHistoryAdmin", ensureAuthenticated, (req, res) => {
+router.get("/orderHistoryAdmin", ensureAuthenticated, ensureAdmin,(req, res) => {
   const title = "Order History - Admin";
   order
     .findAll({
@@ -261,6 +261,8 @@ router.get("/orderHistory", ensureAuthenticated, (req, res) => {
       include: [{ model: orderItem }],
     })
     .then((order) => {
+      console.log("hello")
+      console.log(order)
       res.render("user/orderHistoryPageUser", {
         order: order,
         orderitems: order.orderitems,
@@ -270,22 +272,6 @@ router.get("/orderHistory", ensureAuthenticated, (req, res) => {
     .catch((err) => console.log(err));
 });
 
-// //Need to integrate this later
-// router.get("/userCart", (req, res) => {
-//   const title = "Cart";
-//   cartItem
-//     .findAll({
-//       //where:{
-//       //  userId = req.user.id,
-//       //},
-//     })
-//     .then((cartItem) => {
-//       res.render("user/userCart", {
-//         cartItem: cartItem,
-//         title,
-//       });
-//     });
-// });
 
 router.get("/login", (req, res) => {
   const title = "Login";
@@ -475,6 +461,7 @@ router.get("/userPage/changeaddress", ensureAuthenticated, function (req, res) {
     title,
   });
 });
+
 router.post("/userPage/changeaddress",ensureAuthenticated, (req, res) => {
   let errors = [];
   let { PhoneNo, address, address1, city, country, postalCode } = req.body;
