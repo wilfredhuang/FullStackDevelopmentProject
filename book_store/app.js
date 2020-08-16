@@ -201,7 +201,7 @@ app.post("/deliveryUpdates", (req, res) => {
 	console.log(shippingIDWeb)
 	//checks if event is tracker update
 	if (objectWeb == "Event" && descriptionWeb == "tracker.updated"){
-		let deliveryStatus = req.body.result.status_detail;
+		let deliveryStatus = req.body.result.status;
 		if (deliveryStatus == "delivered"){
 			//console.log("this is delivery status")
 			api.Shipment.retrieve(shippingIDWeb).then((s) => {
@@ -209,8 +209,9 @@ app.post("/deliveryUpdates", (req, res) => {
 				console.log(toAddressWeb)
 				let toNumberWeb = "+" + s.to_address.phone;
 				//console.log(toNumberWeb)
-				let twilioMessage = "this is delivered status"
+				let twilioMessage = "Your package has arrived!"
 				console.log(twilioMessage)
+				res.status(200).send("Acknowledged Delivered")
 				// client.messages
                 //   .create({
                 //     body:
@@ -230,6 +231,7 @@ app.post("/deliveryUpdates", (req, res) => {
 				//console.log(toNumberWeb)
 				let twilioMessage = "this is not delivered status"
 				console.log(twilioMessage)
+				res.status(200).send("Acknowledged Update")
 				// client.messages
                 //   .create({
                 //     body:
@@ -254,6 +256,7 @@ app.post("/deliveryUpdates", (req, res) => {
 	// }
 	else{
 		console.log("might put other stuff here but let's just put a sms notification only")
+		res.status(200).send("Acknowledged")
 	}
 	console.log("=================") // Call your action on the request here
 	//res.status(200).end() // Responding is important
