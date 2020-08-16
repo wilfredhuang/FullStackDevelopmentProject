@@ -15,7 +15,7 @@ const Pending_OrderItem = db.define('pending_orderitem',
             type: Sequelize.STRING
         },
         price: {
-            type: Sequelize.STRING
+            type: Sequelize.DECIMAL(10,2)
         },
         stock: {
             type: Sequelize.STRING

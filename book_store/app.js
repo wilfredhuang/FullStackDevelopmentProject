@@ -185,7 +185,16 @@ app.use(function (req, res, next) {
 	res.locals.shipping_fee = req.session.shipping_fee;
 	res.locals.public_coupon = req.session.public_coupon; 
 	res.locals.deducted = req.session.deducted;
+	// Fixed this 16/08/20, cause if you use SUB coupon, the subtotal would display like
+	// e.g i use a coupon with 50% off and $20 limit with a $60 order on 3 identical items with a discount of buy 3 save 10%
+	// it would calculate like this first, 60-6 = 54, 54-20, the subtotal would be like 34 the previous time with discount 6 and 
+	// coupon 20.00
+	res.locals.full_og_subtotal_price = (0).toFixed(2)
+	for (i in req.session.userCart) {
+		res.locals.full_og_subtotal_price = (parseFloat(res.locals.full_og_subtotal_price) + parseFloat(req.session.userCart[i].SubtotalPrice)).toFixed(2)
+	}
 	res.locals.full_og_subtotal_price = (parseFloat(req.session.full_subtotal_price) + parseFloat(req.session.deducted)).toFixed(2);
+	// res.locals.full_og_subtotal_price = (parseFloat(req.session.full_subtotal_price) + parseFloat(req.session.deducted) + parseFloat(req.session.discounted_price)).toFixed(2);
 	next();
 });
 
