@@ -118,7 +118,6 @@ router.get("/forgetpassword", (req, res) => {
 });
 
 router.post("/forgetpassword", (req, res) => {
-
   let captcha = req.body['g-recaptcha-response'] //get user token value
 //checks if captcha response is valid
   if (
@@ -128,7 +127,6 @@ router.post("/forgetpassword", (req, res) => {
   ) {
     return res.json({ success: false, msg: "Please select captcha" });
   }
-
   const verifyURL =
     "https://www.google.com/recaptcha/api/siteverify?secret=" +
     secretKey +
@@ -298,6 +296,7 @@ router.post("/login", function (req, res, next) {
     });
   })(req, res, next);
 });
+
 router.get("/admin", ensureAdmin, (req, res) => {
   const title = "Admin Page";
   res.render("user/adminmenu", {
