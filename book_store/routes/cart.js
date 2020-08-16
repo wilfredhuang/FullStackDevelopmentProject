@@ -1,9 +1,14 @@
 const express = require("express");
 const router = express.Router();
-const Order = require("../models/Order");
 const alertMessage = require("../helpers/messenger");
+
+//Models
+const Order = require("../models/Order");
 const orderItem = require("../models/OrderItem");
+
+//Authentication
 const ensureAuthenticated = require("../helpers/auth");
+const ensureAdminAuthenticated = require('../helpers/adminauth');
 
 //Request Function
 const request = require("request");
@@ -30,25 +35,6 @@ const nodemailer = require("nodemailer");
 //Email Template
 //const Email = require('email-templates');
 
-//admin auth
-const ensureAdmin = (req, res, next) => {
-  if (req.isAuthenticated()) {
-    // If user is authenticated
-    console.log(req.user.confirmed);
-    if (req.user.isadmin == true) {
-      return next(); // Calling next() to proceed to the next statement
-    }
-  }
-  // If not authenticated, show alert message and redirect to ‘/’
-  alertMessage(
-    res,
-    "danger",
-    "Access Denied",
-    "fas fa-exclamation-circle",
-    true
-  );
-  res.redirect("/");
-};
 
 //Post user's address info to EasyPost API
 // router.post("/processCheckout", (req, res) => {
@@ -191,23 +177,10 @@ const ensureAdmin = (req, res, next) => {
 //     });
 // });
 
-//after checkout page
-// router.get("/checkout2",ensureAuthenticated, (req, res) => {
-//   const title = "Thank You";
-//   res.render("delivery/thankYou"),
-//     {
-//       title,
-//     };
-// });
 
 //view More Details of Order
 router.get("/viewMoreOrder/:id", ensureAuthenticated, (req, res) => {
   const title = "Order Details";
-  // CartItem.findAll({
-  //   userId:req.user.id,
-  //   //id: req.params.id,
-  //   //orderId:req.order.id,
-  // })
   console.log("helllo");
   console.log(req.params.id);
   Order.findOne({
@@ -338,7 +311,7 @@ router.get("/viewMoreOrder/:id", ensureAuthenticated, (req, res) => {
 router.get(
   "/viewMoreOrderAdmin/:id",
   ensureAuthenticated,
-  ensureAdmin,
+  ensureAdminAuthenticated,
   (req, res) => {
     const title = "Order Details - Admin";
     Order.findOne({
@@ -467,7 +440,7 @@ router.get(
   }
 );
 
-router.get("/displayLabelUrl/:id", ensureAuthenticated, ensureAdmin, (req, res) => {
+router.get("/displayLabelUrl/:id", ensureAuthenticated, ensureAdminAuthenticated, (req, res) => {
   console.log(req.params.id);
   let shippingId = req.params.id;
   api.Shipment.retrieve(shippingId).then((s) => {
@@ -481,7 +454,7 @@ router.get("/displayLabelUrl/:id", ensureAuthenticated, ensureAdmin, (req, res) 
   });
 });
 
-router.get("/printLabelPDF/:id", ensureAuthenticated, ensureAdmin, (req, res) => {
+router.get("/printLabelPDF/:id", ensureAuthenticated, ensureAdminAuthenticated, (req, res) => {
   console.log(req.params.id);
   let shippingId = req.params.id;
   api.Shipment.retrieve(shippingId).then((s) => {
@@ -510,7 +483,7 @@ router.get("/printLabelPDF/:id", ensureAuthenticated, ensureAdmin, (req, res) =>
         alertMessage(
           res,
           "success",
-          "Printing is in progress",
+          "PrintNode ID: " + body,
           "fas faexclamation-circle",
           true
         );
@@ -531,10 +504,8 @@ router.post("/checkingDelivery", (req, res) => {
   const title = "Shipping Tracking";
   let trackingId = req.body.trackingIdInput;
   //trk_f10a3961f7c4419184aca1dabc09e4f8
-  //console.log(trackingId);
   let siteUrl =
     "https://www.google.com/recaptcha/api/siteverify?secret=your_secret&response=response_string&remoteip=user_ip_address";
-  //let captcha = document.querySelector("#g-recaptcha-response").value
   let captcha = req.body["g-recaptcha-response"]; //get user token value
 
   //checks if captcha response is valid
@@ -562,7 +533,6 @@ router.post("/checkingDelivery", (req, res) => {
         true
       );
       res.redirect("/delivery/checkDelivery");
-      //return res.json({ "success": false, "msg": "Failed captcha" });
     } else {
       api.Tracker.retrieve(trackingId)
         .then((s) => {

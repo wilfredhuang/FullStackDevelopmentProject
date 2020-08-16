@@ -100,28 +100,6 @@ module.exports = {
     }
   },
 
-  retrieveDeliveryStatus: function () {
-    api.Tracker.retrieve("trk_f10a3961f7c4419184aca1dabc09e4f8")
-      .then((s) => {
-        let deliveryStatus = s.status;
-        //   //let shipmentID = deliveryStatus
-        //   //console.log(s.status);
-        //   //console.log(deliveryStatus);
-        //   console.log("this is hello2");
-        //   return shipmentID;
-        console.log(deliveryStatus);
-        //return "hello"
-        return deliveryStatus;
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-
-    //console.log(shipmentID)
-    //console.log("hello")
-    //return "hello2";
-    //return "this is hello"
-  },
   get_old_subtotal: function (qty, price, new_sub) {
     og_subtotal = (qty * price).toFixed(2);
     if (og_subtotal != new_sub) {
