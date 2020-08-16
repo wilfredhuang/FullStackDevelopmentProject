@@ -204,47 +204,31 @@ router.get("/orderHistory", ensureAuthenticated, (req, res) => {
       include: [{ model: orderItem }],
     })
     .then((order) => {
-<<<<<<< HEAD
-      //console.log(order[0].orderitems);
       res.render("user/orderHistoryPageUser", {
         order: order,
         orderitems: order.orderitems,
         title,
-=======
-      console.log(
-        "========================these is orders======================="
-      );
-      console.log(order[0])
-      console.log(
-        "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
-      );
-      console.log(order[0].orderitems);
-      res.render("user/orderHistoryPageUser", {
-        order: order,
-        orderitems: order.orderitems,
-        title
->>>>>>> parent of 60db11b1... Merge remote-tracking branch 'upstream/master'
       });
     })
     .catch((err) => console.log(err));
 });
 
-//Need to integrate this later
-router.get("/userCart", (req, res) => {
-  const title = "Cart";
-  cartItem
-    .findAll({
-      //where:{
-      //  userId = req.user.id,
-      //},
-    })
-    .then((cartItem) => {
-      res.render("user/userCart", {
-        cartItem: cartItem,
-        title,
-      });
-    });
-});
+// //Need to integrate this later
+// router.get("/userCart", (req, res) => {
+//   const title = "Cart";
+//   cartItem
+//     .findAll({
+//       //where:{
+//       //  userId = req.user.id,
+//       //},
+//     })
+//     .then((cartItem) => {
+//       res.render("user/userCart", {
+//         cartItem: cartItem,
+//         title,
+//       });
+//     });
+// });
 
 router.get("/login", (req, res) => {
   const title = "Login";
