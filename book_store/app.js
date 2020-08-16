@@ -103,7 +103,7 @@ const {
   get_old_subtotal,
   check_subtotal,
   check_for_discount_msg,
-  retrieveDeliveryStatus,
+  formatDeliveryStatus,
 } = require("./helpers/hbs");
 const { when } = require("./helpers/for_loop");
 
@@ -129,7 +129,7 @@ app.engine(
       get_old_subtotal: get_old_subtotal,
       check_subtotal: check_subtotal,
       check_for_discount_msg: check_for_discount_msg,
-      retrieveDeliveryStatus: retrieveDeliveryStatus,
+      formatDeliveryStatus: formatDeliveryStatus,
       when: when,
     },
     handlebars: allowInsecurePrototypeAccess(Handlebars),
