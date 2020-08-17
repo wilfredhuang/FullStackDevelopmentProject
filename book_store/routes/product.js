@@ -1445,7 +1445,7 @@ router.get('/ConfirmPOrder/:id', ensureAdminAuthenticated, async(req, res) => {
         name: "George Costanza",
         company: "Vandelay Industries",
         street1: "1 E 161st St.",
-        phone: "+6590257144",
+        phone: "+6587558054",
         city: "Bronx",
         state: "NY",
         //zip: "10451", //Actual zipcode
