@@ -155,6 +155,7 @@ router.post('/addProductAdmin', (req, res) => {
     productadmin.create({
         product_name, author, publisher, genre, price, stock, details, weight, product_image,rating,
     }).then((product) => {
+        alertMessage(res, 'success', ` ${product_name} was added into the shop.`, 'fas fa-sign-in-alt', true);
         res.redirect('/product/listProductAdmin')
     })
         .catch(err => console.log(err))
@@ -241,6 +242,7 @@ router.put('/updateProductAdmin/:id', (req, res) => {
         }
     })
         .then(() => {
+            alertMessage(res, 'success', ` ${product_name} was updated.`, 'fas fa-sign-in-alt', true);
             res.redirect('/product/listProductAdmin')
         })
         .catch(err => console.log(err))
