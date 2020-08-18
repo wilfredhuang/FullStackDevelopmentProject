@@ -1,3 +1,12 @@
 # FullStackDevelopmentProject
 
-Our team plans to make a online bookshop with handlebar templates.
+This is a bookstore themed website done by a group of four students.
+
+Bryan - Login
+
+Owen - Products
+
+Wilfred - Payments
+
+Hasan - Delivery
+
